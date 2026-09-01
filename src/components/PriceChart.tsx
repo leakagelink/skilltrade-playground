@@ -81,6 +81,8 @@ export function PriceChart({
 
     const chart = createChart(ref.current, {
       height,
+      autoSize: true,
+
       layout: {
         background: { color: "transparent" },
         textColor: text,
