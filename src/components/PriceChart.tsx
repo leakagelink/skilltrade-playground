@@ -94,6 +94,8 @@ export function PriceChart({
       timeScale: { borderColor: grid, timeVisible: true, secondsVisible: false },
       crosshair: { mode: 0 },
       handleScale: { axisPressedMouseMove: false },
+      localization: { locale: "en-US" },
+
     });
     chartRef.current = chart;
 
