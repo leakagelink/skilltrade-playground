@@ -134,10 +134,13 @@ function ChartPage() {
         {quote ? (
           <p className="text-center text-[11px] text-muted-foreground">
             {quote.status === "SIMULATED"
-              ? "Simulated market data — prices are generated for practice and do not reflect real markets."
-              : "Delayed market data. Educational use only."}
+              ? "Simulated market data — live feed unavailable right now."
+              : quote.status === "LIVE"
+                ? "Live crypto market data (Coinbase). Trades are simulated — no real money involved."
+                : "Real market data, ~15 min delayed (Yahoo Finance). Trades are simulated — no real money involved."}
           </p>
         ) : null}
+
 
         {openHere.length ? (
           <div className="space-y-2">
