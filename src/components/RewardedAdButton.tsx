@@ -42,7 +42,7 @@ export function RewardedAdButton({ label = "Watch Ad for +1 Credit" }: { label?:
         <PlayCircle className="size-4" /> {label}
       </Button>
       <Dialog open={open} onOpenChange={() => {}}>
-        <DialogContent className="max-w-xs" showCloseButton={false}>
+        <DialogContent className="max-w-xs">
           <DialogHeader>
             <DialogTitle className="text-center text-base">Rewarded advertisement</DialogTitle>
           </DialogHeader>
