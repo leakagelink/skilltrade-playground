@@ -589,15 +589,13 @@ export function ChartOverlay({
     dx: number,
     dy: number,
   ) => {
-    onCommitSilently((prev) =>
+    onLiveUpdate((prev) =>
       prev.map((d) => {
         if (d.id !== drag.id) return d;
         if (drag.pointIndex !== null) {
           const points = d.points.map((pt, i) => (i === drag.pointIndex ? p : pt));
           return { ...d, points };
         }
-        const anchor = toPixel(drag.origin[0]!);
-        if (!anchor) return d;
         const moved = drag.origin.map((pt) => {
           const px = toPixel(pt);
           if (!px) return pt;
@@ -609,14 +607,6 @@ export function ChartOverlay({
     );
   };
 
-  // live drag updates bypass history; the final position is pushed on pointerup
-  const liveRef = useRef<((updater: (prev: Drawing[]) => Drawing[]) => void) | null>(null);
-  const onCommitSilently = (updater: (prev: Drawing[]) => Drawing[]) => {
-    liveRef.current?.(updater);
-  };
-  useEffect(() => {
-    liveRef.current = (updater) => onCommit(updater);
-  }, [onCommit]);
 
   const onPointerUp = (e: React.PointerEvent<HTMLCanvasElement>) => {
     e.currentTarget.releasePointerCapture(e.pointerId);
