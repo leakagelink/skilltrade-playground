@@ -255,7 +255,7 @@ export function ProChart({ symbol, candles, showPatterns = true, height = 380 }:
       markersRef.current?.setMarkers([]);
       return;
     }
-    const hits = detectPatterns(candles);
+    const hits = detectPatterns(candles).slice(-6);
     const markers: SeriesMarker<Time>[] = hits.map((h) => ({
       time: h.time as UTCTimestamp,
       position: h.bias === "bear" ? "aboveBar" : "belowBar",
@@ -396,9 +396,7 @@ export function ProChart({ symbol, candles, showPatterns = true, height = 380 }:
 
       <div
         className={
-          fullscreen
-            ? "pointer-events-none px-3 pb-3"
-            : "pointer-events-none absolute inset-x-0 bottom-2 z-20 px-2"
+          fullscreen ? "pointer-events-none px-3 pb-3" : "pointer-events-none mt-2"
         }
       >
         <BottomToolDock
