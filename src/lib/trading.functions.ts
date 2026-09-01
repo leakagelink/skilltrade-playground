@@ -527,10 +527,14 @@ export const updateProfileSettings = createServerFn({ method: "POST" })
     return out;
   })
   .handler(async ({ data, context }) => {
-    const patch: Record<string, unknown> = {};
-    if (data.username !== undefined) patch["username"] = data.username;
-    if (data.leaderboardVisible !== undefined) patch["is_leaderboard_visible"] = data.leaderboardVisible;
-    if (data.onboardingCompleted !== undefined) patch["onboarding_completed"] = data.onboardingCompleted;
+    const patch: {
+      username?: string;
+      is_leaderboard_visible?: boolean;
+      onboarding_completed?: boolean;
+    } = {};
+    if (data.username !== undefined) patch.username = data.username;
+    if (data.leaderboardVisible !== undefined) patch.is_leaderboard_visible = data.leaderboardVisible;
+    if (data.onboardingCompleted !== undefined) patch.onboarding_completed = data.onboardingCompleted;
     if (!Object.keys(patch).length) return { ok: true };
 
     const { error } = await context.supabase.from("profiles").update(patch).eq("id", context.userId);
