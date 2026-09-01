@@ -37,7 +37,7 @@ function ProfilePage() {
 
   return (
     <main>
-      <AppHeader title="Profile" subtitle={p ? `Level ${p.level} · ${p.levelTitle}` : undefined} showSettings />
+      <AppHeader title="Profile" subtitle={p ? `Level ${p.level} · ${p.levelTitle}` : "Your simulated performance"} showSettings />
 
       <div className="space-y-5 p-5">
         {dash.isLoading || !p || !s ? (

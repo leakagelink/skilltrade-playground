@@ -40,15 +40,24 @@ function AuthPage() {
     setLoading(true);
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     setLoading(false);
-    if (error) return toast.error(error.message);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
     navigate({ to: "/home", replace: true });
   }
 
   async function handleSignUp(e: React.FormEvent) {
     e.preventDefault();
     const u = username.trim();
-    if (u.length < 3 || u.length > 20) return toast.error("Username must be 3–20 characters.");
-    if (!/^[a-zA-Z0-9_]+$/.test(u)) return toast.error("Username can only contain letters, numbers and underscores.");
+    if (u.length < 3 || u.length > 20) {
+      toast.error("Username must be 3–20 characters.");
+      return;
+    }
+    if (!/^[a-zA-Z0-9_]+$/.test(u)) {
+      toast.error("Username can only contain letters, numbers and underscores.");
+      return;
+    }
     setLoading(true);
     const { data, error } = await supabase.auth.signUp({
       email,
@@ -56,8 +65,14 @@ function AuthPage() {
       options: { emailRedirectTo: window.location.origin, data: { username: u } },
     });
     setLoading(false);
-    if (error) return toast.error(error.message);
-    if (data.session) return navigate({ to: "/onboarding", replace: true });
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    if (data.session) {
+      navigate({ to: "/onboarding", replace: true });
+      return;
+    }
     setSent(true);
   }
 
@@ -66,7 +81,8 @@ function AuthPage() {
     const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
     if (result.error) {
       setLoading(false);
-      return toast.error("Google sign-in is unavailable right now.");
+      toast.error("Google sign-in is unavailable right now.");
+      return;
     }
     if (result.redirected) return;
     navigate({ to: "/home", replace: true });
