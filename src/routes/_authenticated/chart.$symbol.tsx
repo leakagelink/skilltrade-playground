@@ -4,7 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getCandles } from "@/lib/market.functions";
 import { closeTrade, getTrades, openTrade } from "@/lib/trading.functions";
-import { PriceChart } from "@/components/PriceChart";
+import { ProChart } from "@/components/chart/ProChart";
 import { AppHeader } from "@/components/AppHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -112,9 +112,9 @@ function ChartPage() {
       <div className="space-y-4 p-5">
         <div className="surface-card overflow-hidden p-2">
           {chart.isLoading || !chart.data ? (
-            <Skeleton className="h-[320px] w-full rounded-xl" />
+            <Skeleton className="h-[380px] w-full rounded-xl" />
           ) : (
-            <PriceChart candles={chart.data.candles} />
+            <ProChart symbol={symbol} candles={chart.data.candles} height={380} />
           )}
           <div className="flex gap-1 px-1 pb-1 pt-2">
             {TIMEFRAMES.map((t) => (
