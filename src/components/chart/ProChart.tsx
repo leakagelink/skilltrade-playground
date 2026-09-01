@@ -7,6 +7,7 @@ import {
   createSeriesMarkers,
   type IChartApi,
   type ISeriesApi,
+  type ISeriesMarkersPluginApi,
   type SeriesMarker,
   type Time,
   type UTCTimestamp,
@@ -131,7 +132,7 @@ export function ProChart({ symbol, candles, showPatterns = true, height = 380 }:
 
   const volSeriesRef = useRef<ISeriesApi<"Histogram"> | null>(null);
   const indicatorSeriesRef = useRef<Record<string, ISeriesApi<"Line" | "Histogram">>>({});
-  const markersRef = useRef<ReturnType<typeof createSeriesMarkers> | null>(null);
+  const markersRef = useRef<ISeriesMarkersPluginApi<Time> | null>(null);
 
   /* ---------- data ---------- */
   useEffect(() => {
