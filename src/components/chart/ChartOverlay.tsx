@@ -25,6 +25,8 @@ interface Props {
   selectedId: string | null;
   onSelect: (id: string | null) => void;
   onCommit: (updater: (prev: Drawing[]) => Drawing[]) => void;
+  /** updates drawings without pushing a history entry (used while dragging) */
+  onLiveUpdate: (updater: (prev: Drawing[]) => Drawing[]) => void;
   onToolFinished: () => void;
   height: number;
 }
@@ -45,6 +47,7 @@ export function ChartOverlay({
   selectedId,
   onSelect,
   onCommit,
+  onLiveUpdate,
   onToolFinished,
   height,
 }: Props) {
@@ -511,6 +514,8 @@ export function ChartOverlay({
       const hit = hitTest(x, y);
       onSelect(hit?.drawing.id ?? null);
       if (hit) {
+        // snapshot once so the whole drag is a single undo step
+        onCommit((prev) => prev);
         dragRef.current = {
           id: hit.drawing.id,
           pointIndex: hit.pointIndex,
