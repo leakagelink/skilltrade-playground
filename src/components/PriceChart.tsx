@@ -144,10 +144,10 @@ export function PriceChart({
     chart.timeScale().fitContent();
 
     const ro = new ResizeObserver(() => {
-      const w = ref.current?.clientWidth;
-      if (w) chart.applyOptions({ width: w });
+      chart.timeScale().fitContent();
     });
     ro.observe(ref.current);
+
 
     return () => {
       ro.disconnect();
