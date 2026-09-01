@@ -81,6 +81,8 @@ export function PriceChart({
 
     const chart = createChart(ref.current, {
       height,
+      autoSize: true,
+
       layout: {
         background: { color: "transparent" },
         textColor: text,
@@ -92,6 +94,8 @@ export function PriceChart({
       timeScale: { borderColor: grid, timeVisible: true, secondsVisible: false },
       crosshair: { mode: 0 },
       handleScale: { axisPressedMouseMove: false },
+      localization: { locale: "en-US" },
+
     });
     chartRef.current = chart;
 
@@ -140,10 +144,10 @@ export function PriceChart({
     chart.timeScale().fitContent();
 
     const ro = new ResizeObserver(() => {
-      const w = ref.current?.clientWidth;
-      if (w) chart.applyOptions({ width: w });
+      chart.timeScale().fitContent();
     });
     ro.observe(ref.current);
+
 
     return () => {
       ro.disconnect();
