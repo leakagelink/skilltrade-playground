@@ -24,7 +24,7 @@ export const getQuote = createServerFn({ method: "GET" })
 /** Batch quotes for the markets list / watchlists — one round-trip per poll tick. */
 export const getQuotes = createServerFn({ method: "GET" })
   .inputValidator((data: { symbols?: string[] }) => ({
-    symbols: (data?.symbols ?? []).map((s) => String(s).toUpperCase()).slice(0, 40),
+    symbols: (data?.symbols ?? []).map((s) => String(s).toUpperCase()).slice(0, 60),
   }))
   .handler(async ({ data }): Promise<{ quotes: Quote[] }> => {
     const { getMarketDataProvider } = await import("./market/provider.server");
