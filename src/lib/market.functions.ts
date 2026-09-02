@@ -21,6 +21,23 @@ export const getQuote = createServerFn({ method: "GET" })
     return getMarketDataProvider().getLatestPrice(data.symbol);
   });
 
+/** Batch quotes for the markets list / watchlists — one round-trip per poll tick. */
+export const getQuotes = createServerFn({ method: "GET" })
+  .inputValidator((data: { symbols?: string[] }) => ({
+    symbols: (data?.symbols ?? []).map((s) => String(s).toUpperCase()).slice(0, 40),
+  }))
+  .handler(async ({ data }): Promise<{ quotes: Quote[] }> => {
+    const { getMarketDataProvider } = await import("./market/provider.server");
+    const provider = getMarketDataProvider();
+    const symbols = data.symbols.length
+      ? data.symbols
+      : (await provider.getAssets()).map((a) => a.symbol);
+    const settled = await Promise.allSettled(symbols.map((s) => provider.getLatestPrice(s)));
+    return {
+      quotes: settled.flatMap((r) => (r.status === "fulfilled" ? [r.value] : [])),
+    };
+  });
+
 export const getCandles = createServerFn({ method: "GET" })
   .inputValidator((data: { symbol: string; timeframe: string }) => ({
     symbol: String(data.symbol).toUpperCase(),
