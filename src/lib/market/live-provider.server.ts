@@ -92,7 +92,7 @@ async function yahooChart(symbol: string, tf: Timeframe): Promise<YahooChart> {
   const url =
     `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}` +
     `?interval=${cfg.interval}&range=${cfg.range}&includePrePost=false`;
-  return cached(`y:${symbol}:${tf}`, 30_000, () => getJson(url) as Promise<YahooChart>);
+  return cached(`y:${symbol}:${tf}`, tf === "1d" ? 10_000 : 30_000, () => getJson(url) as Promise<YahooChart>);
 }
 
 function yahooToCandles(payload: YahooChart): Candle[] {
@@ -141,7 +141,7 @@ async function coinbaseCandles(product: string, tf: Timeframe): Promise<Candle[]
 
 async function coinbaseStats(product: string): Promise<{ last: number; open: number }> {
   const url = `https://api.exchange.coinbase.com/products/${product}/stats`;
-  const stats = await cached(`cbs:${product}`, 15_000, () => getJson(url) as Promise<{ last?: string; open?: string }>);
+  const stats = await cached(`cbs:${product}`, 5_000, () => getJson(url) as Promise<{ last?: string; open?: string }>);
   return { last: Number(stats.last ?? 0), open: Number(stats.open ?? 0) };
 }
 
