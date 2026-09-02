@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { getMarketAssets } from "@/lib/market.functions";
+import { getMarketAssets, getQuotes } from "@/lib/market.functions";
 import { AppHeader } from "@/components/AppHeader";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -10,6 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/EmptyState";
 import { DisclaimerNote } from "@/components/Disclaimer";
 import { Search, SearchX, ChevronRight } from "lucide-react";
+import { pct, price } from "@/lib/format";
 
 export const Route = createFileRoute("/_authenticated/trade")({
   head: () => ({
@@ -25,7 +26,22 @@ export const Route = createFileRoute("/_authenticated/trade")({
 
 function TradePage() {
   const load = useServerFn(getMarketAssets);
+  const loadQuotes = useServerFn(getQuotes);
   const { data, isLoading } = useQuery({ queryKey: ["assets"], queryFn: () => load() });
+
+  const symbols = useMemo(() => (data?.assets ?? []).map((a) => a.symbol), [data]);
+  // Continuous real-price loop for the markets list.
+  const quotes = useQuery({
+    queryKey: ["quotes", symbols],
+    queryFn: () => loadQuotes({ data: { symbols } }),
+    enabled: symbols.length > 0,
+    refetchInterval: 10000,
+    refetchIntervalInBackground: false,
+  });
+  const quoteBy = useMemo(
+    () => new Map((quotes.data?.quotes ?? []).map((q) => [q.symbol, q])),
+    [quotes.data],
+  );
   const [q, setQ] = useState("");
   const [tab, setTab] = useState<"ALL" | "STOCK" | "CRYPTO">("ALL");
 
@@ -41,7 +57,7 @@ function TradePage() {
 
   return (
     <main>
-      <AppHeader title="Markets" subtitle="Simulated trading only" showSettings />
+      <AppHeader title="Markets" subtitle="Live prices · simulated trading only" showSettings />
 
       <div className="space-y-4 p-5">
         <div className="relative">
@@ -86,9 +102,22 @@ function TradePage() {
                     <p className="truncate text-sm font-semibold">{a.name}</p>
                     <p className="num text-xs text-muted-foreground">{a.displaySymbol}</p>
                   </div>
-                  <span className="rounded-full bg-secondary px-2 py-0.5 text-[10px] font-medium uppercase text-muted-foreground">
-                    {a.assetType}
-                  </span>
+                  {quoteBy.get(a.symbol) ? (
+                    <div className="text-right">
+                      <p className="num text-sm font-semibold">{price(quoteBy.get(a.symbol)!.price)}</p>
+                      <p
+                        className={`num text-[11px] ${
+                          quoteBy.get(a.symbol)!.changePercent >= 0 ? "text-bull" : "text-bear"
+                        }`}
+                      >
+                        {pct(quoteBy.get(a.symbol)!.changePercent)}
+                      </p>
+                    </div>
+                  ) : (
+                    <span className="rounded-full bg-secondary px-2 py-0.5 text-[10px] font-medium uppercase text-muted-foreground">
+                      {a.assetType}
+                    </span>
+                  )}
                   <ChevronRight className="size-4 text-muted-foreground" />
                 </Link>
               </li>

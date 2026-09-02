@@ -227,6 +227,11 @@ function ChartPage() {
               <SheetTitle>
                 {direction} {symbol} — simulated order
               </SheetTitle>
+              {livePrice ? (
+                <p className="num text-left text-xs text-muted-foreground">
+                  Live price {price(livePrice)} · order fills at the latest market price
+                </p>
+              ) : null}
             </SheetHeader>
             <div className="space-y-4 overflow-y-auto px-4 pb-6">
               <div>
