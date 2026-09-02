@@ -11,20 +11,50 @@ import { TIMEFRAMES } from "./types";
 
 const UA = "Mozilla/5.0 (compatible; PaperEdge/1.0; educational paper trading)";
 
-/* ------------------------------ tiny cache ------------------------------ */
+/* --------------------- stale-while-revalidate cache --------------------- */
 
 const cache = new Map<string, { at: number; value: unknown }>();
+const inflight = new Map<string, Promise<unknown>>();
 
+/**
+ * Serves cached data instantly. Fresh (< ttl) → cache hit.
+ * Stale but usable (< ttl * 6) → cache returned immediately while a single
+ * background refresh runs. Identical concurrent loads are de-duplicated.
+ */
 async function cached<T>(key: string, ttlMs: number, load: () => Promise<T>): Promise<T> {
-  const hit = cache.get(key);
   const now = Date.now();
+  const hit = cache.get(key);
   if (hit && now - hit.at < ttlMs) return hit.value as T;
-  const value = await load();
-  cache.set(key, { at: now, value });
-  if (cache.size > 200) {
-    for (const [k, v] of cache) if (now - v.at > 10 * 60_000) cache.delete(k);
+
+  const refresh = (): Promise<T> => {
+    const existing = inflight.get(key);
+    if (existing) return existing as Promise<T>;
+    const p = load()
+      .then((value) => {
+        cache.set(key, { at: Date.now(), value });
+        if (cache.size > 400) {
+          const cutoff = Date.now() - 10 * 60_000;
+          for (const [k, v] of cache) if (v.at < cutoff) cache.delete(k);
+        }
+        return value;
+      })
+      .finally(() => inflight.delete(key));
+    inflight.set(key, p);
+    return p;
+  };
+
+  // Stale-but-recent: return instantly, revalidate in the background.
+  if (hit && now - hit.at < ttlMs * 6) {
+    void refresh().catch(() => undefined);
+    return hit.value as T;
   }
-  return value;
+
+  try {
+    return await refresh();
+  } catch (err) {
+    if (hit) return hit.value as T;
+    throw err;
+  }
 }
 
 async function getJson(url: string): Promise<unknown> {
@@ -32,6 +62,7 @@ async function getJson(url: string): Promise<unknown> {
   if (!res.ok) throw new Error(`Market data request failed [${res.status}]: ${await res.text()}`);
   return res.json();
 }
+
 
 /* ---------------------------- helpers ---------------------------- */
 
@@ -92,7 +123,7 @@ async function yahooChart(symbol: string, tf: Timeframe): Promise<YahooChart> {
   const url =
     `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}` +
     `?interval=${cfg.interval}&range=${cfg.range}&includePrePost=false`;
-  return cached(`y:${symbol}:${tf}`, tf === "1d" ? 10_000 : 30_000, () => getJson(url) as Promise<YahooChart>);
+  return cached(`y:${symbol}:${tf}`, tf === "1d" ? 20_000 : 60_000, () => getJson(url) as Promise<YahooChart>);
 }
 
 function yahooToCandles(payload: YahooChart): Candle[] {
@@ -125,7 +156,7 @@ const COINBASE_GRANULARITY: Record<Timeframe, number> = {
 async function coinbaseCandles(product: string, tf: Timeframe): Promise<Candle[]> {
   const granularity = COINBASE_GRANULARITY[tf];
   const url = `https://api.exchange.coinbase.com/products/${product}/candles?granularity=${granularity}`;
-  const rows = await cached(`cb:${product}:${tf}`, 30_000, () => getJson(url) as Promise<number[][]>);
+  const rows = await cached(`cb:${product}:${tf}`, 45_000, () => getJson(url) as Promise<number[][]>);
   const candles = rows
     .map((r) => ({
       time: r[0]!,
@@ -141,7 +172,7 @@ async function coinbaseCandles(product: string, tf: Timeframe): Promise<Candle[]
 
 async function coinbaseStats(product: string): Promise<{ last: number; open: number }> {
   const url = `https://api.exchange.coinbase.com/products/${product}/stats`;
-  const stats = await cached(`cbs:${product}`, 5_000, () => getJson(url) as Promise<{ last?: string; open?: string }>);
+  const stats = await cached(`cbs:${product}`, 10_000, () => getJson(url) as Promise<{ last?: string; open?: string }>);
   return { last: Number(stats.last ?? 0), open: Number(stats.open ?? 0) };
 }
 
