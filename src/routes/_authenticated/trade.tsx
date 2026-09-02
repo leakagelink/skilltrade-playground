@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { EmptyState } from "@/components/EmptyState";
 import { DisclaimerNote } from "@/components/Disclaimer";
-import { Search, SearchX, ChevronRight } from "lucide-react";
+import { Search, SearchX, ChevronRight, TrendingUp, TrendingDown } from "lucide-react";
 import { pct, price } from "@/lib/format";
 
 export const Route = createFileRoute("/_authenticated/trade")({
@@ -93,21 +93,29 @@ function TradePage() {
                     <p className="truncate text-xs text-muted-foreground">{a.name}</p>
                   </div>
                   {quoteBy.get(a.symbol) ? (
-                    <div className="text-right">
-                      <p className="num text-sm font-semibold">{price(quoteBy.get(a.symbol)!.price)}</p>
-                      <p
-                        className={`num text-[11px] ${
-                          quoteBy.get(a.symbol)!.changePercent >= 0 ? "text-bull" : "text-bear"
-                        }`}
-                      >
-                        {pct(quoteBy.get(a.symbol)!.changePercent)}
-                      </p>
-                    </div>
+                    (() => {
+                      const qd = quoteBy.get(a.symbol)!;
+                      const up = qd.changePercent >= 0;
+                      return (
+                        <div className="flex flex-col items-end gap-1">
+                          <p className="num text-sm font-semibold">{price(qd.price)}</p>
+                          <span
+                            className={`num inline-flex items-center gap-0.5 rounded-full px-1.5 py-0.5 text-[11px] font-semibold ${
+                              up ? "bg-bull/12 text-bull" : "bg-bear/12 text-bear"
+                            }`}
+                          >
+                            {up ? <TrendingUp className="size-3" /> : <TrendingDown className="size-3" />}
+                            {pct(qd.changePercent)}
+                          </span>
+                        </div>
+                      );
+                    })()
                   ) : (
                     <span className="rounded-full bg-secondary px-2 py-0.5 text-[10px] font-medium uppercase text-muted-foreground">
                       {a.assetType}
                     </span>
                   )}
+
                   <ChevronRight className="size-4 text-muted-foreground" />
                 </Link>
               </li>
