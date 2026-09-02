@@ -85,8 +85,8 @@ function TradePage() {
                   params={{ symbol: a.symbol }}
                   className="surface-card flex items-center gap-3 p-4 transition-colors active:bg-elevated"
                 >
-                  <div className="flex size-10 items-center justify-center rounded-xl bg-primary/12 text-xs font-bold text-primary">
-                    {a.symbol.slice(0, 3)}
+                  <div className="flex h-10 min-w-12 shrink-0 items-center justify-center rounded-xl bg-primary/12 px-2 text-[11px] font-bold text-primary">
+                    {a.symbol}
                   </div>
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-semibold">{a.name}</p>
