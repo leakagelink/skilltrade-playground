@@ -34,8 +34,19 @@ function noise(symbol: string, index: number, salt = 0): number {
 }
 
 function meta(symbol: string) {
-  return CATALOG.find((a) => a.symbol === symbol.toUpperCase());
+  const s = symbol.toUpperCase();
+  return (
+    CATALOG.find((a) => a.symbol === s) ?? {
+      symbol: s,
+      name: s,
+      assetType: "STOCK" as const,
+      displaySymbol: `${s}/USD`,
+      base: 20 + (hash(s) % 400),
+      vol: 0.015,
+    }
+  );
 }
+
 
 function bucketSeconds(timeframe: Timeframe): number {
   return TIMEFRAMES.find((t) => t.value === timeframe)?.seconds ?? 60;
