@@ -3,14 +3,29 @@ import { createRouter } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
 
 export const getRouter = () => {
-  const queryClient = new QueryClient();
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        // Serve cached data instantly, refresh in the background.
+        staleTime: 30_000,
+        gcTime: 10 * 60_000,
+        refetchOnWindowFocus: false,
+        refetchOnMount: false,
+        refetchOnReconnect: true,
+        retry: 1,
+        placeholderData: <T,>(prev: T) => prev,
+      },
+    },
+  });
 
   const router = createRouter({
     routeTree,
     context: { queryClient },
     scrollRestoration: true,
+    defaultPreload: "intent",
     defaultPreloadStaleTime: 0,
   });
 
   return router;
 };
+
