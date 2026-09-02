@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { EmptyState } from "@/components/EmptyState";
 import { DisclaimerNote } from "@/components/Disclaimer";
-import { Search, SearchX, ChevronRight } from "lucide-react";
+import { Search, SearchX, ChevronRight, TrendingUp, TrendingDown } from "lucide-react";
 import { pct, price } from "@/lib/format";
 
 export const Route = createFileRoute("/_authenticated/trade")({
