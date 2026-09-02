@@ -89,8 +89,8 @@ function TradePage() {
                     {a.symbol}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-semibold">{a.name}</p>
-                    <p className="num text-xs text-muted-foreground">{a.displaySymbol}</p>
+                    <p className="num truncate text-sm font-bold text-foreground">{a.symbol}</p>
+                    <p className="truncate text-xs text-muted-foreground">{a.name}</p>
                   </div>
                   {quoteBy.get(a.symbol) ? (
                     <div className="text-right">
