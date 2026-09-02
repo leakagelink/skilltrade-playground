@@ -1,6 +1,8 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { CandlestickChart, ShieldCheck, Target, Trophy } from "lucide-react";
+import { CandlestickChart, Loader2, ShieldCheck, Target, Trophy } from "lucide-react";
 import { SimulationBadge } from "@/components/Disclaimer";
 
 export const Route = createFileRoute("/")({
