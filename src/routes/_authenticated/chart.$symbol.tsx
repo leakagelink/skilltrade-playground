@@ -134,6 +134,40 @@ function ChartPage() {
       />
 
       <div className="space-y-4 p-5">
+        {quote ? (
+          <div className="surface-card flex items-center justify-between p-4">
+            <div>
+              <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Live price</p>
+              <p
+                className={`num text-2xl font-bold transition-colors ${
+                  tickDelta > 0 ? "text-bull" : tickDelta < 0 ? "text-bear" : "text-foreground"
+                }`}
+              >
+                {price(quote.price)}
+              </p>
+              <p className="num text-[11px] text-muted-foreground">
+                Tick {tickDelta === 0 ? "—" : `${tickDelta > 0 ? "+" : ""}${tickDelta.toFixed(4)}`}
+              </p>
+            </div>
+            <div className="text-right">
+              <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Momentum (24h)</p>
+              <span
+                className={`num mt-1 inline-flex items-center gap-1 rounded-full px-2 py-1 text-sm font-bold ${
+                  quote.changePercent >= 0 ? "bg-bull/12 text-bull" : "bg-bear/12 text-bear"
+                }`}
+              >
+                {quote.changePercent >= 0 ? (
+                  <ArrowUpRight className="size-4" />
+                ) : (
+                  <ArrowDownRight className="size-4" />
+                )}
+                {pct(quote.changePercent)}
+              </span>
+            </div>
+          </div>
+        ) : null}
+
+
         <div className="surface-card overflow-hidden p-2">
           {chart.isLoading || !chart.data ? (
             <Skeleton className="h-[380px] w-full rounded-xl" />
