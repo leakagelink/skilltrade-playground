@@ -1,6 +1,8 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { CandlestickChart, ShieldCheck, Target, Trophy } from "lucide-react";
+import { CandlestickChart, Loader2, ShieldCheck, Target, Trophy } from "lucide-react";
 import { SimulationBadge } from "@/components/Disclaimer";
 
 export const Route = createFileRoute("/")({
@@ -30,8 +32,34 @@ const FEATURES = [
 ];
 
 function Landing() {
+  const navigate = useNavigate();
+  const [redirecting, setRedirecting] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    supabase.auth.getSession().then(({ data }) => {
+      if (!active) return;
+      if (data.session) {
+        setRedirecting(true);
+        navigate({ to: "/home", replace: true });
+      }
+    });
+    return () => {
+      active = false;
+    };
+  }, [navigate]);
+
+  if (redirecting) {
+    return (
+      <main className="flex min-h-screen items-center justify-center gradient-hero">
+        <Loader2 className="size-6 animate-spin text-primary" />
+      </main>
+    );
+  }
+
   return (
     <main className="min-h-screen gradient-hero">
+
       <div className="mx-auto flex min-h-screen max-w-lg flex-col px-6 pb-10 pt-16">
         <SimulationBadge className="self-start" />
         <h1 className="mt-6 text-4xl font-bold leading-tight">
