@@ -118,7 +118,7 @@ function ChartPage() {
   return (
     <main className="pb-6">
       <AppHeader
-        title={symbol}
+        title={`${symbol}/USD`}
         subtitle={quote ? `${price(quote.price)} · ${pct(quote.changePercent)}` : "Loading price…"}
         back="/trade"
       />
