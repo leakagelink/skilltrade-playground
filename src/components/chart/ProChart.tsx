@@ -50,9 +50,11 @@ interface Props {
   candles: Candle[];
   showPatterns?: boolean;
   height?: number;
+  /** Latest streamed price; folded into the forming candle between candle refetches. */
+  livePrice?: number | null;
 }
 
-export function ProChart({ symbol, candles, showPatterns = true, height = 380 }: Props) {
+export function ProChart({ symbol, candles, showPatterns = true, height = 380, livePrice = null }: Props) {
   const holderRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
   const seriesRef = useRef<ISeriesApi<"Candlestick"> | null>(null);
@@ -160,6 +162,27 @@ export function ProChart({ symbol, candles, showPatterns = true, height = 380 }:
     );
     setLegend(candles[candles.length - 1] ?? null);
   }, [candles, ready]);
+
+  /* ---------- live tick: fold the streamed price into the forming candle ---------- */
+  useEffect(() => {
+    const series = seriesRef.current;
+    const last = candles[candles.length - 1];
+    if (!series || !last || livePrice == null || !Number.isFinite(livePrice)) return;
+    const live: Candle = {
+      ...last,
+      close: livePrice,
+      high: Math.max(last.high, livePrice),
+      low: Math.min(last.low, livePrice),
+    };
+    series.update({
+      time: live.time as UTCTimestamp,
+      open: live.open,
+      high: live.high,
+      low: live.low,
+      close: live.close,
+    });
+    setLegend((prev) => (prev && prev.time !== live.time ? prev : live));
+  }, [livePrice, candles, ready]);
 
   /* ---------- crosshair legend ---------- */
   useEffect(() => {

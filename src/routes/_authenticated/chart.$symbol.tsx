@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { getCandles } from "@/lib/market.functions";
+import { getCandles, getQuote } from "@/lib/market.functions";
 import { closeTrade, getTrades, openTrade } from "@/lib/trading.functions";
 import { ProChart } from "@/components/chart/ProChart";
 import { AppHeader } from "@/components/AppHeader";
@@ -34,6 +34,7 @@ function ChartPage() {
   const navigate = useNavigate();
   const qc = useQueryClient();
   const loadCandles = useServerFn(getCandles);
+  const loadQuote = useServerFn(getQuote);
   const loadTrades = useServerFn(getTrades);
   const open = useServerFn(openTrade);
   const close = useServerFn(closeTrade);
@@ -52,14 +53,27 @@ function ChartPage() {
     refetchInterval: 15000,
   });
 
-  const trades = useQuery({ queryKey: ["trades"], queryFn: () => loadTrades() });
+  // Continuous real-price loop: quotes tick every 5s, candles refresh every 15s.
+  const tick = useQuery({
+    queryKey: ["quote", symbol],
+    queryFn: () => loadQuote({ data: { symbol } }),
+    refetchInterval: 5000,
+    refetchIntervalInBackground: false,
+  });
+
+  const trades = useQuery({
+    queryKey: ["trades"],
+    queryFn: () => loadTrades(),
+    refetchInterval: 15000,
+  });
 
   const openHere = useMemo(
     () => (trades.data?.trades ?? []).filter((t) => t.status === "OPEN" && t.symbol === symbol),
     [trades.data, symbol],
   );
 
-  const quote = chart.data?.quote;
+  const quote = tick.data ?? chart.data?.quote;
+  const livePrice = quote?.price ?? null;
 
   useEffect(() => {
     if (quote && !sl && !tp) {
@@ -114,7 +128,7 @@ function ChartPage() {
           {chart.isLoading || !chart.data ? (
             <Skeleton className="h-[380px] w-full rounded-xl" />
           ) : (
-            <ProChart symbol={symbol} candles={chart.data.candles} height={380} />
+            <ProChart symbol={symbol} candles={chart.data.candles} height={380} livePrice={livePrice} />
           )}
           <div className="flex gap-1 px-1 pb-1 pt-2">
             {TIMEFRAMES.map((t) => (
@@ -132,7 +146,12 @@ function ChartPage() {
         </div>
 
         {quote ? (
-          <p className="text-center text-[11px] text-muted-foreground">
+          <p className="flex items-center justify-center gap-1.5 text-center text-[11px] text-muted-foreground">
+            <span
+              className={`inline-block size-1.5 rounded-full ${
+                quote.status === "SIMULATED" ? "bg-muted-foreground" : "animate-pulse bg-bull"
+              }`}
+            />
             {quote.status === "SIMULATED"
               ? "Simulated market data — live feed unavailable right now."
               : quote.status === "LIVE"
@@ -148,14 +167,22 @@ function ChartPage() {
               Your open positions
             </h2>
             {openHere.map((t) => {
-              const pnl = Number(t.unrealized_pnl ?? 0);
+              const entry = Number(t.entry_price);
+              const notional = Number(t.position_size);
+              const pnl =
+                livePrice && entry > 0
+                  ? ((livePrice - entry) / entry) * notional * (t.direction === "BUY" ? 1 : -1)
+                  : Number(t.unrealized_pnl ?? 0);
               return (
                 <div key={t.id} className="surface-card flex items-center gap-3 p-4">
                   <div className="min-w-0 flex-1">
                     <p className="text-sm font-semibold">
                       {t.direction} · {money(Number(t.position_size))}
                     </p>
-                    <p className="num text-xs text-muted-foreground">Entry {price(Number(t.entry_price))}</p>
+                    <p className="num text-xs text-muted-foreground">
+                      Entry {price(entry)}
+                      {livePrice ? ` · Now ${price(livePrice)}` : ""}
+                    </p>
                   </div>
                   <p className={`num text-sm font-semibold ${pnl >= 0 ? "text-bull" : "text-bear"}`}>
                     {signedMoney(pnl)}
@@ -200,6 +227,11 @@ function ChartPage() {
               <SheetTitle>
                 {direction} {symbol} — simulated order
               </SheetTitle>
+              {livePrice ? (
+                <p className="num text-left text-xs text-muted-foreground">
+                  Live price {price(livePrice)} · order fills at the latest market price
+                </p>
+              ) : null}
             </SheetHeader>
             <div className="space-y-4 overflow-y-auto px-4 pb-6">
               <div>
