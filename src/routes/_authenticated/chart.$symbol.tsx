@@ -74,6 +74,16 @@ function ChartPage() {
 
   const quote = tick.data ?? chart.data?.quote;
   const livePrice = quote?.price ?? null;
+  const prevPriceRef = useRef<number | null>(null);
+  const [tickDelta, setTickDelta] = useState(0);
+
+  useEffect(() => {
+    if (livePrice == null) return;
+    const prev = prevPriceRef.current;
+    if (prev != null && prev !== livePrice) setTickDelta(livePrice - prev);
+    prevPriceRef.current = livePrice;
+  }, [livePrice]);
+
 
   useEffect(() => {
     if (quote && !sl && !tp) {
