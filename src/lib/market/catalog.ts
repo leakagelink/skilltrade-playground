@@ -6,16 +6,69 @@ export interface CatalogEntry extends MarketAsset {
   providerSymbol: string;
 }
 
-export const CATALOG: CatalogEntry[] = [
-  { symbol: "AAPL", name: "Apple Inc.", assetType: "STOCK", displaySymbol: "AAPL/USD", providerSymbol: "AAPL" },
-  { symbol: "MSFT", name: "Microsoft", assetType: "STOCK", displaySymbol: "MSFT/USD", providerSymbol: "MSFT" },
-  { symbol: "NVDA", name: "NVIDIA", assetType: "STOCK", displaySymbol: "NVDA/USD", providerSymbol: "NVDA" },
-  { symbol: "TSLA", name: "Tesla", assetType: "STOCK", displaySymbol: "TSLA/USD", providerSymbol: "TSLA" },
-  { symbol: "AMZN", name: "Amazon", assetType: "STOCK", displaySymbol: "AMZN/USD", providerSymbol: "AMZN" },
-  { symbol: "BTC", name: "Bitcoin", assetType: "CRYPTO", displaySymbol: "BTC/USD", providerSymbol: "BTC-USD" },
-  { symbol: "ETH", name: "Ethereum", assetType: "CRYPTO", displaySymbol: "ETH/USD", providerSymbol: "ETH-USD" },
-  { symbol: "SOL", name: "Solana", assetType: "CRYPTO", displaySymbol: "SOL/USD", providerSymbol: "SOL-USD" },
+const STOCKS: [string, string][] = [
+  ["AAPL", "Apple Inc."],
+  ["MSFT", "Microsoft"],
+  ["NVDA", "NVIDIA"],
+  ["TSLA", "Tesla"],
+  ["AMZN", "Amazon"],
+  ["GOOGL", "Alphabet"],
+  ["META", "Meta Platforms"],
+  ["NFLX", "Netflix"],
+  ["AMD", "AMD"],
+  ["INTC", "Intel"],
+  ["BABA", "Alibaba"],
+  ["DIS", "Walt Disney"],
+  ["JPM", "JPMorgan Chase"],
+  ["V", "Visa"],
+  ["MA", "Mastercard"],
+  ["KO", "Coca-Cola"],
+  ["PEP", "PepsiCo"],
+  ["NKE", "Nike"],
+  ["BA", "Boeing"],
+  ["UBER", "Uber"],
+  ["COIN", "Coinbase Global"],
+  ["PLTR", "Palantir"],
+  ["SHOP", "Shopify"],
+  ["SBUX", "Starbucks"],
+  ["WMT", "Walmart"],
 ];
+
+const CRYPTOS: [string, string][] = [
+  ["BTC", "Bitcoin"],
+  ["ETH", "Ethereum"],
+  ["SOL", "Solana"],
+  ["XRP", "XRP"],
+  ["ADA", "Cardano"],
+  ["DOGE", "Dogecoin"],
+  ["AVAX", "Avalanche"],
+  ["LINK", "Chainlink"],
+  ["DOT", "Polkadot"],
+  ["LTC", "Litecoin"],
+  ["MATIC", "Polygon"],
+  ["ATOM", "Cosmos"],
+  ["UNI", "Uniswap"],
+  ["AAVE", "Aave"],
+  ["BCH", "Bitcoin Cash"],
+];
+
+export const CATALOG: CatalogEntry[] = [
+  ...STOCKS.map(([symbol, name]) => ({
+    symbol,
+    name,
+    assetType: "STOCK" as const,
+    displaySymbol: `${symbol}/USD`,
+    providerSymbol: symbol,
+  })),
+  ...CRYPTOS.map(([symbol, name]) => ({
+    symbol,
+    name,
+    assetType: "CRYPTO" as const,
+    displaySymbol: `${symbol}/USD`,
+    providerSymbol: `${symbol}-USD`,
+  })),
+];
+
 
 export function catalogEntry(symbol: string): CatalogEntry | undefined {
   return CATALOG.find((a) => a.symbol === symbol.toUpperCase());
