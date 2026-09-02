@@ -50,9 +50,11 @@ interface Props {
   candles: Candle[];
   showPatterns?: boolean;
   height?: number;
+  /** Latest streamed price; folded into the forming candle between candle refetches. */
+  livePrice?: number | null;
 }
 
-export function ProChart({ symbol, candles, showPatterns = true, height = 380 }: Props) {
+export function ProChart({ symbol, candles, showPatterns = true, height = 380, livePrice = null }: Props) {
   const holderRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
   const seriesRef = useRef<ISeriesApi<"Candlestick"> | null>(null);
