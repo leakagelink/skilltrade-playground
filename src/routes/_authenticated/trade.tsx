@@ -2,11 +2,11 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { getMarketAssets, getQuotes } from "@/lib/market.functions";
+import { getQuotes } from "@/lib/market.functions";
+import { CATALOG } from "@/lib/market/catalog";
 import { AppHeader } from "@/components/AppHeader";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/EmptyState";
 import { DisclaimerNote } from "@/components/Disclaimer";
 import { Search, SearchX, ChevronRight } from "lucide-react";
@@ -25,11 +25,8 @@ export const Route = createFileRoute("/_authenticated/trade")({
 });
 
 function TradePage() {
-  const load = useServerFn(getMarketAssets);
   const loadQuotes = useServerFn(getQuotes);
-  const { data, isLoading } = useQuery({ queryKey: ["assets"], queryFn: () => load() });
-
-  const symbols = useMemo(() => (data?.assets ?? []).map((a) => a.symbol), [data]);
+  const symbols = useMemo(() => CATALOG.map((asset) => asset.symbol), []);
   // Continuous real-price loop for the markets list.
   const quotes = useQuery({
     queryKey: ["quotes", symbols],
@@ -46,14 +43,13 @@ function TradePage() {
   const [tab, setTab] = useState<"ALL" | "STOCK" | "CRYPTO">("ALL");
 
   const filtered = useMemo(() => {
-    const list = data?.assets ?? [];
     const needle = q.trim().toLowerCase();
-    return list.filter(
+    return CATALOG.filter(
       (a) =>
         (tab === "ALL" || a.assetType === tab) &&
         (!needle || a.name.toLowerCase().includes(needle) || a.symbol.toLowerCase().includes(needle)),
     );
-  }, [data, q, tab]);
+  }, [q, tab]);
 
   return (
     <main>
@@ -78,13 +74,7 @@ function TradePage() {
           </TabsList>
         </Tabs>
 
-        {isLoading ? (
-          <div className="space-y-2">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <Skeleton key={i} className="h-16 w-full rounded-xl" />
-            ))}
-          </div>
-        ) : filtered.length === 0 ? (
+        {filtered.length === 0 ? (
           <EmptyState icon={SearchX} title="No assets found." description="Try a different name or symbol." />
         ) : (
           <ul className="space-y-2">
