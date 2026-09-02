@@ -13,7 +13,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { TIMEFRAMES, type Timeframe } from "@/lib/market/types";
-import { catalogEntry } from "@/lib/market/catalog";
 import { money, pct, price, signedMoney } from "@/lib/format";
 import { toast } from "sonner";
 import { ArrowDownRight, ArrowUpRight } from "lucide-react";
@@ -32,7 +31,6 @@ export const Route = createFileRoute("/_authenticated/chart/$symbol")({
 
 function ChartPage() {
   const { symbol } = Route.useParams();
-  const asset = catalogEntry(symbol);
   const navigate = useNavigate();
   const qc = useQueryClient();
   const loadCandles = useServerFn(getCandles);
@@ -120,7 +118,7 @@ function ChartPage() {
   return (
     <main className="pb-6">
       <AppHeader
-        title={asset?.displaySymbol ?? symbol}
+        title={`${symbol}/USD`}
         subtitle={quote ? `${price(quote.price)} · ${pct(quote.changePercent)}` : "Loading price…"}
         back="/trade"
       />
