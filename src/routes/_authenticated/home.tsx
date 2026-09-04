@@ -189,17 +189,19 @@ function HomePage() {
             <p className="text-sm font-semibold uppercase tracking-wide">Daily Reward</p>
           </div>
           <p className="mt-1 text-xs text-muted-foreground">
-            {data.dailyReward.canClaim
+            {canClaim
               ? `Claim your free ${data.dailyReward.amount} trading credits.`
-              : `Next reward available ${new Date(data.dailyReward.nextClaimAt!).toLocaleString()}.`}
+              : "Next reward unlocks in"}
           </p>
+          {!canClaim ? <p className="num mt-1 text-2xl font-bold tabular-nums">{countdown}</p> : null}
           <Button
             className="mt-3 h-11 w-full rounded-xl font-semibold"
-            disabled={!data.dailyReward.canClaim || claimMutation.isPending}
+            disabled={!canClaim || claimMutation.isPending}
             onClick={() => claimMutation.mutate()}
           >
-            {data.dailyReward.canClaim ? "CLAIM DAILY CREDITS" : "ALREADY CLAIMED"}
+            {canClaim ? "CLAIM DAILY CREDITS" : "ALREADY CLAIMED"}
           </Button>
+
         </div>
 
         {p.virtualCredits === 0 ? (
