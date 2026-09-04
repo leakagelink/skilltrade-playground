@@ -105,7 +105,14 @@ const YAHOO_INTERVAL: Record<Timeframe, { interval: string; range: string }> = {
 interface YahooChart {
   chart?: {
     result?: {
-      meta?: { regularMarketPrice?: number; regularMarketChangePercent?: number; regularMarketTime?: number };
+      meta?: {
+        regularMarketPrice?: number;
+        regularMarketChangePercent?: number;
+        regularMarketTime?: number;
+        previousClose?: number;
+        chartPreviousClose?: number;
+        marketState?: string;
+      };
       timestamp?: number[];
       indicators?: {
         quote?: {
@@ -133,8 +140,8 @@ async function yahooChart(symbol: string, tf: Timeframe): Promise<YahooChart> {
 async function yahooLatest(symbol: string): Promise<YahooChart> {
   const url =
     `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}` +
-    `?interval=1m&range=1d&includePrePost=true&_=${Math.floor(Date.now() / 1_500)}`;
-  return cached(`yq:${symbol}`, 1_500, () => getJson(url) as Promise<YahooChart>);
+    `?interval=1m&range=1d&includePrePost=true&_=${Math.floor(Date.now() / 900)}`;
+  return cached(`yq:${symbol}`, 900, () => getJson(url) as Promise<YahooChart>);
 }
 
 function yahooToCandles(payload: YahooChart): Candle[] {
@@ -181,10 +188,16 @@ async function coinbaseCandles(product: string, tf: Timeframe): Promise<Candle[]
   return tf === "4h" ? aggregate(candles, 14400) : candles;
 }
 
-async function coinbaseStats(product: string): Promise<{ last: number; open: number }> {
-  const url = `https://api.exchange.coinbase.com/products/${product}/stats`;
-  const stats = await cached(`cbs:${product}`, 750, () => getJson(url) as Promise<{ last?: string; open?: string }>);
-  return { last: Number(stats.last ?? 0), open: Number(stats.open ?? 0) };
+async function coinbaseStats(product: string): Promise<{ last: number; open: number; time: string | undefined }> {
+  const [ticker, stats] = await Promise.all([
+    cached(`cbt:${product}`, 500, () =>
+      getJson(`https://api.exchange.coinbase.com/products/${product}/ticker`) as Promise<{ price?: string; time?: string }>,
+    ),
+    cached(`cbs:${product}`, 30_000, () =>
+      getJson(`https://api.exchange.coinbase.com/products/${product}/stats`) as Promise<{ last?: string; open?: string }>,
+    ),
+  ]);
+  return { last: Number(ticker.price ?? stats.last ?? 0), open: Number(stats.open ?? 0), time: ticker.time };
 }
 
 /* ------------------------------ provider ------------------------------- */
@@ -206,13 +219,14 @@ export const liveMarketDataProvider: MarketDataProvider = {
     if (!entry) throw new Error(`Unknown symbol ${symbol}`);
 
     if (entry.assetType === "CRYPTO") {
-      const { last, open } = await coinbaseStats(entry.providerSymbol);
+      const { last, open, time } = await coinbaseStats(entry.providerSymbol);
       return {
         symbol: entry.symbol,
         price: last,
         changePercent: open > 0 ? ((last - open) / open) * 100 : 0,
         status: "LIVE",
-        asOf: Math.floor(Date.now() / 1000),
+        asOf: time ? Math.floor(new Date(time).getTime() / 1000) : Math.floor(Date.now() / 1000),
+        marketState: "OPEN",
       };
     }
 
@@ -220,14 +234,27 @@ export const liveMarketDataProvider: MarketDataProvider = {
     const meta = payload.chart?.result?.[0]?.meta;
     const closes = payload.chart?.result?.[0]?.indicators?.quote?.[0]?.close ?? [];
     const latestClose = [...closes].reverse().find((value) => value != null);
-    const price = latestClose ?? meta?.regularMarketPrice;
+    // regularMarketPrice is the fastest Yahoo tick. A 1-minute candle close
+    // changes only once per minute and previously made stocks look frozen.
+    const price = meta?.regularMarketPrice ?? latestClose;
+    const previousClose = meta?.previousClose ?? meta?.chartPreviousClose;
     if (price == null) throw new Error(`No quote for ${symbol}`);
     return {
       symbol: entry.symbol,
       price,
-      changePercent: meta?.regularMarketChangePercent ?? 0,
+      changePercent:
+        meta?.regularMarketChangePercent ??
+        (previousClose && previousClose > 0 ? ((price - previousClose) / previousClose) * 100 : 0),
       status: "DELAYED",
       asOf: meta?.regularMarketTime ?? Math.floor(Date.now() / 1000),
+      marketState:
+        meta?.marketState === "REGULAR"
+          ? "OPEN"
+          : meta?.marketState === "PRE"
+            ? "PRE"
+            : meta?.marketState === "POST" || meta?.marketState === "POSTPOST"
+              ? "POST"
+              : "CLOSED",
     };
   },
 

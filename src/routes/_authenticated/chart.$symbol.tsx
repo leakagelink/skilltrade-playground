@@ -59,7 +59,7 @@ function ChartPage() {
   const tick = useQuery({
     queryKey: ["quote", symbol],
     queryFn: () => loadQuote({ data: { symbol, requestId: Date.now() } }),
-    refetchInterval: 1500,
+    refetchInterval: 1000,
     refetchIntervalInBackground: true,
     refetchOnMount: "always",
     staleTime: 0,
@@ -204,7 +204,9 @@ function ChartPage() {
               ? "Simulated market data — live feed unavailable right now."
               : quote.status === "LIVE"
                 ? "Live crypto market data (Coinbase). Trades are simulated — no real money involved."
-                : "Real market data, ~15 min delayed (Yahoo Finance). Trades are simulated — no real money involved."}
+                : quote.marketState === "OPEN" || quote.marketState === "PRE" || quote.marketState === "POST"
+                  ? "Real stock market feed (Yahoo Finance). Trades are simulated — no real money involved."
+                  : "US stock market is closed — the last real price stays unchanged until trading resumes."}
           </p>
         ) : null}
 

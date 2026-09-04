@@ -34,6 +34,7 @@ export interface Quote {
   /** "LIVE" only when a real provider is configured, otherwise data is simulated or delayed. */
   status: "SIMULATED" | "DELAYED" | "LIVE";
   asOf: number;
+  marketState?: "OPEN" | "CLOSED" | "PRE" | "POST";
 }
 
 export interface MarketDataProvider {
