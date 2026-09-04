@@ -78,6 +78,9 @@ export const getDashboard = createServerFn({ method: "GET" })
         losses: closed.length - wins,
         winRate: closed.length ? Math.round((wins / closed.length) * 1000) / 10 : 0,
         totalPnl: Math.round(totalPnl * 100) / 100,
+        openPnl,
+        equity: profile ? Math.round((Number(profile.virtual_balance) + openPnl) * 100) / 100 : 0,
+
         maxDrawdown: maxDrawdown(
           closed.map((t) => ({
             direction: t.direction as "BUY" | "SELL",
