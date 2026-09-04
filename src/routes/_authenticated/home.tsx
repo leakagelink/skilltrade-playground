@@ -87,9 +87,9 @@ function HomePage() {
   if (isLoading || !data?.profile) {
     return (
       <div className="space-y-4 p-5">
-        <Skeleton className="h-24 w-full rounded-2xl" />
-        <Skeleton className="h-32 w-full rounded-2xl" />
-        <Skeleton className="h-40 w-full rounded-2xl" />
+        <Skeleton className="h-32 w-full rounded-3xl" />
+        <Skeleton className="h-28 w-full rounded-3xl" />
+        <Skeleton className="h-40 w-full rounded-3xl" />
       </div>
     );
   }
@@ -113,99 +113,96 @@ function HomePage() {
 
 
   return (
-    <main className="pb-6">
-      <section className="gradient-hero px-5 pb-6 pt-8">
-        <div className="flex items-start justify-between gap-3">
+    <main className="pb-8">
+      <section className="mesh-bg relative overflow-hidden px-5 pb-8 pt-8">
+        <div className="animate-rise flex items-start justify-between gap-3">
           <div>
-            <p className="text-xs text-muted-foreground">Welcome back</p>
-            <h1 className="text-2xl font-bold">{p.username}</h1>
+            <p className="chip text-muted-foreground">Welcome back</p>
+            <h1 className="mt-2 text-3xl font-bold tracking-tight">{p.username}</h1>
           </div>
           <SimulationBadge />
         </div>
 
-        <div className="mt-5 flex items-center justify-between text-xs">
-          <span className="font-semibold text-primary">
-            Level {p.level} · {p.levelTitle}
-          </span>
-          <span className="num text-muted-foreground">
-            {p.xp} / {p.xpCeiling} XP
-          </span>
-        </div>
-        <Progress value={xpProgress} className="mt-2 h-2" />
-
-        <div className="mt-5 grid grid-cols-2 gap-3">
-          <div className="surface-card p-4">
-            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-              <Wallet className="size-3.5" /> Live Equity
+        {/* Hero equity tile */}
+        <div className="bento-tile tile-glow animate-rise mt-5 p-5">
+          <div className="relative">
+            <div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
+              <Wallet className="size-3.5" /> Live equity
             </div>
-            <p className="num mt-1.5 text-lg font-semibold">{money(equity)}</p>
-            <p className="text-[11px] text-muted-foreground">Cash {money(p.virtualBalance)}</p>
-          </div>
-          <div className="surface-card p-4">
-            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-              <Coins className="size-3.5" /> Trading Credits
-            </div>
-            <p className="num mt-1.5 text-lg font-semibold">{p.virtualCredits}</p>
-          </div>
-        </div>
-
-        {s.openTrades > 0 ? (
-          <div className="surface-card mt-3 flex items-center justify-between p-4">
-            <div>
-              <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                <span className="relative flex size-2">
-                  <span className="absolute inline-flex size-full animate-ping rounded-full bg-primary opacity-70" />
-                  <span className="relative inline-flex size-2 rounded-full bg-primary" />
+            <p className="num mt-2 text-4xl font-bold text-gradient">{money(equity)}</p>
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              <span className="chip text-muted-foreground">Cash {money(p.virtualBalance)}</span>
+              <span className="chip text-muted-foreground">
+                <Coins className="size-3 text-primary" /> {p.virtualCredits} credits
+              </span>
+              {s.openTrades > 0 ? (
+                <span className={`chip ${openPnl >= 0 ? "text-bull" : "text-bear"}`}>
+                  <span className="relative flex size-1.5">
+                    <span className="absolute inline-flex size-full animate-ping rounded-full bg-current opacity-70" />
+                    <span className="relative inline-flex size-1.5 rounded-full bg-current" />
+                  </span>
+                  {signedMoney(openPnl)} live
                 </span>
-                Open P&L · live market prices
-              </div>
-              <p className={`num mt-1 text-xl font-bold ${openPnl >= 0 ? "text-bull" : "text-bear"}`}>
-                {signedMoney(openPnl)}
-              </p>
+              ) : null}
             </div>
-            <p className="text-[11px] text-muted-foreground">{s.openTrades} open</p>
-          </div>
-        ) : null}
 
+            <div className="mt-5">
+              <div className="flex items-center justify-between text-[11px]">
+                <span className="font-semibold text-primary">
+                  Level {p.level} · {p.levelTitle}
+                </span>
+                <span className="num text-muted-foreground">
+                  {p.xp} / {p.xpCeiling} XP
+                </span>
+              </div>
+              <Progress value={xpProgress} className="mt-2 h-1.5" />
+            </div>
+          </div>
+        </div>
+
+        {/* Bento grid */}
+        <div className="mt-3 grid grid-cols-2 gap-3">
+          <Link to="/profile" className="bento-tile bento-tile-interactive animate-rise col-span-1 p-4">
+            <div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
+              <Trophy className="size-3.5" /> Skill score
+            </div>
+            <p className="num mt-2 text-3xl font-bold text-primary">{p.skillScore}</p>
+            <p className="text-[11px] text-muted-foreground">out of 1000</p>
+          </Link>
+
+          <div className="bento-tile animate-rise col-span-1 p-4">
+            <div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
+              <Gift className="size-3.5" /> Daily reward
+            </div>
+            {canClaim ? (
+              <p className="num mt-2 text-2xl font-bold text-bull">+{data.dailyReward.amount}</p>
+            ) : (
+              <p className="num mt-2 text-2xl font-bold tabular-nums">{countdown}</p>
+            )}
+            <Button
+              size="sm"
+              className="mt-3 h-9 w-full rounded-xl text-xs font-semibold"
+              disabled={!canClaim || claimMutation.isPending}
+              onClick={() => claimMutation.mutate()}
+            >
+              {canClaim ? "Claim credits" : "Claimed"}
+            </Button>
+          </div>
+
+          <div className="bento-tile animate-rise col-span-2 grid grid-cols-3 gap-y-4 p-4">
+            <Stat label="Total P&L" value={signedMoney(s.totalPnl)} tone={s.totalPnl >= 0 ? "bull" : "bear"} />
+            <Stat label="Win rate" value={`${s.winRate}%`} />
+            <Stat label="Trades" value={String(s.totalTrades)} />
+            <Stat label="Open" value={String(s.openTrades)} />
+            <Stat label="Closed" value={String(s.closedTrades)} />
+            <Stat label="Drawdown" value={pct(-s.maxDrawdown)} tone="bear" />
+          </div>
+        </div>
       </section>
 
-      <section className="space-y-4 px-5">
-        <div className="surface-card flex items-center justify-between p-4">
-          <div>
-            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-              <Trophy className="size-3.5" /> Trading Skill Score
-            </div>
-            <p className="num mt-1 text-2xl font-bold text-primary">{p.skillScore}</p>
-            <p className="text-[11px] text-muted-foreground">out of 1000</p>
-          </div>
-          <Button asChild variant="outline" size="sm" className="rounded-lg">
-            <Link to="/profile">Details</Link>
-          </Button>
-        </div>
-
-        <div className="surface-card p-4">
-          <div className="flex items-center gap-2">
-            <Gift className="size-4 text-primary" />
-            <p className="text-sm font-semibold uppercase tracking-wide">Daily Reward</p>
-          </div>
-          <p className="mt-1 text-xs text-muted-foreground">
-            {canClaim
-              ? `Claim your free ${data.dailyReward.amount} trading credits.`
-              : "Next reward unlocks in"}
-          </p>
-          {!canClaim ? <p className="num mt-1 text-2xl font-bold tabular-nums">{countdown}</p> : null}
-          <Button
-            className="mt-3 h-11 w-full rounded-xl font-semibold"
-            disabled={!canClaim || claimMutation.isPending}
-            onClick={() => claimMutation.mutate()}
-          >
-            {canClaim ? "CLAIM DAILY CREDITS" : "ALREADY CLAIMED"}
-          </Button>
-
-        </div>
-
+      <section className="space-y-3 px-5">
         {p.virtualCredits === 0 ? (
-          <div className="surface-card p-4">
+          <div className="bento-tile p-4">
             <p className="text-sm font-semibold">You need Trading Credits to open a new trade.</p>
             <p className="mt-1 text-xs text-muted-foreground">
               Watching an ad is completely optional — you can simply wait for your daily reward.
@@ -216,16 +213,7 @@ function HomePage() {
           </div>
         ) : null}
 
-        <div className="surface-card grid grid-cols-2 gap-y-4 p-4">
-          <Stat label="Total simulated P&L" value={signedMoney(s.totalPnl)} tone={s.totalPnl >= 0 ? "bull" : "bear"} />
-          <Stat label="Win rate" value={`${s.winRate}%`} />
-          <Stat label="Total trades" value={String(s.totalTrades)} />
-          <Stat label="Open trades" value={String(s.openTrades)} />
-          <Stat label="Max drawdown" value={pct(-s.maxDrawdown)} tone="bear" />
-          <Stat label="Closed trades" value={String(s.closedTrades)} />
-        </div>
-
-        <Button asChild size="lg" className="h-12 w-full rounded-xl text-base font-semibold">
+        <Button asChild size="lg" className="h-13 w-full rounded-2xl text-base font-semibold shadow-[0_16px_36px_-18px_oklch(0.78_0.17_158/80%)]">
           <Link to="/trade">
             <TrendingUp className="size-4" /> Continue Trading
           </Link>
@@ -240,9 +228,9 @@ function HomePage() {
 function Stat({ label, value, tone }: { label: string; value: string; tone?: "bull" | "bear" }) {
   return (
     <div>
-      <p className="text-[11px] text-muted-foreground">{label}</p>
+      <p className="text-[10px] uppercase tracking-wide text-muted-foreground">{label}</p>
       <p
-        className={`num text-base font-semibold ${
+        className={`num mt-0.5 text-base font-semibold ${
           tone === "bull" ? "text-bull" : tone === "bear" ? "text-bear" : ""
         }`}
       >
