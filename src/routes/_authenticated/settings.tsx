@@ -167,9 +167,20 @@ function SettingsPage() {
   );
 }
 
-function LegalLink({ to, label }: { to: "/legal/terms" | "/legal/privacy" | "/legal/disclaimer" | "/legal/support" | "/account-deletion"; label: string }) {
+function LegalLink({ to, label }: { to: InternalLegalPath; label: string }) {
+  const className = "flex items-center gap-3 px-4 py-3.5 text-sm active:bg-elevated";
+  const external = externalLegalUrl(to);
+  // When no public URL is configured, the in-app legal page is used.
+  if (external) {
+    return (
+      <a href={external} target="_blank" rel="noreferrer" className={className}>
+        <span className="flex-1">{label}</span>
+        <ChevronRight className="size-4 text-muted-foreground" />
+      </a>
+    );
+  }
   return (
-    <Link to={to} className="flex items-center gap-3 px-4 py-3.5 text-sm active:bg-elevated">
+    <Link to={to} className={className}>
       <span className="flex-1">{label}</span>
       <ChevronRight className="size-4 text-muted-foreground" />
     </Link>
