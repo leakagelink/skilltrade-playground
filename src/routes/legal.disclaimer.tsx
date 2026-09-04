@@ -17,6 +17,14 @@ export const Route = createFileRoute("/legal/disclaimer")({
       updated="Version 1.0"
       sections={[
         {
+          heading: "Who operates TradeVirt",
+          body: `${OPERATED_BY} Developer / representative: ${APP_INFO.developer}. Support: ${APP_INFO.supportEmail}. Official website: ${APP_INFO.website}.`,
+        },
+        {
+          heading: "No real-money trading",
+          body: "This application is for educational and simulated trading purposes only. No real-money trading is available through the application.",
+        },
+        {
           heading: "Educational purpose",
           body: "This application is intended for educational and simulation purposes only. It exists to help you practise trading mechanics, risk management and discipline in a risk-free environment.",
         },
