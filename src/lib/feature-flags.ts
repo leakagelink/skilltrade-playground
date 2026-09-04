@@ -6,7 +6,12 @@ export const FEATURE_FLAGS = {
   bannerAds: false,
   interstitialAds: false,
   nativeAds: false,
-  rewardedAds: true,
+  /**
+   * Version 1.0 production: rewarded advertisements are completely disabled.
+   * The provider/verification architecture is kept for a future release, but no
+   * user-facing entry point exists and the server rejects every grant request.
+   */
+  rewardedAds: false,
   subscriptions: false,
   aiTradeReviewAdvanced: false,
   aiBotMode: true, // simulation-only placeholder
