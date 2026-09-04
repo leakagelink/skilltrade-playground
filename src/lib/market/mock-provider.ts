@@ -97,7 +97,9 @@ export const mockMarketDataProvider: MarketDataProvider = {
   async getLatestPrice(symbol) {
     const m = meta(symbol);
     if (!m) throw new Error("UNSUPPORTED_ASSET");
-    const step = 60;
+    // Keep fallback quotes visibly moving while still deterministic. This is
+    // only used when the real upstream feed is unavailable.
+    const step = 5;
     const bucket = Math.floor(Date.now() / 1000 / step);
     const price = round(closeAt(m.symbol, bucket, m.vol, m.base));
     const dayAgo = round(closeAt(m.symbol, bucket - 1440, m.vol, m.base));

@@ -51,6 +51,8 @@ function ChartPage() {
     queryKey: ["candles", symbol, tf],
     queryFn: () => loadCandles({ data: { symbol, timeframe: tf } }),
     refetchInterval: 15000,
+    refetchIntervalInBackground: true,
+    staleTime: 0,
   });
 
   // Continuous real-price loop: quotes tick every 5s, candles refresh every 15s.
@@ -58,7 +60,9 @@ function ChartPage() {
     queryKey: ["quote", symbol],
     queryFn: () => loadQuote({ data: { symbol } }),
     refetchInterval: 5000,
-    refetchIntervalInBackground: false,
+    refetchIntervalInBackground: true,
+    refetchOnMount: "always",
+    staleTime: 0,
   });
 
   const trades = useQuery({
