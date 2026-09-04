@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { LegalPage } from "@/components/LegalPage";
+import { APP_INFO, OPERATED_BY } from "@/lib/app-config";
 
 export const Route = createFileRoute("/account-deletion")({
   head: () => ({
@@ -15,16 +16,20 @@ export const Route = createFileRoute("/account-deletion")({
   }),
   component: () => (
     <LegalPage
-      title="Delete Your Account"
+      title="TradeVirt Account Deletion"
       updated="Version 1.0"
       sections={[
         {
+          heading: "Who operates TradeVirt",
+          body: `${OPERATED_BY} Developer / representative: ${APP_INFO.developer}. Support for account deletion: ${APP_INFO.supportEmail}. Official website: ${APP_INFO.website}.`,
+        },
+        {
           heading: "Delete from inside the app",
-          body: "Open TradeVirt, go to Settings, scroll to Danger zone and tap Delete account, then confirm. Deletion is immediate and permanent.",
+          body: "Open TradeVirt, go to Settings, tap Delete account and confirm. The request is processed by the server immediately: your authentication record and account data are removed and you are signed out.",
         },
         {
           heading: "Request deletion by email",
-          body: "If you cannot access the app, email support@tradevirt.app from your registered email address with the subject 'Delete my account'. We process verified requests within 30 days.",
+          body: `If you cannot access the app, email ${APP_INFO.supportEmail} from your registered email address with the subject 'Delete my account'. We process verified requests within 30 days. You do not need to visit any other website to delete your account.`,
         },
         {
           heading: "What is deleted",
@@ -32,11 +37,11 @@ export const Route = createFileRoute("/account-deletion")({
         },
         {
           heading: "What is retained",
-          body: "TradeVirt keeps no payment or financial data because the app involves no real money. Anonymous, non-identifying aggregate usage counts may remain for up to 90 days in backups before being overwritten.",
+          body: "TradeVirt keeps no payment or financial data because the app involves no real money. Backup copies may persist for a short period before being overwritten, and anonymised or legally required records may be retained.",
         },
         {
           heading: "After deletion",
-          body: "Deleted data cannot be restored. You may create a new account at any time; it starts fresh with a new $100,000 virtual balance.",
+          body: "Deleted data cannot be restored. You may create a new account at any time; it starts fresh with a new $100,000 virtual balance, which has no monetary value.",
         },
       ]}
     />
