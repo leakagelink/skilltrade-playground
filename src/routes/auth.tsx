@@ -91,8 +91,8 @@ function AuthPage() {
 
   if (sent) {
     return (
-      <main className="flex min-h-screen items-center justify-center gradient-hero px-6">
-        <div className="surface-card max-w-sm p-6 text-center">
+      <main className="mesh-bg flex min-h-screen items-center justify-center bg-background px-6">
+        <div className="glass-card max-w-sm p-6 text-center">
           <BrandMark size="md" className="mx-auto mb-4" />
           <h1 className="text-xl font-semibold">Check your email</h1>
           <p className="mt-2 text-sm text-muted-foreground">
@@ -105,7 +105,7 @@ function AuthPage() {
   }
 
   return (
-    <main className="min-h-screen gradient-hero px-6 py-12">
+    <main className="mesh-bg min-h-screen bg-background px-6 py-12">
       <div className="mx-auto max-w-sm">
         <Link to="/" className="text-sm text-muted-foreground">
           ← Back
@@ -123,17 +123,17 @@ function AuthPage() {
             <form onSubmit={handleSignUp} className="mt-6 space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="su-username">Username</Label>
-                <Input id="su-username" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="tradepro" required minLength={3} maxLength={20} className="h-12" />
+                <Input id="su-username" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="tradepro" required minLength={3} maxLength={20} className="h-12 rounded-xl bg-elevated/40" />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="su-email">Email</Label>
-                <Input id="su-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="h-12" />
+                <Input id="su-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="h-12 rounded-xl bg-elevated/40" />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="su-password">Password</Label>
-                <Input id="su-password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} className="h-12" />
+                <Input id="su-password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} className="h-12 rounded-xl bg-elevated/40" />
               </div>
-              <Button type="submit" disabled={loading} className="h-12 w-full rounded-xl text-base font-semibold">
+              <Button type="submit" disabled={loading} className="h-13 w-full rounded-2xl text-base font-semibold shadow-[0_16px_36px_-18px_oklch(0.78_0.17_158/80%)]">
                 {loading ? <Loader2 className="size-4 animate-spin" /> : "Create account"}
               </Button>
             </form>
@@ -143,13 +143,13 @@ function AuthPage() {
             <form onSubmit={handleSignIn} className="mt-6 space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="si-email">Email</Label>
-                <Input id="si-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="h-12" />
+                <Input id="si-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="h-12 rounded-xl bg-elevated/40" />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="si-password">Password</Label>
-                <Input id="si-password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required className="h-12" />
+                <Input id="si-password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required className="h-12 rounded-xl bg-elevated/40" />
               </div>
-              <Button type="submit" disabled={loading} className="h-12 w-full rounded-xl text-base font-semibold">
+              <Button type="submit" disabled={loading} className="h-13 w-full rounded-2xl text-base font-semibold shadow-[0_16px_36px_-18px_oklch(0.78_0.17_158/80%)]">
                 {loading ? <Loader2 className="size-4 animate-spin" /> : "Log in"}
               </Button>
             </form>
@@ -160,7 +160,7 @@ function AuthPage() {
           <span className="h-px flex-1 bg-border" /> or <span className="h-px flex-1 bg-border" />
         </div>
 
-        <Button variant="outline" onClick={handleGoogle} disabled={loading} className="h-12 w-full rounded-xl">
+        <Button variant="outline" onClick={handleGoogle} disabled={loading} className="h-13 w-full rounded-2xl border-border/70 bg-elevated/40">
           Continue with Google
         </Button>
 

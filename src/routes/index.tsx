@@ -63,15 +63,15 @@ function Landing() {
   }
 
   return (
-    <main className="min-h-screen gradient-hero">
+    <main className="mesh-bg min-h-screen bg-background">
 
       <div className="mx-auto flex min-h-screen max-w-lg flex-col px-6 pb-10 pt-16">
         <BrandLogo size="md" withTagline />
         <SimulationBadge className="mt-6 self-start" />
-        <h1 className="mt-6 text-4xl font-bold leading-tight">
+        <h1 className="mt-6 text-[2.6rem] font-bold leading-[1.05] tracking-tight">
           Practice Trading.
           <br />
-          <span className="text-primary">Build Your Skill.</span>
+          <span className="text-gradient">Build Your Skill.</span>
         </h1>
         <p className="mt-4 text-base text-muted-foreground">
           Trade with virtual money. Track your performance. Improve your trading discipline — without
@@ -80,8 +80,8 @@ function Landing() {
 
         <div className="mt-8 grid gap-3">
           {FEATURES.map((f) => (
-            <div key={f.title} className="surface-card flex items-start gap-3 p-4">
-              <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary/15 text-primary">
+            <div key={f.title} className="bento-tile bento-tile-interactive animate-rise flex items-start gap-3 p-4">
+              <div className="flex size-10 shrink-0 items-center justify-center rounded-2xl bg-primary/15 text-primary ring-1 ring-primary/25">
                 <f.icon className="size-5" />
               </div>
               <div>
@@ -93,10 +93,10 @@ function Landing() {
         </div>
 
         <div className="mt-8 flex flex-col gap-3">
-          <Button asChild size="lg" className="h-12 rounded-xl text-base font-semibold">
+          <Button asChild size="lg" className="h-13 rounded-2xl text-base font-semibold shadow-[0_18px_40px_-18px_oklch(0.78_0.17_158/80%)]">
             <Link to="/auth">Create free account</Link>
           </Button>
-          <Button asChild variant="outline" size="lg" className="h-12 rounded-xl">
+          <Button asChild variant="outline" size="lg" className="h-13 rounded-2xl border-border/70 bg-elevated/40">
             <Link to="/auth">I already have an account</Link>
           </Button>
         </div>
