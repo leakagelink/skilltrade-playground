@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { claimDailyReward, getDashboard, syncOpenTrades } from "@/lib/trading.functions";
@@ -94,11 +94,23 @@ function HomePage() {
     );
   }
 
-
   const p = data.profile;
   const s = data.stats;
   const span = Math.max(p.xpCeiling - p.xpFloor, 1);
   const xpProgress = Math.min(100, Math.max(0, ((p.xp - p.xpFloor) / span) * 100));
+  const openPnl = live?.openPnl ?? s.openPnl;
+  const equity = live?.equity ?? s.equity;
+  const nextClaimMs = data.dailyReward.nextClaimAt ? new Date(data.dailyReward.nextClaimAt).getTime() : 0;
+  const msLeft = Math.max(0, nextClaimMs - now);
+  const canClaim = data.dailyReward.canClaim || msLeft === 0;
+  const countdown = [
+    Math.floor(msLeft / 3600000),
+    Math.floor((msLeft % 3600000) / 60000),
+    Math.floor((msLeft % 60000) / 1000),
+  ]
+    .map((n) => String(n).padStart(2, "0"))
+    .join(":");
+
 
   return (
     <main className="pb-6">
@@ -124,9 +136,10 @@ function HomePage() {
         <div className="mt-5 grid grid-cols-2 gap-3">
           <div className="surface-card p-4">
             <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-              <Wallet className="size-3.5" /> Virtual Balance
+              <Wallet className="size-3.5" /> Live Equity
             </div>
-            <p className="num mt-1.5 text-lg font-semibold">{money(p.virtualBalance)}</p>
+            <p className="num mt-1.5 text-lg font-semibold">{money(equity)}</p>
+            <p className="text-[11px] text-muted-foreground">Cash {money(p.virtualBalance)}</p>
           </div>
           <div className="surface-card p-4">
             <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
@@ -135,6 +148,25 @@ function HomePage() {
             <p className="num mt-1.5 text-lg font-semibold">{p.virtualCredits}</p>
           </div>
         </div>
+
+        {s.openTrades > 0 ? (
+          <div className="surface-card mt-3 flex items-center justify-between p-4">
+            <div>
+              <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                <span className="relative flex size-2">
+                  <span className="absolute inline-flex size-full animate-ping rounded-full bg-primary opacity-70" />
+                  <span className="relative inline-flex size-2 rounded-full bg-primary" />
+                </span>
+                Open P&L · live market prices
+              </div>
+              <p className={`num mt-1 text-xl font-bold ${openPnl >= 0 ? "text-bull" : "text-bear"}`}>
+                {signedMoney(openPnl)}
+              </p>
+            </div>
+            <p className="text-[11px] text-muted-foreground">{s.openTrades} open</p>
+          </div>
+        ) : null}
+
       </section>
 
       <section className="space-y-4 px-5">
@@ -157,17 +189,19 @@ function HomePage() {
             <p className="text-sm font-semibold uppercase tracking-wide">Daily Reward</p>
           </div>
           <p className="mt-1 text-xs text-muted-foreground">
-            {data.dailyReward.canClaim
+            {canClaim
               ? `Claim your free ${data.dailyReward.amount} trading credits.`
-              : `Next reward available ${new Date(data.dailyReward.nextClaimAt!).toLocaleString()}.`}
+              : "Next reward unlocks in"}
           </p>
+          {!canClaim ? <p className="num mt-1 text-2xl font-bold tabular-nums">{countdown}</p> : null}
           <Button
             className="mt-3 h-11 w-full rounded-xl font-semibold"
-            disabled={!data.dailyReward.canClaim || claimMutation.isPending}
+            disabled={!canClaim || claimMutation.isPending}
             onClick={() => claimMutation.mutate()}
           >
-            {data.dailyReward.canClaim ? "CLAIM DAILY CREDITS" : "ALREADY CLAIMED"}
+            {canClaim ? "CLAIM DAILY CREDITS" : "ALREADY CLAIMED"}
           </Button>
+
         </div>
 
         {p.virtualCredits === 0 ? (
