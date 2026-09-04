@@ -41,20 +41,41 @@ function ProfilePage() {
 
       <div className="space-y-5 p-5">
         {dash.isLoading || !p || !s ? (
-          <Skeleton className="h-32 w-full rounded-2xl" />
+          <Skeleton className="h-40 w-full rounded-3xl" />
         ) : (
-          <div className="surface-card grid grid-cols-3 gap-y-4 p-4 text-center">
-            <Metric label="Skill score" value={String(p.skillScore)} />
-            <Metric label="Win rate" value={`${s.winRate}%`} />
-            <Metric label="Trades" value={String(s.totalTrades)} />
-            <Metric label="Balance" value={money(p.virtualBalance, 0)} />
-            <Metric label="Credits" value={String(p.virtualCredits)} />
-            <Metric label="Net P&L" value={signedMoney(s.totalPnl)} tone={s.totalPnl >= 0 ? "bull" : "bear"} />
+          <div className="space-y-3">
+            <div className="brand-gradient brand-shadow relative overflow-hidden rounded-[28px] p-5">
+              <div className="pointer-events-none absolute -right-14 -top-16 size-48 rounded-full bg-primary-foreground/15 blur-2xl" />
+              <div className="relative flex items-center gap-4">
+                <div className="flex size-14 items-center justify-center rounded-2xl bg-primary-foreground/20 text-xl font-extrabold">
+                  {p.username.slice(0, 1).toUpperCase()}
+                </div>
+                <div className="min-w-0">
+                  <p className="truncate text-lg font-extrabold tracking-tight">{p.username}</p>
+                  <p className="text-xs opacity-80">
+                    Level {p.level} · {p.levelTitle}
+                  </p>
+                </div>
+                <div className="ml-auto text-right">
+                  <p className="text-[10px] uppercase tracking-wider opacity-75">Skill</p>
+                  <p className="num text-2xl font-bold">{p.skillScore}</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="bento-tile grid grid-cols-3 gap-y-4 p-4 text-center">
+              <Metric label="Win rate" value={`${s.winRate}%`} />
+              <Metric label="Trades" value={String(s.totalTrades)} />
+              <Metric label="Net P&L" value={signedMoney(s.totalPnl)} tone={s.totalPnl >= 0 ? "bull" : "bear"} />
+              <Metric label="Balance" value={money(p.virtualBalance, 0)} />
+              <Metric label="Credits" value={String(p.virtualCredits)} />
+              <Metric label="Open" value={String(open.length)} />
+            </div>
           </div>
         )}
 
         <Tabs defaultValue="closed">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid h-11 w-full grid-cols-2 rounded-2xl bg-secondary p-1">
             <TabsTrigger value="open">Open ({open.length})</TabsTrigger>
             <TabsTrigger value="closed">History ({closed.length})</TabsTrigger>
           </TabsList>
@@ -75,7 +96,7 @@ function ProfilePage() {
                 {closed.map((t) => {
                   const pnl = Number(t.realized_pnl ?? 0);
                   return (
-                    <AccordionItem key={t.id} value={t.id} className="surface-card border-none px-4">
+                    <AccordionItem key={t.id} value={t.id} className="bento-tile border-none px-4">
                       <AccordionTrigger className="py-3 hover:no-underline">
                         <div className="flex flex-1 items-center gap-3 pr-2 text-left">
                           <div className="min-w-0 flex-1">

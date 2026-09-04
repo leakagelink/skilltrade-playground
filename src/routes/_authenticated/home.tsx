@@ -114,48 +114,67 @@ function HomePage() {
 
   return (
     <main className="pb-8">
-      <section className="mesh-bg relative overflow-hidden px-5 pb-8 pt-8">
+      <section className="mesh-bg relative overflow-hidden px-5 pb-6 pt-7">
         <div className="animate-rise flex items-start justify-between gap-3">
           <div>
-            <p className="chip text-muted-foreground">Welcome back</p>
-            <h1 className="mt-2 text-3xl font-bold tracking-tight">{p.username}</h1>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+              Welcome back
+            </p>
+            <h1 className="mt-1 text-[26px] font-extrabold leading-tight tracking-tight">{p.username}</h1>
           </div>
           <SimulationBadge />
         </div>
 
-        {/* Hero equity tile */}
-        <div className="bento-tile tile-glow animate-rise mt-5 p-5">
+        {/* Hero equity card */}
+        <div className="brand-gradient brand-shadow animate-rise relative mt-5 overflow-hidden rounded-[28px] p-5">
+          <div className="pointer-events-none absolute -right-16 -top-20 size-56 rounded-full bg-primary-foreground/15 blur-2xl" />
+          <div className="pointer-events-none absolute -bottom-24 -left-10 size-48 rounded-full bg-primary-foreground/10 blur-2xl" />
           <div className="relative">
-            <div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
-              <Wallet className="size-3.5" /> Live equity
-            </div>
-            <p className="num mt-2 text-4xl font-bold text-gradient">{money(equity)}</p>
-            <div className="mt-3 flex flex-wrap items-center gap-2">
-              <span className="chip text-muted-foreground">Cash {money(p.virtualBalance)}</span>
-              <span className="chip text-muted-foreground">
-                <Coins className="size-3 text-primary" /> {p.virtualCredits} credits
-              </span>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.16em] opacity-80">
+                <Wallet className="size-3.5" /> Live equity
+              </div>
               {s.openTrades > 0 ? (
-                <span className={`chip ${openPnl >= 0 ? "text-bull" : "text-bear"}`}>
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-primary-foreground/15 px-2.5 py-1 text-[11px] font-semibold">
                   <span className="relative flex size-1.5">
                     <span className="absolute inline-flex size-full animate-ping rounded-full bg-current opacity-70" />
                     <span className="relative inline-flex size-1.5 rounded-full bg-current" />
                   </span>
-                  {signedMoney(openPnl)} live
+                  {signedMoney(openPnl)}
                 </span>
               ) : null}
             </div>
 
-            <div className="mt-5">
-              <div className="flex items-center justify-between text-[11px]">
-                <span className="font-semibold text-primary">
+            <p className="num mt-2 text-[40px] font-bold leading-none tracking-tight">{money(equity)}</p>
+
+            <div className="mt-4 grid grid-cols-2 gap-2">
+              <div className="rounded-2xl bg-primary-foreground/12 px-3 py-2 backdrop-blur-sm">
+                <p className="text-[10px] uppercase tracking-wider opacity-75">Cash</p>
+                <p className="num text-sm font-semibold">{money(p.virtualBalance)}</p>
+              </div>
+              <div className="rounded-2xl bg-primary-foreground/12 px-3 py-2 backdrop-blur-sm">
+                <p className="text-[10px] uppercase tracking-wider opacity-75">Credits</p>
+                <p className="num flex items-center gap-1 text-sm font-semibold">
+                  <Coins className="size-3.5" /> {p.virtualCredits}
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-4">
+              <div className="flex items-center justify-between text-[11px] font-semibold">
+                <span>
                   Level {p.level} · {p.levelTitle}
                 </span>
-                <span className="num text-muted-foreground">
+                <span className="num opacity-80">
                   {p.xp} / {p.xpCeiling} XP
                 </span>
               </div>
-              <Progress value={xpProgress} className="mt-2 h-1.5" />
+              <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-primary-foreground/25">
+                <div
+                  className="h-full rounded-full bg-primary-foreground transition-all duration-500"
+                  style={{ width: `${xpProgress}%` }}
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -188,17 +207,19 @@ function HomePage() {
               {canClaim ? "Claim credits" : "Claimed"}
             </Button>
           </div>
+        </div>
 
-          <div className="bento-tile animate-rise col-span-2 grid grid-cols-3 gap-y-4 p-4">
-            <Stat label="Total P&L" value={signedMoney(s.totalPnl)} tone={s.totalPnl >= 0 ? "bull" : "bear"} />
-            <Stat label="Win rate" value={`${s.winRate}%`} />
-            <Stat label="Trades" value={String(s.totalTrades)} />
-            <Stat label="Open" value={String(s.openTrades)} />
-            <Stat label="Closed" value={String(s.closedTrades)} />
-            <Stat label="Drawdown" value={pct(-s.maxDrawdown)} tone="bear" />
-          </div>
+        <p className="section-title mt-6">Performance</p>
+        <div className="bento-tile animate-rise mt-2 grid grid-cols-3 gap-y-4 p-4">
+          <Stat label="Total P&L" value={signedMoney(s.totalPnl)} tone={s.totalPnl >= 0 ? "bull" : "bear"} />
+          <Stat label="Win rate" value={`${s.winRate}%`} />
+          <Stat label="Trades" value={String(s.totalTrades)} />
+          <Stat label="Open" value={String(s.openTrades)} />
+          <Stat label="Closed" value={String(s.closedTrades)} />
+          <Stat label="Drawdown" value={pct(-s.maxDrawdown)} tone="bear" />
         </div>
       </section>
+
 
       <section className="space-y-3 px-5">
         {p.virtualCredits === 0 ? (
