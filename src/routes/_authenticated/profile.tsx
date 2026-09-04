@@ -75,7 +75,7 @@ function ProfilePage() {
         )}
 
         <Tabs defaultValue="closed">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid h-11 w-full grid-cols-2 rounded-2xl bg-secondary p-1">
             <TabsTrigger value="open">Open ({open.length})</TabsTrigger>
             <TabsTrigger value="closed">History ({closed.length})</TabsTrigger>
           </TabsList>
@@ -96,7 +96,7 @@ function ProfilePage() {
                 {closed.map((t) => {
                   const pnl = Number(t.realized_pnl ?? 0);
                   return (
-                    <AccordionItem key={t.id} value={t.id} className="surface-card border-none px-4">
+                    <AccordionItem key={t.id} value={t.id} className="bento-tile border-none px-4">
                       <AccordionTrigger className="py-3 hover:no-underline">
                         <div className="flex flex-1 items-center gap-3 pr-2 text-left">
                           <div className="min-w-0 flex-1">
