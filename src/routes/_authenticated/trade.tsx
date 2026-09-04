@@ -8,7 +8,7 @@ import { AppHeader } from "@/components/AppHeader";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { EmptyState } from "@/components/EmptyState";
-import { DisclaimerNote } from "@/components/Disclaimer";
+import { DisclaimerNote, MarketDataNote } from "@/components/Disclaimer";
 import { Search, SearchX, ChevronRight, TrendingUp, TrendingDown } from "lucide-react";
 import { pct, price } from "@/lib/format";
 
@@ -143,6 +143,7 @@ function TradePage() {
           </ul>
         )}
 
+        <MarketDataNote />
         <DisclaimerNote />
       </div>
     </main>

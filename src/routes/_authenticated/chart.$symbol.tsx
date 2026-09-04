@@ -14,6 +14,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { TIMEFRAMES, type Timeframe } from "@/lib/market/types";
 import { money, pct, price, signedMoney } from "@/lib/format";
+import { MarketDataNote } from "@/components/Disclaimer";
 import { toast } from "sonner";
 import { ArrowDownRight, ArrowUpRight } from "lucide-react";
 
@@ -208,7 +209,13 @@ function ChartPage() {
                   ? "Latest available stock price from a public market data source. Market data may be delayed. Trades are simulated only."
                   : "Market closed — showing the latest available price. Market data may be delayed."}
           </p>
-        ) : null}
+        ) : (
+          <p className="text-center text-[11px] text-muted-foreground">
+            Market data is temporarily unavailable. Please try again later.
+          </p>
+        )}
+
+        <MarketDataNote />
 
 
         {openHere.length ? (
