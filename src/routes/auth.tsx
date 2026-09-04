@@ -123,7 +123,7 @@ function AuthPage() {
             <form onSubmit={handleSignUp} className="mt-6 space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="su-username">Username</Label>
-                <Input id="su-username" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="tradepro" required minLength={3} maxLength={20} className="h-12 rounded-xl bg-elevated/40" />
+                <Input id="su-username" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="tradevirt" required minLength={3} maxLength={20} className="h-12 rounded-xl bg-elevated/40" />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="su-email">Email</Label>
