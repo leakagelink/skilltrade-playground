@@ -131,7 +131,7 @@ function HomePage() {
           <div className="relative">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.16em] opacity-80">
-                <Wallet className="size-3.5" /> Live equity
+                <Wallet className="size-3.5" /> Portfolio equity
               </div>
               {s.openTrades > 0 ? (
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-primary-foreground/15 px-2.5 py-1 text-[11px] font-semibold">
