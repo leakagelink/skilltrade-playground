@@ -21,6 +21,7 @@ import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedTradeRouteImport } from './routes/_authenticated/trade'
 import { Route as LegalDisclaimerRouteImport } from './routes/legal.disclaimer'
 import { Route as LegalPrivacyRouteImport } from './routes/legal.privacy'
+import { Route as LegalSupportRouteImport } from './routes/legal.support'
 import { Route as LegalTermsRouteImport } from './routes/legal.terms'
 import { Route as AuthenticatedChartSymbolRouteImport } from './routes/_authenticated/chart.$symbol'
 
@@ -84,6 +85,11 @@ const LegalPrivacyRoute = LegalPrivacyRouteImport.update({
   path: '/legal/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LegalSupportRoute = LegalSupportRouteImport.update({
+  id: '/legal/support',
+  path: '/legal/support',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LegalTermsRoute = LegalTermsRouteImport.update({
   id: '/legal/terms',
   path: '/legal/terms',
@@ -108,6 +114,7 @@ export interface FileRoutesByFullPath {
   '/trade': typeof AuthenticatedTradeRoute
   '/legal/disclaimer': typeof LegalDisclaimerRoute
   '/legal/privacy': typeof LegalPrivacyRoute
+  '/legal/support': typeof LegalSupportRoute
   '/legal/terms': typeof LegalTermsRoute
   '/chart/$symbol': typeof AuthenticatedChartSymbolRoute
 }
@@ -123,6 +130,7 @@ export interface FileRoutesByTo {
   '/trade': typeof AuthenticatedTradeRoute
   '/legal/disclaimer': typeof LegalDisclaimerRoute
   '/legal/privacy': typeof LegalPrivacyRoute
+  '/legal/support': typeof LegalSupportRoute
   '/legal/terms': typeof LegalTermsRoute
   '/chart/$symbol': typeof AuthenticatedChartSymbolRoute
 }
@@ -140,6 +148,7 @@ export interface FileRoutesById {
   '/_authenticated/trade': typeof AuthenticatedTradeRoute
   '/legal/disclaimer': typeof LegalDisclaimerRoute
   '/legal/privacy': typeof LegalPrivacyRoute
+  '/legal/support': typeof LegalSupportRoute
   '/legal/terms': typeof LegalTermsRoute
   '/_authenticated/chart/$symbol': typeof AuthenticatedChartSymbolRoute
 }
@@ -157,6 +166,7 @@ export interface FileRouteTypes {
     | '/trade'
     | '/legal/disclaimer'
     | '/legal/privacy'
+    | '/legal/support'
     | '/legal/terms'
     | '/chart/$symbol'
   fileRoutesByTo: FileRoutesByTo
@@ -172,6 +182,7 @@ export interface FileRouteTypes {
     | '/trade'
     | '/legal/disclaimer'
     | '/legal/privacy'
+    | '/legal/support'
     | '/legal/terms'
     | '/chart/$symbol'
   id:
@@ -188,6 +199,7 @@ export interface FileRouteTypes {
     | '/_authenticated/trade'
     | '/legal/disclaimer'
     | '/legal/privacy'
+    | '/legal/support'
     | '/legal/terms'
     | '/_authenticated/chart/$symbol'
   fileRoutesById: FileRoutesById
@@ -198,6 +210,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   LegalDisclaimerRoute: typeof LegalDisclaimerRoute
   LegalPrivacyRoute: typeof LegalPrivacyRoute
+  LegalSupportRoute: typeof LegalSupportRoute
   LegalTermsRoute: typeof LegalTermsRoute
 }
 
@@ -287,6 +300,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LegalPrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/legal/support': {
+      id: '/legal/support'
+      path: '/legal/support'
+      fullPath: '/legal/support'
+      preLoaderRoute: typeof LegalSupportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/legal/terms': {
       id: '/legal/terms'
       path: '/legal/terms'
@@ -335,6 +355,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   LegalDisclaimerRoute: LegalDisclaimerRoute,
   LegalPrivacyRoute: LegalPrivacyRoute,
+  LegalSupportRoute: LegalSupportRoute,
   LegalTermsRoute: LegalTermsRoute,
 }
 export const routeTree = rootRouteImport
