@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { isEnabled } from "./feature-flags";
 
 const DAILY_REWARD_CREDITS = 3;
 const REWARDED_AD_CREDITS = 1;
