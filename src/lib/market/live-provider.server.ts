@@ -188,7 +188,7 @@ async function coinbaseCandles(product: string, tf: Timeframe): Promise<Candle[]
   return tf === "4h" ? aggregate(candles, 14400) : candles;
 }
 
-async function coinbaseStats(product: string): Promise<{ last: number; open: number; time?: string }> {
+async function coinbaseStats(product: string): Promise<{ last: number; open: number; time: string | undefined }> {
   const [ticker, stats] = await Promise.all([
     cached(`cbt:${product}`, 500, () =>
       getJson(`https://api.exchange.coinbase.com/products/${product}/ticker`) as Promise<{ price?: string; time?: string }>,
