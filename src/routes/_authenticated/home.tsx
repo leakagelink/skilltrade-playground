@@ -136,9 +136,10 @@ function HomePage() {
         <div className="mt-5 grid grid-cols-2 gap-3">
           <div className="surface-card p-4">
             <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-              <Wallet className="size-3.5" /> Virtual Balance
+              <Wallet className="size-3.5" /> Live Equity
             </div>
-            <p className="num mt-1.5 text-lg font-semibold">{money(p.virtualBalance)}</p>
+            <p className="num mt-1.5 text-lg font-semibold">{money(equity)}</p>
+            <p className="text-[11px] text-muted-foreground">Cash {money(p.virtualBalance)}</p>
           </div>
           <div className="surface-card p-4">
             <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
@@ -147,6 +148,25 @@ function HomePage() {
             <p className="num mt-1.5 text-lg font-semibold">{p.virtualCredits}</p>
           </div>
         </div>
+
+        {s.openTrades > 0 ? (
+          <div className="surface-card mt-3 flex items-center justify-between p-4">
+            <div>
+              <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                <span className="relative flex size-2">
+                  <span className="absolute inline-flex size-full animate-ping rounded-full bg-primary opacity-70" />
+                  <span className="relative inline-flex size-2 rounded-full bg-primary" />
+                </span>
+                Open P&L · live market prices
+              </div>
+              <p className={`num mt-1 text-xl font-bold ${openPnl >= 0 ? "text-bull" : "text-bear"}`}>
+                {signedMoney(openPnl)}
+              </p>
+            </div>
+            <p className="text-[11px] text-muted-foreground">{s.openTrades} open</p>
+          </div>
+        ) : null}
+
       </section>
 
       <section className="space-y-4 px-5">
