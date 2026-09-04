@@ -3,9 +3,11 @@ import type { CapacitorConfig } from '@capacitor/cli';
 const config: CapacitorConfig = {
   appId: 'online.tradevirt.app',
   appName: 'TradeVirt',
-  webDir: '.output/public',
+  webDir: 'capacitor-web',
   server: {
+    url: 'https://tradevirt.online',
     androidScheme: 'https',
+    cleartext: false,
   },
 };
 
