@@ -55,11 +55,11 @@ function ChartPage() {
     staleTime: 0,
   });
 
-  // Continuous real-price loop: quotes tick every 5s, candles refresh every 15s.
+  // Fast real-price loop. The request id also prevents browser/CDN GET caching.
   const tick = useQuery({
     queryKey: ["quote", symbol],
-    queryFn: () => loadQuote({ data: { symbol } }),
-    refetchInterval: 5000,
+    queryFn: () => loadQuote({ data: { symbol, requestId: Date.now() } }),
+    refetchInterval: 1500,
     refetchIntervalInBackground: true,
     refetchOnMount: "always",
     staleTime: 0,

@@ -58,7 +58,10 @@ async function cached<T>(key: string, ttlMs: number, load: () => Promise<T>): Pr
 }
 
 async function getJson(url: string): Promise<unknown> {
-  const res = await fetch(url, { headers: { "User-Agent": UA, Accept: "application/json" } });
+  const res = await fetch(url, {
+    cache: "no-store",
+    headers: { "User-Agent": UA, Accept: "application/json", "Cache-Control": "no-cache" },
+  });
   if (!res.ok) throw new Error(`Market data request failed [${res.status}]: ${await res.text()}`);
   return res.json();
 }
@@ -122,8 +125,16 @@ async function yahooChart(symbol: string, tf: Timeframe): Promise<YahooChart> {
   const cfg = YAHOO_INTERVAL[tf];
   const url =
     `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}` +
-    `?interval=${cfg.interval}&range=${cfg.range}&includePrePost=false`;
+    `?interval=${cfg.interval}&range=${cfg.range}&includePrePost=true`;
     return cached(`y:${symbol}:${tf}`, tf === "1d" ? 8_000 : 30_000, () => getJson(url) as Promise<YahooChart>);
+}
+
+/** Latest quote uses its own short-lived key so candle caching cannot freeze ticks. */
+async function yahooLatest(symbol: string): Promise<YahooChart> {
+  const url =
+    `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}` +
+    `?interval=1m&range=1d&includePrePost=true&_=${Math.floor(Date.now() / 1_500)}`;
+  return cached(`yq:${symbol}`, 1_500, () => getJson(url) as Promise<YahooChart>);
 }
 
 function yahooToCandles(payload: YahooChart): Candle[] {
@@ -172,7 +183,7 @@ async function coinbaseCandles(product: string, tf: Timeframe): Promise<Candle[]
 
 async function coinbaseStats(product: string): Promise<{ last: number; open: number }> {
   const url = `https://api.exchange.coinbase.com/products/${product}/stats`;
-  const stats = await cached(`cbs:${product}`, 2_000, () => getJson(url) as Promise<{ last?: string; open?: string }>);
+  const stats = await cached(`cbs:${product}`, 750, () => getJson(url) as Promise<{ last?: string; open?: string }>);
   return { last: Number(stats.last ?? 0), open: Number(stats.open ?? 0) };
 }
 
@@ -205,9 +216,11 @@ export const liveMarketDataProvider: MarketDataProvider = {
       };
     }
 
-    const payload = await yahooChart(entry.providerSymbol, "1d");
+    const payload = await yahooLatest(entry.providerSymbol);
     const meta = payload.chart?.result?.[0]?.meta;
-    const price = meta?.regularMarketPrice;
+    const closes = payload.chart?.result?.[0]?.indicators?.quote?.[0]?.close ?? [];
+    const latestClose = [...closes].reverse().find((value) => value != null);
+    const price = latestClose ?? meta?.regularMarketPrice;
     if (price == null) throw new Error(`No quote for ${symbol}`);
     return {
       symbol: entry.symbol,

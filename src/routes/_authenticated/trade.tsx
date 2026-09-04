@@ -30,9 +30,9 @@ function TradePage() {
   // Continuous real-price loop for the markets list.
   const quotes = useQuery({
     queryKey: ["quotes", symbols],
-    queryFn: () => loadQuotes({ data: { symbols } }),
+    queryFn: () => loadQuotes({ data: { symbols, requestId: Date.now() } }),
     enabled: symbols.length > 0,
-    refetchInterval: 5000,
+    refetchInterval: 3000,
     refetchIntervalInBackground: true,
     refetchOnMount: "always",
     staleTime: 0,
