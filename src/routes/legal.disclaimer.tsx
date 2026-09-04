@@ -33,11 +33,11 @@ export const Route = createFileRoute("/legal/disclaimer")({
         },
         {
           heading: "Market data",
-          body: "Market data in this application may be simulated or delayed. It is never presented as a live execution feed and must not be relied on for real-world trading decisions.",
+          body: "Market prices and chart data may be delayed, incomplete or temporarily unavailable. Market data is provided solely for educational simulation purposes and should not be relied upon for investment decisions. It is never a live execution feed.",
         },
         {
-          heading: "AI simulation",
-          body: "Where an AI simulation is shown, its performance is generated on simulated data only. AI simulation performance does not represent guaranteed investment results.",
+          heading: "AI and automated insights",
+          body: "AI-generated insights and trade reviews are provided for educational and informational purposes only. They do not constitute financial or investment advice and do not guarantee trading performance or future market outcomes. Where an AI simulation is shown, its performance is generated on simulated data only.",
         },
       ]}
     />

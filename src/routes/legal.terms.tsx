@@ -25,7 +25,7 @@ export const Route = createFileRoute("/legal/terms")({
         },
         {
           heading: "3. Acceptable use",
-          body: "You agree not to attempt to manipulate simulated balances, credits, XP, scores, or leaderboard rankings, and not to use automated means to abuse rewarded advertisements or challenge rewards.",
+          body: "You agree not to attempt to manipulate simulated balances, credits, XP, scores, or leaderboard rankings, and not to use automated means to abuse daily rewards or challenge rewards.",
         },
         {
           heading: "4. Accounts",
@@ -33,11 +33,11 @@ export const Route = createFileRoute("/legal/terms")({
         },
         {
           heading: "5. Rewards",
-          body: "All Version 1.0 rewards are virtual: XP, levels, badges, virtual Trading Credits and leaderboard position. No cash, cryptocurrency, gift cards or other prizes of monetary value are offered.",
+          body: "All Version 1.0 rewards are virtual: XP, levels, badges, virtual Trading Credits and leaderboard position. Trading Credits come from the new-account bonus, the 24-hour daily reward and challenges only; Version 1.0 contains no advertisements and no way to earn credits from advertising. No cash, cryptocurrency, gift cards or other prizes of monetary value are offered.",
         },
         {
-          heading: "6. No warranty",
-          body: "Market data may be simulated or delayed. The service is provided on an as-is basis without warranty of accuracy, availability or fitness for a particular purpose.",
+          heading: "6. No warranty and market data",
+          body: "Market prices and chart data may be delayed, incomplete or temporarily unavailable, and are provided solely for educational simulation purposes. The service is provided on an as-is basis without warranty of accuracy, availability or fitness for a particular purpose, and nothing in it constitutes financial, investment, trading or legal advice.",
         },
         {
           heading: "7. Changes",

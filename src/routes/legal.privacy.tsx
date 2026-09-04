@@ -33,11 +33,35 @@ export const Route = createFileRoute("/legal/privacy")({
         },
         {
           heading: "Advertising",
-          body: "Rewarded advertisements are optional and never required. When an advertising provider is enabled, ad delivery may involve that provider's own data handling, disclosed at that time.",
+          body: "Version 1.0 of TradeVirt contains no advertising SDK and shows no advertisements. No advertising or tracking identifiers are collected. If advertising is ever introduced, this policy will be updated before it becomes active.",
         },
         {
-          heading: "Deleting your data",
-          body: "Deleting your account from Settings permanently removes your profile and all associated simulated trading records.",
+          heading: "Third-party services",
+          body: "We use Supabase for authentication, database storage and server functions, Google Sign-In for optional authentication, and public third-party market data sources for stock and crypto prices. No analytics or advertising SDK is active in Version 1.0.",
+        },
+        {
+          heading: "Market data providers",
+          body: "The application may use third-party market data providers to display market prices and chart information. Market data may be delayed, incomplete or temporarily unavailable and is shown for educational simulation only.",
+        },
+        {
+          heading: "How we use your data",
+          body: "Your data is used only to authenticate you, manage your account, provide paper trading functionality, maintain your simulated portfolio and trade history, calculate your Trading Skill Score, run challenges and leaderboards, and improve reliability. We do not sell your data.",
+        },
+        {
+          heading: "Security",
+          body: "We implement reasonable technical and organisational measures designed to protect user information, including row-level database security and server-side validation of all account, credit and trade operations. No system can be guaranteed to be completely secure.",
+        },
+        {
+          heading: "Children",
+          body: "TradeVirt is intended for users who meet the minimum age required by the applicable app store rating and local law. We do not knowingly collect data from children below that age.",
+        },
+        {
+          heading: "Policy changes",
+          body: "We may update this Privacy Policy from time to time. The version indicator at the top of this page reflects the current revision.",
+        },
+        {
+          heading: "Deleting your data and retention",
+          body: "You can delete your account from Settings inside the app, or follow the instructions on the public account deletion page. Deletion removes your profile, simulated trades, credit history, XP and challenge progress. Backup copies may persist for a short period before being overwritten, and anonymised or legally required records may be retained.",
         },
       ]}
     />

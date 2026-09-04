@@ -10,7 +10,6 @@ import { DisclaimerNote, SimulationBadge } from "@/components/Disclaimer";
 import { money, pct, signedMoney } from "@/lib/format";
 import { Coins, Gift, TrendingUp, Trophy, Wallet } from "lucide-react";
 import { toast } from "sonner";
-import { RewardedAdButton } from "@/components/RewardedAdButton";
 
 export const Route = createFileRoute("/_authenticated/home")({
   head: () => ({
@@ -132,7 +131,7 @@ function HomePage() {
           <div className="relative">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.16em] opacity-80">
-                <Wallet className="size-3.5" /> Live equity
+                <Wallet className="size-3.5" /> Portfolio equity
               </div>
               {s.openTrades > 0 ? (
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-primary-foreground/15 px-2.5 py-1 text-[11px] font-semibold">
@@ -226,11 +225,9 @@ function HomePage() {
           <div className="bento-tile p-4">
             <p className="text-sm font-semibold">You need Trading Credits to open a new trade.</p>
             <p className="mt-1 text-xs text-muted-foreground">
-              Watching an ad is completely optional — you can simply wait for your daily reward.
+              You receive 3 Trading Credits every 24 hours, plus credits from completed challenges. Come
+              back when your daily reward unlocks.
             </p>
-            <div className="mt-3 grid gap-2">
-              <RewardedAdButton />
-            </div>
           </div>
         ) : null}
 

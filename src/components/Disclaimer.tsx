@@ -21,3 +21,17 @@ export function DisclaimerNote({ text }: { text?: string }) {
     </p>
   );
 }
+
+/**
+ * Market data transparency note. Prices come from public third-party sources and
+ * may be delayed, incomplete or temporarily unavailable — they are never
+ * presented as a guaranteed real-time execution feed.
+ */
+export function MarketDataNote({ className = "" }: { className?: string }) {
+  return (
+    <p className={`text-center text-[11px] leading-relaxed text-muted-foreground ${className}`}>
+      Market data may be delayed, incomplete or temporarily unavailable. It is provided for
+      educational simulation purposes only.
+    </p>
+  );
+}

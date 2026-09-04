@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { isEnabled } from "./feature-flags";
 
 const DAILY_REWARD_CREDITS = 3;
 const REWARDED_AD_CREDITS = 1;
@@ -489,6 +490,10 @@ export const grantRewardedAdCredit = createServerFn({ method: "POST" })
     providerId: String(data?.providerId ?? ""),
   }))
   .handler(async ({ data, context }) => {
+    // Version 1.0: rewarded ads are fully disabled in production. The architecture
+    // is preserved for a future release, but no credits can ever be granted here.
+    if (!isEnabled("rewardedAds")) fail("Rewarded ads are currently unavailable.");
+
     const userId = context.userId;
     const { admin, adjustCredits, recomputeProfile } = await loadEngine();
     const { verifyAdCompletion } = await import("./ads/verify.server");

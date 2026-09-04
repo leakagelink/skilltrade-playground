@@ -8,7 +8,7 @@ import { AppHeader } from "@/components/AppHeader";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { EmptyState } from "@/components/EmptyState";
-import { DisclaimerNote } from "@/components/Disclaimer";
+import { DisclaimerNote, MarketDataNote } from "@/components/Disclaimer";
 import { Search, SearchX, ChevronRight, TrendingUp, TrendingDown } from "lucide-react";
 import { pct, price } from "@/lib/format";
 
@@ -67,7 +67,7 @@ function TradePage() {
 
   return (
     <main>
-      <AppHeader title="Markets" subtitle="Live prices · simulated trading only" showSettings />
+      <AppHeader title="Markets" subtitle="Latest available prices · simulated trading only" showSettings />
 
       <div className="space-y-4 p-5">
         <div className="relative">
@@ -143,6 +143,7 @@ function TradePage() {
           </ul>
         )}
 
+        <MarketDataNote />
         <DisclaimerNote />
       </div>
     </main>
