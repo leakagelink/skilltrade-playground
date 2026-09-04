@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { LegalPage } from "@/components/LegalPage";
+import { APP_INFO, OPERATED_BY } from "@/lib/app-config";
 
 export const Route = createFileRoute("/legal/terms")({
   head: () => ({
@@ -15,6 +16,10 @@ export const Route = createFileRoute("/legal/terms")({
       title="Terms of Service"
       updated="Version 1.0"
       sections={[
+        {
+          heading: "0. Who operates TradeVirt",
+          body: `${OPERATED_BY} Developer / representative: ${APP_INFO.developer}. Support: ${APP_INFO.supportEmail}. Official website: ${APP_INFO.website}.`,
+        },
         {
           heading: "1. Nature of the service",
           body: "TradeVirt is a simulated paper trading and educational skill-development application. It is not a broker, exchange, investment adviser, or financial transaction service. No real-money trading is available.",
