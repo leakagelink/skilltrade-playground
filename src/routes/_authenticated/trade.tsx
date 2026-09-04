@@ -76,12 +76,12 @@ function TradePage() {
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder="Search Bitcoin, BTC, Apple, AAPL…"
-            className="h-12 rounded-xl pl-9"
+            className="h-12 rounded-2xl border-border bg-surface pl-9 shadow-[0_10px_24px_-22px_oklch(0.4_0.08_258/60%)]"
           />
         </div>
 
         <Tabs value={tab} onValueChange={(v) => setTab(v as typeof tab)}>
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid h-11 w-full grid-cols-3 rounded-2xl bg-secondary p-1">
             <TabsTrigger value="ALL">All</TabsTrigger>
             <TabsTrigger value="STOCK">Stocks</TabsTrigger>
             <TabsTrigger value="CRYPTO">Crypto</TabsTrigger>
@@ -97,9 +97,9 @@ function TradePage() {
                 <Link
                   to="/chart/$symbol"
                   params={{ symbol: a.symbol }}
-                  className="surface-card flex items-center gap-3 p-4 transition-colors active:bg-elevated"
+                  className="bento-tile bento-tile-interactive flex items-center gap-3 p-3.5"
                 >
-                  <div className="flex h-10 min-w-12 shrink-0 items-center justify-center rounded-xl bg-primary/12 px-2 text-[11px] font-bold text-primary">
+                  <div className="brand-gradient flex h-11 min-w-11 shrink-0 items-center justify-center rounded-2xl px-2 text-[11px] font-extrabold tracking-tight">
                     {a.symbol}
                   </div>
                   <div className="min-w-0 flex-1">
