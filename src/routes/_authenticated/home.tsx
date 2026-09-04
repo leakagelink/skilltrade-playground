@@ -31,10 +31,30 @@ function HomePage() {
   const sync = useServerFn(syncOpenTrades);
   const claim = useServerFn(claimDailyReward);
 
-  const { data, isLoading } = useQuery({ queryKey: ["dashboard"], queryFn: () => load() });
+  const { data, isLoading } = useQuery({
+    queryKey: ["dashboard"],
+    queryFn: () => load(),
+    refetchInterval: 10000,
+    refetchIntervalInBackground: true,
+    refetchOnMount: "always",
+    staleTime: 0,
+  });
 
   useEffect(() => {
-    sync().then(() => qc.invalidateQueries({ queryKey: ["dashboard"] })).catch(() => {});
+    let active = true;
+    const updateOpenTrades = () => {
+      sync()
+        .then((result) => {
+          if (active && result.updated > 0) qc.invalidateQueries({ queryKey: ["dashboard"] });
+        })
+        .catch(() => {});
+    };
+    updateOpenTrades();
+    const interval = window.setInterval(updateOpenTrades, 10000);
+    return () => {
+      active = false;
+      window.clearInterval(interval);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
