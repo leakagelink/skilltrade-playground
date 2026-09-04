@@ -110,6 +110,7 @@ function Landing() {
           <Link to="/legal/terms">Terms</Link>
           <Link to="/legal/privacy">Privacy</Link>
           <Link to="/legal/disclaimer">Disclaimer</Link>
+          <Link to="/legal/support">Support</Link>
         </div>
       </div>
     </main>
