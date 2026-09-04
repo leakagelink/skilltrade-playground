@@ -32,7 +32,7 @@ function TradePage() {
     queryKey: ["quotes", symbols],
     queryFn: () => loadQuotes({ data: { symbols, requestId: Date.now() } }),
     enabled: symbols.length > 0,
-    refetchInterval: 3000,
+    refetchInterval: 1000,
     refetchIntervalInBackground: true,
     refetchOnMount: "always",
     staleTime: 0,

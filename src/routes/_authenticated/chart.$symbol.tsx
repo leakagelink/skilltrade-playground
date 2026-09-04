@@ -59,7 +59,7 @@ function ChartPage() {
   const tick = useQuery({
     queryKey: ["quote", symbol],
     queryFn: () => loadQuote({ data: { symbol, requestId: Date.now() } }),
-    refetchInterval: 1500,
+    refetchInterval: 1000,
     refetchIntervalInBackground: true,
     refetchOnMount: "always",
     staleTime: 0,
