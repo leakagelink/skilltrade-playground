@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { ChevronLeft, Settings } from "lucide-react";
 import type { ReactNode } from "react";
+import { BrandMark } from "@/components/BrandLogo";
 
 export function AppHeader({
   title,
@@ -25,7 +26,9 @@ export function AppHeader({
         >
           <ChevronLeft className="size-5" />
         </Link>
-      ) : null}
+      ) : (
+        <BrandMark size="sm" className="-ml-1 rounded-xl p-1" />
+      )}
       <div className="min-w-0 flex-1">
         <h1 className="truncate text-lg font-semibold">{title}</h1>
         {subtitle ? <p className="truncate text-xs text-muted-foreground">{subtitle}</p> : null}
