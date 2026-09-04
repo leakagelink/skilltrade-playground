@@ -30,6 +30,8 @@ function HomePage() {
   const load = useServerFn(getDashboard);
   const sync = useServerFn(syncOpenTrades);
   const claim = useServerFn(claimDailyReward);
+  const [live, setLive] = useState<{ openPnl: number; equity: number } | null>(null);
+  const [now, setNow] = useState(() => Date.now());
 
   const { data, isLoading } = useQuery({
     queryKey: ["dashboard"],
@@ -40,22 +42,31 @@ function HomePage() {
     staleTime: 0,
   });
 
+  // Mark open positions to real market prices every 5s.
   useEffect(() => {
     let active = true;
     const updateOpenTrades = () => {
       sync()
         .then((result) => {
-          if (active && result.updated > 0) qc.invalidateQueries({ queryKey: ["dashboard"] });
+          if (!active) return;
+          setLive({ openPnl: result.openPnl, equity: result.equity });
+          if (result.closed > 0) qc.invalidateQueries({ queryKey: ["dashboard"] });
         })
         .catch(() => {});
     };
     updateOpenTrades();
-    const interval = window.setInterval(updateOpenTrades, 10000);
+    const interval = window.setInterval(updateOpenTrades, 5000);
     return () => {
       active = false;
       window.clearInterval(interval);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Ticking clock so the daily-reward countdown unlocks in real time.
+  useEffect(() => {
+    const t = window.setInterval(() => setNow(Date.now()), 1000);
+    return () => window.clearInterval(t);
   }, []);
 
   useEffect(() => {
@@ -82,6 +93,7 @@ function HomePage() {
       </div>
     );
   }
+
 
   const p = data.profile;
   const s = data.stats;
