@@ -15,7 +15,10 @@ export const getMarketAssets = createServerFn({ method: "GET" }).handler(
 );
 
 export const getQuote = createServerFn({ method: "GET" })
-  .inputValidator((data: { symbol: string }) => ({ symbol: String(data.symbol).toUpperCase() }))
+  .inputValidator((data: { symbol: string; requestId?: number }) => ({
+    symbol: String(data.symbol).toUpperCase(),
+    requestId: Number(data.requestId ?? 0),
+  }))
   .handler(async ({ data }): Promise<Quote> => {
     const { getMarketDataProvider } = await import("./market/provider.server");
     return getMarketDataProvider().getLatestPrice(data.symbol);
@@ -23,8 +26,9 @@ export const getQuote = createServerFn({ method: "GET" })
 
 /** Batch quotes for the markets list / watchlists — one round-trip per poll tick. */
 export const getQuotes = createServerFn({ method: "GET" })
-  .inputValidator((data: { symbols?: string[] }) => ({
+  .inputValidator((data: { symbols?: string[]; requestId?: number }) => ({
     symbols: (data?.symbols ?? []).map((s) => String(s).toUpperCase()).slice(0, 60),
+    requestId: Number(data?.requestId ?? 0),
   }))
   .handler(async ({ data }): Promise<{ quotes: Quote[] }> => {
     const { getMarketDataProvider } = await import("./market/provider.server");
