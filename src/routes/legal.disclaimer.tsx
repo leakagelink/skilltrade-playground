@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { LegalPage } from "@/components/LegalPage";
+import { APP_INFO, OPERATED_BY } from "@/lib/app-config";
 
 export const Route = createFileRoute("/legal/disclaimer")({
   head: () => ({
