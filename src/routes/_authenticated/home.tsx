@@ -216,7 +216,7 @@ function HomePage() {
           <Stat label="Trades" value={String(s.totalTrades)} />
           <Stat label="Open" value={String(s.openTrades)} />
           <Stat label="Closed" value={String(s.closedTrades)} />
-          <Stat label="Drawdown" value={pct(-s.maxDrawdown)} tone={s.maxDrawdown > 0 ? "bear" : undefined} />
+          <Stat label="Drawdown" value={pct(-s.maxDrawdown)} tone="bear" />
         </div>
       </section>
 
