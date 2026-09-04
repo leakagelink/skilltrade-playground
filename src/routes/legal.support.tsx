@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { LegalPage } from "@/components/LegalPage";
+import { APP_INFO, OPERATED_BY } from "@/lib/app-config";
 
 export const Route = createFileRoute("/legal/support")({
   head: () => ({
@@ -19,8 +20,12 @@ export const Route = createFileRoute("/legal/support")({
       updated="Version 1.0"
       sections={[
         {
+          heading: "Who operates TradeVirt",
+          body: `${OPERATED_BY} Developer / representative: ${APP_INFO.developer}. Official website: ${APP_INFO.website}.`,
+        },
+        {
           heading: "Contact us",
-          body: "Email support@tradevirt.app for account help, bug reports, privacy requests or feedback. We aim to reply within 3 business days.",
+          body: `Email ${APP_INFO.supportEmail} for account help, bug reports, privacy requests or feedback. We aim to reply within 3 business days.`,
         },
         {
           heading: "Account help",
@@ -32,11 +37,11 @@ export const Route = createFileRoute("/legal/support")({
         },
         {
           heading: "Data and privacy requests",
-          body: "You can delete your account and all associated data yourself from Settings. For any other data request, email support@tradevirt.app from your registered address.",
+          body: `You can delete your account and all associated data yourself from Settings. For any other data request, email ${APP_INFO.supportEmail} from your registered address.`,
         },
         {
           heading: "Market data",
-          body: "Prices are delayed or indicative market data used for educational simulation. TradeVirt is not a broker and executes no real orders.",
+          body: "Market data may be delayed, incomplete or temporarily unavailable, and is provided for educational simulation purposes only. TradeVirt is not a broker and executes no real orders.",
         },
       ]}
     />
