@@ -94,11 +94,23 @@ function HomePage() {
     );
   }
 
-
   const p = data.profile;
   const s = data.stats;
   const span = Math.max(p.xpCeiling - p.xpFloor, 1);
   const xpProgress = Math.min(100, Math.max(0, ((p.xp - p.xpFloor) / span) * 100));
+  const openPnl = live?.openPnl ?? s.openPnl;
+  const equity = live?.equity ?? s.equity;
+  const nextClaimMs = data.dailyReward.nextClaimAt ? new Date(data.dailyReward.nextClaimAt).getTime() : 0;
+  const msLeft = Math.max(0, nextClaimMs - now);
+  const canClaim = data.dailyReward.canClaim || msLeft === 0;
+  const countdown = [
+    Math.floor(msLeft / 3600000),
+    Math.floor((msLeft % 3600000) / 60000),
+    Math.floor((msLeft % 60000) / 1000),
+  ]
+    .map((n) => String(n).padStart(2, "0"))
+    .join(":");
+
 
   return (
     <main className="pb-6">
