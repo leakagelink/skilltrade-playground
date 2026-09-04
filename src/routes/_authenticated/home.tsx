@@ -226,11 +226,9 @@ function HomePage() {
           <div className="bento-tile p-4">
             <p className="text-sm font-semibold">You need Trading Credits to open a new trade.</p>
             <p className="mt-1 text-xs text-muted-foreground">
-              Watching an ad is completely optional — you can simply wait for your daily reward.
+              You receive 3 Trading Credits every 24 hours, plus credits from completed challenges. Come
+              back when your daily reward unlocks.
             </p>
-            <div className="mt-3 grid gap-2">
-              <RewardedAdButton />
-            </div>
           </div>
         ) : null}
 
