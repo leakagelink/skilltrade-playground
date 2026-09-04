@@ -10,7 +10,6 @@ import { DisclaimerNote, SimulationBadge } from "@/components/Disclaimer";
 import { money, pct, signedMoney } from "@/lib/format";
 import { Coins, Gift, TrendingUp, Trophy, Wallet } from "lucide-react";
 import { toast } from "sonner";
-import { RewardedAdButton } from "@/components/RewardedAdButton";
 
 export const Route = createFileRoute("/_authenticated/home")({
   head: () => ({
