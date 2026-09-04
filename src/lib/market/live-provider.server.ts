@@ -111,6 +111,7 @@ interface YahooChart {
         regularMarketTime?: number;
         previousClose?: number;
         chartPreviousClose?: number;
+        marketState?: string;
       };
       timestamp?: number[];
       indicators?: {
@@ -187,10 +188,16 @@ async function coinbaseCandles(product: string, tf: Timeframe): Promise<Candle[]
   return tf === "4h" ? aggregate(candles, 14400) : candles;
 }
 
-async function coinbaseStats(product: string): Promise<{ last: number; open: number }> {
-  const url = `https://api.exchange.coinbase.com/products/${product}/stats`;
-  const stats = await cached(`cbs:${product}`, 500, () => getJson(url) as Promise<{ last?: string; open?: string }>);
-  return { last: Number(stats.last ?? 0), open: Number(stats.open ?? 0) };
+async function coinbaseStats(product: string): Promise<{ last: number; open: number; time?: string }> {
+  const [ticker, stats] = await Promise.all([
+    cached(`cbt:${product}`, 500, () =>
+      getJson(`https://api.exchange.coinbase.com/products/${product}/ticker`) as Promise<{ price?: string; time?: string }>,
+    ),
+    cached(`cbs:${product}`, 30_000, () =>
+      getJson(`https://api.exchange.coinbase.com/products/${product}/stats`) as Promise<{ last?: string; open?: string }>,
+    ),
+  ]);
+  return { last: Number(ticker.price ?? stats.last ?? 0), open: Number(stats.open ?? 0), time: ticker.time };
 }
 
 /* ------------------------------ provider ------------------------------- */
@@ -212,13 +219,14 @@ export const liveMarketDataProvider: MarketDataProvider = {
     if (!entry) throw new Error(`Unknown symbol ${symbol}`);
 
     if (entry.assetType === "CRYPTO") {
-      const { last, open } = await coinbaseStats(entry.providerSymbol);
+      const { last, open, time } = await coinbaseStats(entry.providerSymbol);
       return {
         symbol: entry.symbol,
         price: last,
         changePercent: open > 0 ? ((last - open) / open) * 100 : 0,
         status: "LIVE",
-        asOf: Math.floor(Date.now() / 1000),
+        asOf: time ? Math.floor(new Date(time).getTime() / 1000) : Math.floor(Date.now() / 1000),
+        marketState: "OPEN",
       };
     }
 
@@ -239,6 +247,14 @@ export const liveMarketDataProvider: MarketDataProvider = {
         (previousClose && previousClose > 0 ? ((price - previousClose) / previousClose) * 100 : 0),
       status: "DELAYED",
       asOf: meta?.regularMarketTime ?? Math.floor(Date.now() / 1000),
+      marketState:
+        meta?.marketState === "REGULAR"
+          ? "OPEN"
+          : meta?.marketState === "PRE"
+            ? "PRE"
+            : meta?.marketState === "POST" || meta?.marketState === "POSTPOST"
+              ? "POST"
+              : "CLOSED",
     };
   },
 

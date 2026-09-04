@@ -114,6 +114,9 @@ function TradePage() {
                       return (
                         <div className="flex flex-col items-end gap-1">
                           <p className="num text-sm font-semibold">{price(qd.price)}</p>
+                           {a.assetType === "STOCK" && qd.marketState === "CLOSED" ? (
+                             <span className="text-[10px] font-medium text-muted-foreground">Market closed</span>
+                           ) : null}
                           <span
                             className={`num inline-flex items-center gap-0.5 rounded-full px-1.5 py-0.5 text-[11px] font-semibold ${
                               up ? "bg-bull/12 text-bull" : "bg-bear/12 text-bear"
