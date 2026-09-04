@@ -15,9 +15,9 @@ import { RewardedAdButton } from "@/components/RewardedAdButton";
 export const Route = createFileRoute("/_authenticated/home")({
   head: () => ({
     meta: [
-      { title: "Dashboard — PaperEdge" },
+      { title: "Dashboard — TradeVirt" },
       { name: "description", content: "Your virtual balance, trading credits, XP progress and simulated performance at a glance." },
-      { property: "og:title", content: "Dashboard — PaperEdge" },
+      { property: "og:title", content: "Dashboard — TradeVirt" },
       { property: "og:description", content: "Track your simulated trading performance and daily rewards." },
     ],
   }),

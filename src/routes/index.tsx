@@ -4,17 +4,18 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { CandlestickChart, Loader2, ShieldCheck, Target, Trophy } from "lucide-react";
 import { SimulationBadge } from "@/components/Disclaimer";
+import { BrandLogo, BrandMark } from "@/components/BrandLogo";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "PaperEdge — Practice Trading. Build Your Skill." },
+      { title: "TradeVirt — Practice Trading. Build Your Skill." },
       {
         name: "description",
         content:
           "Practice trading with virtual money. Simulated trades, XP, challenges and a Trading Skill Score. Educational paper trading only — no real money.",
       },
-      { property: "og:title", content: "PaperEdge — Practice Trading. Build Your Skill." },
+      { property: "og:title", content: "TradeVirt — Practice Trading. Build Your Skill." },
       {
         property: "og:description",
         content: "Trade with virtual money. Track your performance. Improve your trading discipline.",
@@ -51,8 +52,12 @@ function Landing() {
 
   if (redirecting) {
     return (
-      <main className="flex min-h-screen items-center justify-center gradient-hero">
-        <Loader2 className="size-6 animate-spin text-primary" />
+      <main className="flex min-h-screen flex-col items-center justify-center gap-6 gradient-hero">
+        <BrandMark size="lg" className="animate-pulse rounded-3xl p-4" />
+        <p className="text-xl font-semibold tracking-tight">
+          Trade<span className="text-primary">Virt</span>
+        </p>
+        <Loader2 className="size-5 animate-spin text-primary" />
       </main>
     );
   }
@@ -61,7 +66,8 @@ function Landing() {
     <main className="min-h-screen gradient-hero">
 
       <div className="mx-auto flex min-h-screen max-w-lg flex-col px-6 pb-10 pt-16">
-        <SimulationBadge className="self-start" />
+        <BrandLogo size="md" withTagline />
+        <SimulationBadge className="mt-6 self-start" />
         <h1 className="mt-6 text-4xl font-bold leading-tight">
           Practice Trading.
           <br />

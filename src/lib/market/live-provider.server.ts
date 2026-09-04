@@ -9,7 +9,7 @@ import { TIMEFRAMES } from "./types";
  * Requests are cached in-memory to stay well inside the free rate limits.
  */
 
-const UA = "Mozilla/5.0 (compatible; PaperEdge/1.0; educational paper trading)";
+const UA = "Mozilla/5.0 (compatible; TradeVirt/1.0; educational paper trading)";
 
 /* --------------------- stale-while-revalidate cache --------------------- */
 

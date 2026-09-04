@@ -4,9 +4,9 @@ import { LegalPage } from "@/components/LegalPage";
 export const Route = createFileRoute("/legal/disclaimer")({
   head: () => ({
     meta: [
-      { title: "Educational & Risk Disclaimer — PaperEdge" },
-      { name: "description", content: "PaperEdge is for educational and simulation purposes only. Nothing in the app constitutes financial or investment advice." },
-      { property: "og:title", content: "Educational & Risk Disclaimer — PaperEdge" },
+      { title: "Educational & Risk Disclaimer — TradeVirt" },
+      { name: "description", content: "TradeVirt is for educational and simulation purposes only. Nothing in the app constitutes financial or investment advice." },
+      { property: "og:title", content: "Educational & Risk Disclaimer — TradeVirt" },
       { property: "og:description", content: "Educational simulation only. Not financial advice." },
     ],
   }),

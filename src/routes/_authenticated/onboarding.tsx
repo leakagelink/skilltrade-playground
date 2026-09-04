@@ -10,9 +10,9 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/_authenticated/onboarding")({
   head: () => ({
     meta: [
-      { title: "Welcome — PaperEdge" },
-      { name: "description", content: "Get started with simulated paper trading on PaperEdge." },
-      { property: "og:title", content: "Welcome to PaperEdge" },
+      { title: "Welcome — TradeVirt" },
+      { name: "description", content: "Get started with simulated paper trading on TradeVirt." },
+      { property: "og:title", content: "Welcome to TradeVirt" },
       { property: "og:description", content: "Practice trading using virtual money. No real money is involved." },
     ],
   }),

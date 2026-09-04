@@ -27,10 +27,10 @@ import { ChevronRight, LogOut } from "lucide-react";
 export const Route = createFileRoute("/_authenticated/settings")({
   head: () => ({
     meta: [
-      { title: "Settings — PaperEdge" },
+      { title: "Settings — TradeVirt" },
       { name: "description", content: "Manage your username, leaderboard visibility, legal information and account." },
-      { property: "og:title", content: "Settings — PaperEdge" },
-      { property: "og:description", content: "Manage your PaperEdge paper trading account." },
+      { property: "og:title", content: "Settings — TradeVirt" },
+      { property: "og:description", content: "Manage your TradeVirt paper trading account." },
     ],
   }),
   component: SettingsPage,

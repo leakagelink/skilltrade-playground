@@ -80,13 +80,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
       { name: "theme-color", content: "#12161c" },
-      { title: "PaperEdge — Practice Trading. Build Your Skill." },
+      { title: "TradeVirt — Practice Trading. Build Your Skill." },
       {
         name: "description",
         content:
           "A gamified paper trading simulator. Practice with virtual money, track simulated performance and build trading discipline. Educational use only.",
       },
-      { property: "og:title", content: "PaperEdge — Practice Trading. Build Your Skill." },
+      { property: "og:title", content: "TradeVirt — Practice Trading. Build Your Skill." },
       {
         property: "og:description",
         content: "Trade with virtual money. Track your performance. Improve your trading discipline.",
@@ -102,7 +102,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap",
       },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "icon", href: "/favicon.png", type: "image/png" },
+      { rel: "apple-touch-icon", href: "/favicon.png" },
     ],
   }),
   shellComponent: RootShell,
