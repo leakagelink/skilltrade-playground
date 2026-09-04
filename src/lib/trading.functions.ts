@@ -45,8 +45,13 @@ export const getDashboard = createServerFn({ method: "GET" })
     const closed = all.filter((t) => t.status !== "OPEN");
     const wins = closed.filter((t) => Number(t.realized_pnl ?? 0) > 0).length;
     const totalPnl = closed.reduce((a, t) => a + Number(t.realized_pnl ?? 0), 0);
+    const openPnl =
+      Math.round(
+        all.filter((t) => t.status === "OPEN").reduce((a, t) => a + Number(t.unrealized_pnl ?? 0), 0) * 100,
+      ) / 100;
     const level = profile ? Number(profile.level) : 1;
     const xp = profile ? Number(profile.xp) : 0;
+
 
     return {
       profile: profile
