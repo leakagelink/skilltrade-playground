@@ -45,8 +45,13 @@ export const getDashboard = createServerFn({ method: "GET" })
     const closed = all.filter((t) => t.status !== "OPEN");
     const wins = closed.filter((t) => Number(t.realized_pnl ?? 0) > 0).length;
     const totalPnl = closed.reduce((a, t) => a + Number(t.realized_pnl ?? 0), 0);
+    const openPnl =
+      Math.round(
+        all.filter((t) => t.status === "OPEN").reduce((a, t) => a + Number(t.unrealized_pnl ?? 0), 0) * 100,
+      ) / 100;
     const level = profile ? Number(profile.level) : 1;
     const xp = profile ? Number(profile.xp) : 0;
+
 
     return {
       profile: profile
@@ -73,6 +78,9 @@ export const getDashboard = createServerFn({ method: "GET" })
         losses: closed.length - wins,
         winRate: closed.length ? Math.round((wins / closed.length) * 1000) / 10 : 0,
         totalPnl: Math.round(totalPnl * 100) / 100,
+        openPnl,
+        equity: profile ? Math.round((Number(profile.virtual_balance) + openPnl) * 100) / 100 : 0,
+
         maxDrawdown: maxDrawdown(
           closed.map((t) => ({
             direction: t.direction as "BUY" | "SELL",
@@ -323,36 +331,110 @@ export const closeTrade = createServerFn({ method: "POST" })
     return { exitPrice: exit, pnl, status, review };
   });
 
-/** Marks-to-market open trades and auto-closes any that hit SL/TP. */
+/** Marks-to-market open trades on real prices and auto-closes any that hit SL/TP. */
 export const syncOpenTrades = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     const userId = context.userId;
-    const { admin, pnlFor } = await loadEngine();
+    const { admin, pnlFor, awardXp, recomputeProfile, evaluateChallenges, addNotification, XP_REWARDS } =
+      await loadEngine();
     const { getMarketDataProvider } = await import("./market/provider.server");
     const provider = getMarketDataProvider();
 
     const { data: open } = await admin.from("trades").select("*").eq("user_id", userId).eq("status", "OPEN");
-    if (!open?.length) return { updated: 0 };
+    const { data: baseProfile } = await admin
+      .from("profiles")
+      .select("virtual_balance")
+      .eq("id", userId)
+      .single();
+    let balance = Number(baseProfile?.virtual_balance ?? 0);
+
+    if (!open?.length) {
+      return { updated: 0, closed: 0, openPnl: 0, equity: Math.round(balance * 100) / 100, positions: [] as Array<{ id: string; symbol: string; direction: string; price: number; pnl: number }> };
+    }
 
     const symbols = [...new Set(open.map((t) => t.symbol as string))];
+    const settled = await Promise.allSettled(symbols.map((s) => provider.getLatestPrice(s)));
     const quotes = new Map<string, number>();
-    for (const s of symbols) {
-      try {
-        quotes.set(s, (await provider.getLatestPrice(s)).price);
-      } catch {
-        /* leave stale */
+    settled.forEach((r, i) => {
+      if (r.status === "fulfilled") quotes.set(symbols[i]!, r.value.price);
+    });
+
+    const positions: Array<{ id: string; symbol: string; direction: string; price: number; pnl: number }> = [];
+    let openPnl = 0;
+    let closedCount = 0;
+
+    for (const t of open) {
+      const symbol = t.symbol as string;
+      const direction = t.direction as "BUY" | "SELL";
+      const entry = Number(t.entry_price);
+      const size = Number(t.position_size);
+      const sl = t.stop_loss == null ? null : Number(t.stop_loss);
+      const tp = t.take_profit == null ? null : Number(t.take_profit);
+      const live = quotes.get(symbol);
+      const price = live ?? Number(t.current_price ?? entry);
+
+      let hit: "STOP_LOSS_HIT" | "TAKE_PROFIT_HIT" | null = null;
+      let exit = price;
+      if (live != null) {
+        if (sl != null && ((direction === "BUY" && price <= sl) || (direction === "SELL" && price >= sl))) {
+          hit = "STOP_LOSS_HIT";
+          exit = sl;
+        } else if (tp != null && ((direction === "BUY" && price >= tp) || (direction === "SELL" && price <= tp))) {
+          hit = "TAKE_PROFIT_HIT";
+          exit = tp;
+        }
+      }
+
+      if (hit) {
+        const realized = pnlFor(direction, entry, exit, size);
+        balance = Math.round((balance + realized) * 100) / 100;
+        await admin
+          .from("trades")
+          .update({
+            exit_price: exit,
+            current_price: exit,
+            realized_pnl: realized,
+            unrealized_pnl: 0,
+            status: hit,
+            closed_at: new Date().toISOString(),
+          })
+          .eq("id", t.id);
+        await admin.from("profiles").update({ virtual_balance: balance }).eq("id", userId);
+        await awardXp(admin, userId, XP_REWARDS.CLOSE_TRADE, "CLOSE_TRADE");
+        await addNotification(
+          admin,
+          userId,
+          hit === "STOP_LOSS_HIT" ? "Stop loss hit" : "Take profit hit",
+          `${symbol} ${direction} closed automatically at ${exit} with a simulated P&L of ${realized >= 0 ? "+" : ""}${realized.toFixed(2)}.`,
+          "TRADE",
+        );
+        closedCount += 1;
+        continue;
+      }
+
+      const pnl = pnlFor(direction, entry, price, size);
+      openPnl += pnl;
+      positions.push({ id: t.id as string, symbol, direction, price, pnl });
+      if (live != null) {
+        await admin.from("trades").update({ current_price: price, unrealized_pnl: pnl }).eq("id", t.id);
       }
     }
 
-    for (const t of open) {
-      const price = quotes.get(t.symbol as string);
-      if (price == null) continue;
-      const pnl = pnlFor(t.direction as "BUY" | "SELL", Number(t.entry_price), price, Number(t.position_size));
-      await admin.from("trades").update({ current_price: price, unrealized_pnl: pnl }).eq("id", t.id);
+    if (closedCount > 0) {
+      await recomputeProfile(admin, userId);
+      await evaluateChallenges(admin, userId);
     }
-    return { updated: open.length };
+
+    return {
+      updated: positions.length,
+      closed: closedCount,
+      openPnl: Math.round(openPnl * 100) / 100,
+      equity: Math.round((balance + openPnl) * 100) / 100,
+      positions,
+    };
   });
+
 
 /* ------------------------------------------------------------------ */
 /* Credits                                                             */
