@@ -141,7 +141,7 @@ function ChartPage() {
         {quote ? (
           <div className="surface-card flex items-center justify-between p-4">
             <div>
-              <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Live price</p>
+              <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Current market price</p>
               <p
                 className={`num text-2xl font-bold transition-colors ${
                   tickDelta > 0 ? "text-bull" : tickDelta < 0 ? "text-bear" : "text-foreground"
@@ -201,12 +201,12 @@ function ChartPage() {
               }`}
             />
             {quote.status === "SIMULATED"
-              ? "Simulated market data — live feed unavailable right now."
+              ? "Demo market data — the market feed is temporarily unavailable."
               : quote.status === "LIVE"
-                ? "Live crypto market data (Coinbase). Trades are simulated — no real money involved."
+                ? "Current market price from a public crypto data source. Data may be delayed or incomplete. Trades are simulated only."
                 : quote.marketState === "OPEN" || quote.marketState === "PRE" || quote.marketState === "POST"
-                  ? "Real stock market feed (Yahoo Finance). Trades are simulated — no real money involved."
-                  : "US stock market is closed — the last real price stays unchanged until trading resumes."}
+                  ? "Latest available stock price from a public market data source. Market data may be delayed. Trades are simulated only."
+                  : "Market closed — showing the latest available price. Market data may be delayed."}
           </p>
         ) : null}
 
@@ -279,7 +279,7 @@ function ChartPage() {
               </SheetTitle>
               {livePrice ? (
                 <p className="num text-left text-xs text-muted-foreground">
-                  Live price {price(livePrice)} · order fills at the latest market price
+                  Latest available price {price(livePrice)} · order fills at the latest market price
                 </p>
               ) : null}
             </SheetHeader>

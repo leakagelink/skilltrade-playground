@@ -67,7 +67,7 @@ function TradePage() {
 
   return (
     <main>
-      <AppHeader title="Markets" subtitle="Live prices · simulated trading only" showSettings />
+      <AppHeader title="Markets" subtitle="Latest available prices · simulated trading only" showSettings />
 
       <div className="space-y-4 p-5">
         <div className="relative">
