@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AccountDeletionRouteImport } from './routes/account-deletion'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedChallengesRouteImport } from './routes/_authenticated/challenges'
 import { Route as AuthenticatedHomeRouteImport } from './routes/_authenticated/home'
@@ -21,6 +22,7 @@ import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedTradeRouteImport } from './routes/_authenticated/trade'
 import { Route as LegalDisclaimerRouteImport } from './routes/legal.disclaimer'
 import { Route as LegalPrivacyRouteImport } from './routes/legal.privacy'
+import { Route as LegalSupportRouteImport } from './routes/legal.support'
 import { Route as LegalTermsRouteImport } from './routes/legal.terms'
 import { Route as AuthenticatedChartSymbolRouteImport } from './routes/_authenticated/chart.$symbol'
 
@@ -31,6 +33,11 @@ const IndexRoute = IndexRouteImport.update({
 } as any)
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AccountDeletionRoute = AccountDeletionRouteImport.update({
+  id: '/account-deletion',
+  path: '/account-deletion',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -84,6 +91,11 @@ const LegalPrivacyRoute = LegalPrivacyRouteImport.update({
   path: '/legal/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LegalSupportRoute = LegalSupportRouteImport.update({
+  id: '/legal/support',
+  path: '/legal/support',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LegalTermsRoute = LegalTermsRouteImport.update({
   id: '/legal/terms',
   path: '/legal/terms',
@@ -98,6 +110,7 @@ const AuthenticatedChartSymbolRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/account-deletion': typeof AccountDeletionRoute
   '/auth': typeof AuthRoute
   '/challenges': typeof AuthenticatedChallengesRoute
   '/home': typeof AuthenticatedHomeRoute
@@ -108,11 +121,13 @@ export interface FileRoutesByFullPath {
   '/trade': typeof AuthenticatedTradeRoute
   '/legal/disclaimer': typeof LegalDisclaimerRoute
   '/legal/privacy': typeof LegalPrivacyRoute
+  '/legal/support': typeof LegalSupportRoute
   '/legal/terms': typeof LegalTermsRoute
   '/chart/$symbol': typeof AuthenticatedChartSymbolRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/account-deletion': typeof AccountDeletionRoute
   '/auth': typeof AuthRoute
   '/challenges': typeof AuthenticatedChallengesRoute
   '/home': typeof AuthenticatedHomeRoute
@@ -123,6 +138,7 @@ export interface FileRoutesByTo {
   '/trade': typeof AuthenticatedTradeRoute
   '/legal/disclaimer': typeof LegalDisclaimerRoute
   '/legal/privacy': typeof LegalPrivacyRoute
+  '/legal/support': typeof LegalSupportRoute
   '/legal/terms': typeof LegalTermsRoute
   '/chart/$symbol': typeof AuthenticatedChartSymbolRoute
 }
@@ -130,6 +146,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/account-deletion': typeof AccountDeletionRoute
   '/auth': typeof AuthRoute
   '/_authenticated/challenges': typeof AuthenticatedChallengesRoute
   '/_authenticated/home': typeof AuthenticatedHomeRoute
@@ -140,6 +157,7 @@ export interface FileRoutesById {
   '/_authenticated/trade': typeof AuthenticatedTradeRoute
   '/legal/disclaimer': typeof LegalDisclaimerRoute
   '/legal/privacy': typeof LegalPrivacyRoute
+  '/legal/support': typeof LegalSupportRoute
   '/legal/terms': typeof LegalTermsRoute
   '/_authenticated/chart/$symbol': typeof AuthenticatedChartSymbolRoute
 }
@@ -147,6 +165,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/account-deletion'
     | '/auth'
     | '/challenges'
     | '/home'
@@ -157,11 +176,13 @@ export interface FileRouteTypes {
     | '/trade'
     | '/legal/disclaimer'
     | '/legal/privacy'
+    | '/legal/support'
     | '/legal/terms'
     | '/chart/$symbol'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/account-deletion'
     | '/auth'
     | '/challenges'
     | '/home'
@@ -172,12 +193,14 @@ export interface FileRouteTypes {
     | '/trade'
     | '/legal/disclaimer'
     | '/legal/privacy'
+    | '/legal/support'
     | '/legal/terms'
     | '/chart/$symbol'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
+    | '/account-deletion'
     | '/auth'
     | '/_authenticated/challenges'
     | '/_authenticated/home'
@@ -188,6 +211,7 @@ export interface FileRouteTypes {
     | '/_authenticated/trade'
     | '/legal/disclaimer'
     | '/legal/privacy'
+    | '/legal/support'
     | '/legal/terms'
     | '/_authenticated/chart/$symbol'
   fileRoutesById: FileRoutesById
@@ -195,9 +219,11 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AccountDeletionRoute: typeof AccountDeletionRoute
   AuthRoute: typeof AuthRoute
   LegalDisclaimerRoute: typeof LegalDisclaimerRoute
   LegalPrivacyRoute: typeof LegalPrivacyRoute
+  LegalSupportRoute: typeof LegalSupportRoute
   LegalTermsRoute: typeof LegalTermsRoute
 }
 
@@ -215,6 +241,13 @@ declare module '@tanstack/react-router' {
       path: ''
       fullPath: '/'
       preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/account-deletion': {
+      id: '/account-deletion'
+      path: '/account-deletion'
+      fullPath: '/account-deletion'
+      preLoaderRoute: typeof AccountDeletionRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -287,6 +320,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LegalPrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/legal/support': {
+      id: '/legal/support'
+      path: '/legal/support'
+      fullPath: '/legal/support'
+      preLoaderRoute: typeof LegalSupportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/legal/terms': {
       id: '/legal/terms'
       path: '/legal/terms'
@@ -332,9 +372,11 @@ const AuthenticatedRouteRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AccountDeletionRoute: AccountDeletionRoute,
   AuthRoute: AuthRoute,
   LegalDisclaimerRoute: LegalDisclaimerRoute,
   LegalPrivacyRoute: LegalPrivacyRoute,
+  LegalSupportRoute: LegalSupportRoute,
   LegalTermsRoute: LegalTermsRoute,
 }
 export const routeTree = rootRouteImport

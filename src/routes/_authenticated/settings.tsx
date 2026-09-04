@@ -131,6 +131,8 @@ function SettingsPage() {
           <LegalLink to="/legal/terms" label="Terms of Service" />
           <LegalLink to="/legal/privacy" label="Privacy Policy" />
           <LegalLink to="/legal/disclaimer" label="Risk Disclaimer" />
+          <LegalLink to="/legal/support" label="Support & Contact" />
+          <LegalLink to="/account-deletion" label="Account Deletion Policy" />
         </section>
 
         <DisclaimerNote />
@@ -165,7 +167,7 @@ function SettingsPage() {
   );
 }
 
-function LegalLink({ to, label }: { to: "/legal/terms" | "/legal/privacy" | "/legal/disclaimer"; label: string }) {
+function LegalLink({ to, label }: { to: "/legal/terms" | "/legal/privacy" | "/legal/disclaimer" | "/legal/support" | "/account-deletion"; label: string }) {
   return (
     <Link to={to} className="flex items-center gap-3 px-4 py-3.5 text-sm active:bg-elevated">
       <span className="flex-1">{label}</span>
