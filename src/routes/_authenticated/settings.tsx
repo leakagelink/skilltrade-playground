@@ -1,3 +1,4 @@
+import { externalLegalUrl, type InternalLegalPath } from "@/lib/app-config";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
