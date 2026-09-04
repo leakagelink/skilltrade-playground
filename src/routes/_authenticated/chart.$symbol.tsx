@@ -20,9 +20,9 @@ import { ArrowDownRight, ArrowUpRight } from "lucide-react";
 export const Route = createFileRoute("/_authenticated/chart/$symbol")({
   head: ({ params }) => ({
     meta: [
-      { title: `${params.symbol} Chart — PaperEdge Paper Trading` },
+      { title: `${params.symbol} Chart — TradeVirt Paper Trading` },
       { name: "description", content: `Simulated ${params.symbol} price chart with a practice order ticket. Educational use only.` },
-      { property: "og:title", content: `${params.symbol} — PaperEdge` },
+      { property: "og:title", content: `${params.symbol} — TradeVirt` },
       { property: "og:description", content: `Practice trading ${params.symbol} with virtual money.` },
     ],
   }),

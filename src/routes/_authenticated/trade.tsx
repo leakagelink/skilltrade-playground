@@ -15,9 +15,9 @@ import { pct, price } from "@/lib/format";
 export const Route = createFileRoute("/_authenticated/trade")({
   head: () => ({
     meta: [
-      { title: "Markets — PaperEdge Paper Trading" },
+      { title: "Markets — TradeVirt Paper Trading" },
       { name: "description", content: "Browse and search supported stocks and crypto assets for simulated paper trading." },
-      { property: "og:title", content: "Markets — PaperEdge" },
+      { property: "og:title", content: "Markets — TradeVirt" },
       { property: "og:description", content: "Browse supported stocks and crypto for simulated trading." },
     ],
   }),

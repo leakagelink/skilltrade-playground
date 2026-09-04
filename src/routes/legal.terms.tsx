@@ -4,10 +4,10 @@ import { LegalPage } from "@/components/LegalPage";
 export const Route = createFileRoute("/legal/terms")({
   head: () => ({
     meta: [
-      { title: "Terms of Service — PaperEdge" },
-      { name: "description", content: "Terms of service for PaperEdge, a simulated paper trading and trading skill development application." },
-      { property: "og:title", content: "Terms of Service — PaperEdge" },
-      { property: "og:description", content: "Terms governing use of the PaperEdge paper trading simulator." },
+      { title: "Terms of Service — TradeVirt" },
+      { name: "description", content: "Terms of service for TradeVirt, a simulated paper trading and trading skill development application." },
+      { property: "og:title", content: "Terms of Service — TradeVirt" },
+      { property: "og:description", content: "Terms governing use of the TradeVirt paper trading simulator." },
     ],
   }),
   component: () => (
@@ -17,7 +17,7 @@ export const Route = createFileRoute("/legal/terms")({
       sections={[
         {
           heading: "1. Nature of the service",
-          body: "PaperEdge is a simulated paper trading and educational skill-development application. It is not a broker, exchange, investment adviser, or financial transaction service. No real-money trading is available.",
+          body: "TradeVirt is a simulated paper trading and educational skill-development application. It is not a broker, exchange, investment adviser, or financial transaction service. No real-money trading is available.",
         },
         {
           heading: "2. Virtual balance and credits",

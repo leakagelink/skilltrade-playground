@@ -11,9 +11,9 @@ import { Award, CheckCircle2, Target } from "lucide-react";
 export const Route = createFileRoute("/_authenticated/challenges")({
   head: () => ({
     meta: [
-      { title: "Challenges & Badges — PaperEdge" },
+      { title: "Challenges & Badges — TradeVirt" },
       { name: "description", content: "Complete daily and weekly trading challenges to earn XP, credits and badges." },
-      { property: "og:title", content: "Challenges — PaperEdge" },
+      { property: "og:title", content: "Challenges — TradeVirt" },
       { property: "og:description", content: "Daily and weekly challenges that reward disciplined practice." },
     ],
   }),

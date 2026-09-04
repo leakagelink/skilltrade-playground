@@ -14,9 +14,9 @@ import { History } from "lucide-react";
 export const Route = createFileRoute("/_authenticated/profile")({
   head: () => ({
     meta: [
-      { title: "Profile & Trade History — PaperEdge" },
+      { title: "Profile & Trade History — TradeVirt" },
       { name: "description", content: "Review your simulated trade history, educational trade reviews and performance statistics." },
-      { property: "og:title", content: "Profile — PaperEdge" },
+      { property: "og:title", content: "Profile — TradeVirt" },
       { property: "og:description", content: "Your simulated trading history and skill breakdown." },
     ],
   }),

@@ -4,10 +4,10 @@ import { LegalPage } from "@/components/LegalPage";
 export const Route = createFileRoute("/legal/privacy")({
   head: () => ({
     meta: [
-      { title: "Privacy Policy — PaperEdge" },
-      { name: "description", content: "How PaperEdge handles your account data, simulated trading activity and privacy settings." },
-      { property: "og:title", content: "Privacy Policy — PaperEdge" },
-      { property: "og:description", content: "How PaperEdge handles account data and simulated trading activity." },
+      { title: "Privacy Policy — TradeVirt" },
+      { name: "description", content: "How TradeVirt handles your account data, simulated trading activity and privacy settings." },
+      { property: "og:title", content: "Privacy Policy — TradeVirt" },
+      { property: "og:description", content: "How TradeVirt handles account data and simulated trading activity." },
     ],
   }),
   component: () => (
@@ -29,7 +29,7 @@ export const Route = createFileRoute("/legal/privacy")({
         },
         {
           heading: "Financial data",
-          body: "PaperEdge never collects payment details, bank information or cryptocurrency wallet addresses, because no real-money transactions exist in the application.",
+          body: "TradeVirt never collects payment details, bank information or cryptocurrency wallet addresses, because no real-money transactions exist in the application.",
         },
         {
           heading: "Advertising",

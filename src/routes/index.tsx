@@ -8,13 +8,13 @@ import { SimulationBadge } from "@/components/Disclaimer";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "PaperEdge — Practice Trading. Build Your Skill." },
+      { title: "TradeVirt — Practice Trading. Build Your Skill." },
       {
         name: "description",
         content:
           "Practice trading with virtual money. Simulated trades, XP, challenges and a Trading Skill Score. Educational paper trading only — no real money.",
       },
-      { property: "og:title", content: "PaperEdge — Practice Trading. Build Your Skill." },
+      { property: "og:title", content: "TradeVirt — Practice Trading. Build Your Skill." },
       {
         property: "og:description",
         content: "Trade with virtual money. Track your performance. Improve your trading discipline.",

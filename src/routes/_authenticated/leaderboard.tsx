@@ -12,9 +12,9 @@ import { Trophy } from "lucide-react";
 export const Route = createFileRoute("/_authenticated/leaderboard")({
   head: () => ({
     meta: [
-      { title: "Leaderboard — PaperEdge" },
+      { title: "Leaderboard — TradeVirt" },
       { name: "description", content: "See how your Trading Skill Score ranks against other paper traders." },
-      { property: "og:title", content: "Leaderboard — PaperEdge" },
+      { property: "og:title", content: "Leaderboard — TradeVirt" },
       { property: "og:description", content: "Ranked by Trading Skill Score, not luck." },
     ],
   }),

@@ -12,9 +12,9 @@ import { Loader2 } from "lucide-react";
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
-      { title: "Sign in — PaperEdge Paper Trading Simulator" },
-      { name: "description", content: "Create your PaperEdge account and start practising simulated trading with virtual money." },
-      { property: "og:title", content: "Sign in — PaperEdge" },
+      { title: "Sign in — TradeVirt Paper Trading Simulator" },
+      { name: "description", content: "Create your TradeVirt account and start practising simulated trading with virtual money." },
+      { property: "og:title", content: "Sign in — TradeVirt" },
       { property: "og:description", content: "Create an account to practise paper trading with virtual money." },
     ],
   }),
@@ -108,7 +108,7 @@ function AuthPage() {
         <Link to="/" className="text-sm text-muted-foreground">
           ← Back
         </Link>
-        <h1 className="mt-6 text-2xl font-bold">Welcome to PaperEdge</h1>
+        <h1 className="mt-6 text-2xl font-bold">Welcome to TradeVirt</h1>
         <p className="mt-1 text-sm text-muted-foreground">Practice Trading. Build Your Skill.</p>
 
         <Tabs defaultValue="signup" className="mt-8">
@@ -163,7 +163,7 @@ function AuthPage() {
         </Button>
 
         <p className="mt-8 text-center text-[11px] leading-relaxed text-muted-foreground">
-          By continuing you agree that PaperEdge is a simulated paper trading application for
+          By continuing you agree that TradeVirt is a simulated paper trading application for
           educational purposes only. No real money trading is available.
         </p>
       </div>
