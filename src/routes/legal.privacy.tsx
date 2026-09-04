@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { LegalPage } from "@/components/LegalPage";
+import { APP_INFO, OPERATED_BY } from "@/lib/app-config";
 
 export const Route = createFileRoute("/legal/privacy")({
   head: () => ({
@@ -15,6 +16,10 @@ export const Route = createFileRoute("/legal/privacy")({
       title="Privacy Policy"
       updated="Version 1.0"
       sections={[
+        {
+          heading: "Who operates TradeVirt",
+          body: `${OPERATED_BY} Developer / representative: ${APP_INFO.developer}. Official website: ${APP_INFO.website}. Privacy questions: ${APP_INFO.supportEmail}.`,
+        },
         {
           heading: "Data we store",
           body: "Your email address (for authentication only), your chosen username, avatar, and your simulated trading activity: trades, XP, credits, challenge progress, badges and scores.",
@@ -37,7 +42,7 @@ export const Route = createFileRoute("/legal/privacy")({
         },
         {
           heading: "Third-party services",
-          body: "We use Supabase for authentication, database storage and server functions, Google Sign-In for optional authentication, and public third-party market data sources for stock and crypto prices. No analytics or advertising SDK is active in Version 1.0.",
+          body: "We use a managed cloud backend (Supabase) for authentication, database storage and server functions, Google Sign-In for optional authentication, and public third-party market data sources for stock and crypto prices. No analytics or advertising SDK is active in Version 1.0.",
         },
         {
           heading: "Market data providers",
@@ -61,7 +66,7 @@ export const Route = createFileRoute("/legal/privacy")({
         },
         {
           heading: "Deleting your data and retention",
-          body: "You can delete your account from Settings inside the app, or follow the instructions on the public account deletion page. Deletion removes your profile, simulated trades, credit history, XP and challenge progress. Backup copies may persist for a short period before being overwritten, and anonymised or legally required records may be retained.",
+          body: `You can delete your account from Settings inside the app, which removes your account immediately, or email ${APP_INFO.supportEmail} from your registered address. Deletion removes your profile, simulated trades, credit history, XP and challenge progress. Backup copies may persist for a short period before being overwritten, and anonymised or legally required records may be retained.`,
         },
       ]}
     />
