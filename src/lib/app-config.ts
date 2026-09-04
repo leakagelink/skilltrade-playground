@@ -31,12 +31,14 @@ export type InternalLegalPath =
   | "/legal/support"
   | "/account-deletion";
 
+// The legal pages are served by this same app, so in-app navigation stays
+// internal. LEGAL_URLS above are the public equivalents for store listings.
 const EXTERNAL_BY_PATH: Record<InternalLegalPath, string> = {
-  "/legal/terms": LEGAL_URLS.TERMS_URL,
-  "/legal/privacy": LEGAL_URLS.PRIVACY_POLICY_URL,
-  "/legal/disclaimer": LEGAL_URLS.DISCLAIMER_URL,
+  "/legal/terms": "",
+  "/legal/privacy": "",
+  "/legal/disclaimer": "",
   "/legal/support": "",
-  "/account-deletion": LEGAL_URLS.ACCOUNT_DELETION_URL,
+  "/account-deletion": "",
 };
 
 /** Returns a configured external URL for a legal page, or null to use the in-app page. */
