@@ -145,8 +145,10 @@ export async function twelveDataQuotes(symbols: string[]): Promise<Map<string, T
   // Twelve Data returns a direct quote for one symbol and a symbol-keyed map
   // for a multi-symbol request.
   if (normalized.length === 1) {
-    const quote = parseQuote(payload, normalized[0]);
-    if (quote) quotes.set(normalized[0], quote);
+    const symbol = normalized[0];
+    if (!symbol) return quotes;
+    const quote = parseQuote(payload, symbol);
+    if (quote) quotes.set(symbol, quote);
     return quotes;
   }
   for (const symbol of normalized) {
