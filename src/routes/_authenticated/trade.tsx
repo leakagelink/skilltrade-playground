@@ -101,9 +101,8 @@ function TradePage() {
                   params={{ symbol: a.symbol }}
                   className="bento-tile bento-tile-interactive grid min-w-0 grid-cols-[auto_minmax(0,1fr)_auto_auto] items-center gap-2.5 p-3 sm:gap-3 sm:p-3.5"
                 >
-                  <div className="brand-gradient flex h-11 min-w-11 shrink-0 items-center justify-center rounded-2xl px-2 text-[11px] font-extrabold tracking-tight">
-                    {a.symbol}
-                  </div>
+                  <AssetLogo symbol={a.symbol} assetType={a.assetType} name={a.name} size={44} />
+
                   <div className="min-w-0 flex-1">
                     <p className="num truncate text-sm font-bold text-foreground">{a.symbol}</p>
                     <p className="truncate text-xs text-muted-foreground">{a.name}</p>
