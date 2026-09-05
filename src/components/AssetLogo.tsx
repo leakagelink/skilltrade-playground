@@ -6,9 +6,9 @@ const TOKEN = import.meta.env["VITE_LOVABLE_CONNECTOR_LOGO_DEV_API_KEY"] as stri
 interface AssetLogoProps {
   symbol: string;
   assetType: AssetType;
-  name?: string;
-  className?: string;
-  size?: number;
+  name?: string | undefined;
+  className?: string | undefined;
+  size?: number | undefined;
 }
 
 /** Company / coin logo with a branded initials fallback. */
