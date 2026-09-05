@@ -113,7 +113,7 @@ function HomePage() {
 
   return (
     <main className="pb-8">
-      <section className="mesh-bg relative overflow-hidden px-5 pb-6 pt-7">
+      <section className="mesh-bg safe-top-section relative overflow-hidden px-5 pb-6">
         <div className="animate-rise flex items-start justify-between gap-3">
           <div>
             <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
