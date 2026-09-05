@@ -1,4 +1,5 @@
 # Roadmap
 
-- [x] Connect Logo.dev in new workspace
-- [ ] Fix auth flash: logged-in users should land on home, not sign-in screen
+- [ ] Connect Logo.dev in new workspace (connect card declined)
+- [x] Fix auth flash: signed-in users land on home
+- [x] Faster crypto momentum via Coinbase live rates

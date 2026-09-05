@@ -29,12 +29,30 @@ function AuthPage() {
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
   const [sent, setSent] = useState(false);
+  // Hold the sign-in form back until we know whether a session already exists,
+  // so a returning user never sees the sign-in screen before their home screen.
+  const [checkingSession, setCheckingSession] = useState(true);
 
   useEffect(() => {
+    let active = true;
     supabase.auth.getSession().then(({ data }) => {
+      if (!active) return;
       if (data.session) navigate({ to: "/home", replace: true });
+      else setCheckingSession(false);
     });
+    return () => {
+      active = false;
+    };
   }, [navigate]);
+
+  if (checkingSession) {
+    return (
+      <main className="flex min-h-screen flex-col items-center justify-center gap-6 gradient-hero">
+        <BrandMark size="lg" className="animate-pulse rounded-3xl p-4" />
+        <Loader2 className="size-5 animate-spin text-primary" />
+      </main>
+    );
+  }
 
   async function handleSignIn(e: React.FormEvent) {
     e.preventDefault();

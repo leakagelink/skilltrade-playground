@@ -32,17 +32,42 @@ const FEATURES = [
   { icon: Trophy, title: "Leaderboards", body: "Compete on skill, not on raw profit." },
 ];
 
+/**
+ * Supabase persists its session in localStorage under an "sb-<ref>-auth-token"
+ * key. Reading it lets a returning signed-in user skip the marketing screen
+ * entirely instead of seeing it flash while getSession() resolves.
+ */
+function hasStoredSession(): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    for (let i = 0; i < window.localStorage.length; i++) {
+      const key = window.localStorage.key(i);
+      if (key && key.startsWith("sb-") && key.endsWith("-auth-token") && window.localStorage.getItem(key)) {
+        return true;
+      }
+    }
+  } catch {
+    // Storage blocked → fall back to the async session check below.
+  }
+  return false;
+}
+
 function Landing() {
   const navigate = useNavigate();
-  const [redirecting, setRedirecting] = useState(false);
+  // "checking" while the stored session is verified; a returning user therefore
+  // sees the splash, never the sign-in call-to-action.
+  const [state, setState] = useState<"checking" | "redirecting" | "guest">("checking");
 
   useEffect(() => {
     let active = true;
+    if (hasStoredSession()) setState("redirecting");
     supabase.auth.getSession().then(({ data }) => {
       if (!active) return;
       if (data.session) {
-        setRedirecting(true);
+        setState("redirecting");
         navigate({ to: "/home", replace: true });
+      } else {
+        setState("guest");
       }
     });
     return () => {
@@ -50,7 +75,7 @@ function Landing() {
     };
   }, [navigate]);
 
-  if (redirecting) {
+  if (state !== "guest") {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center gap-6 gradient-hero">
         <BrandMark size="lg" className="animate-pulse rounded-3xl p-4" />
@@ -61,6 +86,7 @@ function Landing() {
       </main>
     );
   }
+
 
   return (
     <main className="mesh-bg min-h-screen bg-background">
