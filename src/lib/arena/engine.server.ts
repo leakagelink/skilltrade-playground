@@ -110,7 +110,22 @@ export async function runBotCatchUp(admin: Admin, session: Record<string, unknow
   const strategy = strategyFor(bot);
 
   const closes: { id: string; exit: number; pnl: number; status: string; at: string }[] = [];
-  const opens: Record<string, unknown>[] = [];
+  const opens: {
+    arena_session_id: string;
+    owner_type: string;
+    symbol: string;
+    asset_type: string;
+    direction: string;
+    quantity: number;
+    position_size: number;
+    entry_price: number;
+    current_price: number;
+    stop_loss: number;
+    take_profit: number;
+    status: string;
+    unrealized_pnl: number;
+    opened_at: string;
+  }[] = [];
 
   let lastOpenedAt = trades.reduce(
     (acc, t) => Math.max(acc, new Date(t.opened_at).getTime()),
