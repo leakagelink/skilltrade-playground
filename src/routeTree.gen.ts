@@ -26,6 +26,7 @@ import { Route as LegalPrivacyRouteImport } from './routes/legal.privacy'
 import { Route as LegalSupportRouteImport } from './routes/legal.support'
 import { Route as LegalTermsRouteImport } from './routes/legal.terms'
 import { Route as AuthenticatedAiArenaIndexRouteImport } from './routes/_authenticated/ai-arena.index'
+import { Route as AuthenticatedAiArenaHistoryRouteImport } from './routes/_authenticated/ai-arena.history'
 import { Route as AuthenticatedChartSymbolRouteImport } from './routes/_authenticated/chart.$symbol'
 
 const IndexRoute = IndexRouteImport.update({
@@ -114,6 +115,12 @@ const AuthenticatedAiArenaIndexRoute =
     path: '/ai-arena/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAiArenaHistoryRoute =
+  AuthenticatedAiArenaHistoryRouteImport.update({
+    id: '/ai-arena/history',
+    path: '/ai-arena/history',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedChartSymbolRoute =
   AuthenticatedChartSymbolRouteImport.update({
     id: '/chart/$symbol',
@@ -137,6 +144,7 @@ export interface FileRoutesByFullPath {
   '/legal/privacy': typeof LegalPrivacyRoute
   '/legal/support': typeof LegalSupportRoute
   '/legal/terms': typeof LegalTermsRoute
+  '/ai-arena/history': typeof AuthenticatedAiArenaHistoryRoute
   '/chart/$symbol': typeof AuthenticatedChartSymbolRoute
   '/ai-arena/': typeof AuthenticatedAiArenaIndexRoute
 }
@@ -156,6 +164,7 @@ export interface FileRoutesByTo {
   '/legal/privacy': typeof LegalPrivacyRoute
   '/legal/support': typeof LegalSupportRoute
   '/legal/terms': typeof LegalTermsRoute
+  '/ai-arena/history': typeof AuthenticatedAiArenaHistoryRoute
   '/chart/$symbol': typeof AuthenticatedChartSymbolRoute
   '/ai-arena': typeof AuthenticatedAiArenaIndexRoute
 }
@@ -177,6 +186,7 @@ export interface FileRoutesById {
   '/legal/privacy': typeof LegalPrivacyRoute
   '/legal/support': typeof LegalSupportRoute
   '/legal/terms': typeof LegalTermsRoute
+  '/_authenticated/ai-arena/history': typeof AuthenticatedAiArenaHistoryRoute
   '/_authenticated/chart/$symbol': typeof AuthenticatedChartSymbolRoute
   '/_authenticated/ai-arena/': typeof AuthenticatedAiArenaIndexRoute
 }
@@ -198,6 +208,7 @@ export interface FileRouteTypes {
     | '/legal/privacy'
     | '/legal/support'
     | '/legal/terms'
+    | '/ai-arena/history'
     | '/chart/$symbol'
     | '/ai-arena/'
   fileRoutesByTo: FileRoutesByTo
@@ -217,6 +228,7 @@ export interface FileRouteTypes {
     | '/legal/privacy'
     | '/legal/support'
     | '/legal/terms'
+    | '/ai-arena/history'
     | '/chart/$symbol'
     | '/ai-arena'
   id:
@@ -237,6 +249,7 @@ export interface FileRouteTypes {
     | '/legal/privacy'
     | '/legal/support'
     | '/legal/terms'
+    | '/_authenticated/ai-arena/history'
     | '/_authenticated/chart/$symbol'
     | '/_authenticated/ai-arena/'
   fileRoutesById: FileRoutesById
@@ -373,6 +386,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAiArenaIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/ai-arena/history': {
+      id: '/_authenticated/ai-arena/history'
+      path: '/ai-arena/history'
+      fullPath: '/ai-arena/history'
+      preLoaderRoute: typeof AuthenticatedAiArenaHistoryRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/chart/$symbol': {
       id: '/_authenticated/chart/$symbol'
       path: '/chart/$symbol'
@@ -392,6 +412,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedTradeRoute: typeof AuthenticatedTradeRoute
+  AuthenticatedAiArenaHistoryRoute: typeof AuthenticatedAiArenaHistoryRoute
   AuthenticatedChartSymbolRoute: typeof AuthenticatedChartSymbolRoute
   AuthenticatedAiArenaIndexRoute: typeof AuthenticatedAiArenaIndexRoute
 }
@@ -405,6 +426,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedTradeRoute: AuthenticatedTradeRoute,
+  AuthenticatedAiArenaHistoryRoute: AuthenticatedAiArenaHistoryRoute,
   AuthenticatedChartSymbolRoute: AuthenticatedChartSymbolRoute,
   AuthenticatedAiArenaIndexRoute: AuthenticatedAiArenaIndexRoute,
 }

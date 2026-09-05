@@ -19,7 +19,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { DisclaimerNote, MarketDataNote, SimulationBadge } from "@/components/Disclaimer";
 import { AiOpponentCard, ArenaResultCard, ArenaScoreCard, VersusPanel } from "@/components/arena/ArenaParts";
 import { AssetLogo } from "@/components/AssetLogo";
-import { money, pct, signedMoney } from "@/lib/format";
+import { money, signedMoney } from "@/lib/format";
 
 export const Route = createFileRoute("/_authenticated/ai-arena/")({
   head: () => ({
@@ -432,5 +432,3 @@ function ArenaTicket({
     </div>
   );
 }
-
-export { pct };
