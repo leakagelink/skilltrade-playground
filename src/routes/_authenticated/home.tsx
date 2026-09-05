@@ -35,10 +35,10 @@ function HomePage() {
   const { data, isLoading } = useQuery({
     queryKey: ["dashboard"],
     queryFn: () => load(),
-    refetchInterval: 10000,
+    refetchInterval: 30000,
     refetchIntervalInBackground: true,
-    refetchOnMount: "always",
-    staleTime: 0,
+    refetchOnMount: true,
+    staleTime: 15_000,
   });
 
   // Mark open positions to real market prices every 5s.

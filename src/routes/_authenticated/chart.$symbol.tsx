@@ -56,17 +56,17 @@ function ChartPage() {
     queryFn: () => loadCandles({ data: { symbol, timeframe: tf } }),
     refetchInterval: 15000,
     refetchIntervalInBackground: true,
-    staleTime: 0,
+    staleTime: 3_000,
   });
 
   // Fast real-price loop. The request id also prevents browser/CDN GET caching.
   const tick = useQuery({
     queryKey: ["quote", symbol],
     queryFn: () => loadQuote({ data: { symbol, requestId: Date.now() } }),
-    refetchInterval: 1000,
+    refetchInterval: 4000,
     refetchIntervalInBackground: true,
-    refetchOnMount: "always",
-    staleTime: 0,
+    refetchOnMount: true,
+    staleTime: 3_000,
   });
 
   const trades = useQuery({
