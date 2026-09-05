@@ -1,9 +1,10 @@
 import { Link } from "@tanstack/react-router";
-import { Home, CandlestickChart, Sparkles, Target, Trophy, User } from "lucide-react";
+import { Home, CandlestickChart, Sparkles, Swords, Target, Trophy, User } from "lucide-react";
 
 const TABS = [
   { to: "/home", label: "Home", icon: Home },
   { to: "/trade", label: "Trade", icon: CandlestickChart },
+  { to: "/ai-arena", label: "Arena", icon: Swords },
   { to: "/insights", label: "AI", icon: Sparkles },
   { to: "/challenges", label: "Goals", icon: Target },
   { to: "/leaderboard", label: "Ranks", icon: Trophy },
