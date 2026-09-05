@@ -13,6 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { TIMEFRAMES, type Timeframe } from "@/lib/market/types";
+import { catalogEntry } from "@/lib/market/catalog";
 import { money, pct, price, signedMoney } from "@/lib/format";
 import { MarketDataNote } from "@/components/Disclaimer";
 import { toast } from "sonner";
