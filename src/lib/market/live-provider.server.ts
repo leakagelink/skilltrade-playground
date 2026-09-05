@@ -219,6 +219,23 @@ export const liveMarketDataProvider: MarketDataProvider = {
     if (!entry) throw new Error(`Unknown symbol ${symbol}`);
 
     if (entry.assetType === "CRYPTO") {
+      // Preferred source: CoinGecko with automatic key rotation.
+      if (hasCoinGeckoKeys() && coinGeckoId(entry.symbol)) {
+        try {
+          const cg = await cached(`cg:${entry.symbol}`, 15_000, () => coinGeckoSimplePrice(entry.symbol));
+          return {
+            symbol: entry.symbol,
+            price: cg.price,
+            changePercent: cg.changePercent,
+            status: "LIVE",
+            asOf: cg.asOf,
+            marketState: "OPEN",
+          };
+        } catch {
+          // Every key exhausted or request failed → keyless fallback below.
+        }
+      }
+
       const { last, open, time } = await coinbaseStats(entry.providerSymbol);
       return {
         symbol: entry.symbol,
@@ -229,6 +246,7 @@ export const liveMarketDataProvider: MarketDataProvider = {
         marketState: "OPEN",
       };
     }
+
 
     const payload = await yahooLatest(entry.providerSymbol);
     const meta = payload.chart?.result?.[0]?.meta;
