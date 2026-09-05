@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getQuotes } from "@/lib/market.functions";
 import { CATALOG, catalogEntry } from "@/lib/market/catalog";
+import type { Quote } from "@/lib/market/types";
 import { AppHeader } from "@/components/AppHeader";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -70,15 +71,21 @@ function TradePage() {
   const previousPrices = useRef(new Map<string, number>());
   const [tickMoves, setTickMoves] = useState(new Map<string, number>());
 
+  const allQuotes = useMemo(
+    () => [...(cryptoQuotes.data?.quotes ?? []), ...(stockQuotes.data?.quotes ?? [])],
+    [cryptoQuotes.data, stockQuotes.data],
+  );
+  const quotesPending = cryptoQuotes.isPending || stockQuotes.isPending;
+
   useEffect(() => {
     const nextMoves = new Map<string, number>();
-    for (const quote of quotes.data?.quotes ?? []) {
+    for (const quote of allQuotes) {
       const previous = previousPrices.current.get(quote.symbol);
       if (previous != null && previous !== quote.price) nextMoves.set(quote.symbol, quote.price - previous);
       previousPrices.current.set(quote.symbol, quote.price);
     }
     if (nextMoves.size > 0) setTickMoves((current) => new Map([...current, ...nextMoves]));
-  }, [quotes.data]);
+  }, [allQuotes]);
 
   const filtered = useMemo(() => {
     const needle = q.trim().toLowerCase();
@@ -156,7 +163,7 @@ function TradePage() {
                     })()
                   ) : (
                     <span className="max-w-20 text-right text-[9px] font-medium leading-tight text-muted-foreground sm:text-[10px]">
-                      {quotes.isPending ? "Loading price…" : "Price unavailable"}
+                      {quotesPending ? "Loading price…" : "Price unavailable"}
                     </span>
                   )}
 
