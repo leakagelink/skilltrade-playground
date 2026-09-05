@@ -73,7 +73,8 @@ function InsightsPage() {
       toast.error(e.message || "AI analysis is temporarily unavailable. Please try again later."),
   });
 
-  const dna = insights.data?.dna;
+  const d = insights.data;
+  const dna = d?.dna;
 
   const share = async () => {
     if (!dna) return;
@@ -106,7 +107,7 @@ function InsightsPage() {
       <AppHeader title="AI Insights" subtitle="Educational analysis of your simulated trading" />
 
       <div className="space-y-6 p-5">
-        {insights.isLoading || !dna ? (
+        {insights.isLoading || !dna || !d ? (
           <>
             <Skeleton className="h-56 w-full rounded-3xl" />
             <Skeleton className="h-32 w-full rounded-3xl" />
@@ -157,27 +158,27 @@ function InsightsPage() {
             <section>
               <p className="section-title">Performance Trend</p>
               <div className="bento-tile mt-2 p-4">
-                {insights.data.comparison.hasEnoughData ? (
+                {d.comparison.hasEnoughData ? (
                   <div className="space-y-3">
                     <TrendRow
                       label="Consistency"
-                      current={insights.data.comparison.current.consistency}
-                      previous={insights.data.comparison.previous.consistency}
+                      current={d.comparison.current.consistency}
+                      previous={d.comparison.previous.consistency}
                     />
                     <TrendRow
                       label="Risk control"
-                      current={insights.data.comparison.current.riskControl}
-                      previous={insights.data.comparison.previous.riskControl}
+                      current={d.comparison.current.riskControl}
+                      previous={d.comparison.previous.riskControl}
                     />
                     <TrendRow
                       label="Discipline"
-                      current={insights.data.comparison.current.discipline}
-                      previous={insights.data.comparison.previous.discipline}
+                      current={d.comparison.current.discipline}
+                      previous={d.comparison.previous.discipline}
                     />
                     <TrendRow
                       label="Win rate"
-                      current={insights.data.comparison.current.winRate}
-                      previous={insights.data.comparison.previous.winRate}
+                      current={d.comparison.current.winRate}
+                      previous={d.comparison.previous.winRate}
                       suffix="%"
                     />
                     <p className="text-[11px] text-muted-foreground">
@@ -222,7 +223,7 @@ function InsightsPage() {
                     </div>
                   ))}
                   <p className="text-[11px] text-muted-foreground">
-                    {insights.data.usedToday} of {insights.data.dailyLimit} educational AI reviews used in the last 24
+                    {d.usedToday} of {d.dailyLimit} educational AI reviews used in the last 24
                     hours.
                   </p>
                 </div>
@@ -233,14 +234,14 @@ function InsightsPage() {
             <section>
               <p className="section-title">Recent AI Insights</p>
               <div className="mt-2 space-y-3">
-                {insights.data.reviews.length === 0 ? (
+                {d.reviews.length === 0 ? (
                   <EmptyState
                     icon={Activity}
                     title="No AI reviews yet"
                     description="Close a simulated trade and request an educational review to see it here."
                   />
                 ) : (
-                  insights.data.reviews.map((r) => (
+                  d.reviews.map((r) => (
                     <article key={r.id} className="bento-tile space-y-3 p-4">
                       <div className="flex items-center gap-2">
                         <p className="text-sm font-semibold">
