@@ -14,7 +14,7 @@ export const Route = createFileRoute("/legal/privacy")({
   component: () => (
     <LegalPage
       title="Privacy Policy"
-      updated="Version 1.1"
+      updated="Version 1.2"
       sections={[
         {
           heading: "Who operates TradeVirt",
@@ -53,8 +53,12 @@ export const Route = createFileRoute("/legal/privacy")({
           body: "When you request an educational AI review of a completed simulated trade, a minimised and anonymised set of simulated trade metrics (asset category, trade direction, entry and exit price, position size as a percentage of your virtual balance, stop loss and take profit usage, holding duration, simulated result and aggregate simulated statistics) is sent to an AI provider through the Lovable AI gateway. Your email address, password, authentication token, user identifier and real personal information are never sent. AI reviews and Trader DNA scores are calculated and stored server-side and are visible only to you.",
         },
         {
+          heading: "AI Arena",
+          body: "The AI Arena is a simulated trading competition against rule-based AI opponents using virtual funds. If you take part, we store your Arena sessions, the simulated Arena trades you place, the AI opponent's simulated trades, timings and the resulting Arena Scores. This activity is visible only to you, is calculated on our servers, and involves no real money, deposits, withdrawals or prizes of monetary value.",
+        },
+        {
           heading: "How we use your data",
-          body: "Your data is used only to authenticate you, manage your account, provide paper trading functionality, maintain your simulated portfolio and trade history, calculate your Trading Skill Score, calculate Trader DNA and educational AI insights, run challenges and leaderboards, and improve reliability. We do not sell your data.",
+          body: "Your data is used only to authenticate you, manage your account, provide paper trading functionality, maintain your simulated portfolio and trade history, calculate your Trading Skill Score, calculate Trader DNA and educational AI insights, run challenges, AI Arena competitions and leaderboards, and improve reliability. We do not sell your data.",
         },
         {
           heading: "Security",
@@ -70,7 +74,7 @@ export const Route = createFileRoute("/legal/privacy")({
         },
         {
           heading: "Deleting your data and retention",
-          body: `You can delete your account from Settings inside the app, which removes your account immediately, or email ${APP_INFO.supportEmail} from your registered address. Deletion removes your profile, simulated trades, credit history, XP and challenge progress. Backup copies may persist for a short period before being overwritten, and anonymised or legally required records may be retained.`,
+          body: `You can delete your account from Settings inside the app, which removes your account immediately, or email ${APP_INFO.supportEmail} from your registered address. Deletion removes your profile, simulated trades, credit history, XP, challenge progress, AI reviews, Trader DNA records and AI Arena sessions and Arena trades. Backup copies may persist for a short period before being overwritten, and anonymised or legally required records may be retained.`,
         },
       ]}
     />
