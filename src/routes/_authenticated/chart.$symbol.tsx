@@ -6,6 +6,8 @@ import { getCandles, getQuote } from "@/lib/market.functions";
 import { closeTrade, getTrades, openTrade } from "@/lib/trading.functions";
 import { ProChart } from "@/components/chart/ProChart";
 import { AppHeader } from "@/components/AppHeader";
+import { AssetLogo } from "@/components/AssetLogo";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
