@@ -142,19 +142,28 @@ function ChartPage() {
       <div className="space-y-4 p-5">
         {quote ? (
           <div className="surface-card flex items-center justify-between p-4">
-            <div>
-              <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Current market price</p>
-              <p
-                className={`num text-2xl font-bold transition-colors ${
-                  tickDelta > 0 ? "text-bull" : tickDelta < 0 ? "text-bear" : "text-foreground"
-                }`}
-              >
-                {price(quote.price)}
-              </p>
-              <p className="num text-[11px] text-muted-foreground">
-                Tick {tickDelta === 0 ? "—" : `${tickDelta > 0 ? "+" : ""}${tickDelta.toFixed(4)}`}
-              </p>
+            <div className="flex items-center gap-3">
+              <AssetLogo
+                symbol={symbol}
+                assetType={catalogEntry(symbol)?.assetType ?? "STOCK"}
+                name={catalogEntry(symbol)?.name}
+                size={40}
+              />
+              <div>
+                <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Current market price</p>
+                <p
+                  className={`num text-2xl font-bold transition-colors ${
+                    tickDelta > 0 ? "text-bull" : tickDelta < 0 ? "text-bear" : "text-foreground"
+                  }`}
+                >
+                  {price(quote.price)}
+                </p>
+                <p className="num text-[11px] text-muted-foreground">
+                  Tick {tickDelta === 0 ? "—" : `${tickDelta > 0 ? "+" : ""}${tickDelta.toFixed(4)}`}
+                </p>
+              </div>
             </div>
+
             <div className="text-right">
               <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Momentum (24h)</p>
               <span
