@@ -14,7 +14,7 @@ export const Route = createFileRoute("/legal/disclaimer")({
   component: () => (
     <LegalPage
       title="Educational & Risk Disclaimer"
-      updated="Version 1.0"
+      updated="Version 1.1"
       sections={[
         {
           heading: "Who operates TradeVirt",
