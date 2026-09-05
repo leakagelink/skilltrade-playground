@@ -36,6 +36,9 @@ export const getQuotes = createServerFn({ method: "GET" })
     const symbols = data.symbols.length
       ? data.symbols
       : (await provider.getAssets()).map((a) => a.symbol);
+    if (provider.getLatestPrices) {
+      return { quotes: await provider.getLatestPrices(symbols) };
+    }
     const settled = await Promise.allSettled(symbols.map((s) => provider.getLatestPrice(s)));
     return {
       quotes: settled.flatMap((r) => (r.status === "fulfilled" ? [r.value] : [])),
