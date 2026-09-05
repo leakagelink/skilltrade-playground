@@ -298,13 +298,24 @@ export const liveMarketDataProvider: MarketDataProvider = {
     const entry = catalogEntry(symbol);
     if (!entry) throw new Error(`Unknown symbol ${symbol}`);
 
-    let candles: Candle[];
+    let candles: Candle[] = [];
     if (entry.assetType === "CRYPTO") {
       candles = await coinbaseCandles(entry.providerSymbol, timeframe);
     } else {
-      const payload = await yahooChart(entry.providerSymbol, timeframe);
-      candles = yahooToCandles(payload);
-      if (timeframe === "4h") candles = aggregate(candles, bucketSeconds("4h"));
+      if (hasTwelveDataKeys()) {
+        try {
+          candles = await cached(`tdc:${entry.symbol}:${timeframe}`, 30_000, () =>
+            twelveDataCandles(entry.symbol, timeframe, Math.max(limit, 200)),
+          );
+        } catch {
+          candles = [];
+        }
+      }
+      if (candles.length === 0) {
+        const payload = await yahooChart(entry.providerSymbol, timeframe);
+        candles = yahooToCandles(payload);
+        if (timeframe === "4h") candles = aggregate(candles, bucketSeconds("4h"));
+      }
     }
     if (candles.length === 0) throw new Error(`No candles for ${symbol}`);
     return candles.slice(-limit);
