@@ -14,6 +14,65 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_trade_reviews: {
+        Row: {
+          areas_to_review: string[]
+          consistency_score: number
+          created_at: string
+          detected_patterns: string[]
+          discipline_score: number
+          educational_note: string
+          id: string
+          provider: string
+          risk_management_score: number
+          strengths: string[]
+          summary: string
+          timing_score: number
+          trade_id: string
+          user_id: string
+        }
+        Insert: {
+          areas_to_review?: string[]
+          consistency_score?: number
+          created_at?: string
+          detected_patterns?: string[]
+          discipline_score?: number
+          educational_note?: string
+          id?: string
+          provider?: string
+          risk_management_score?: number
+          strengths?: string[]
+          summary: string
+          timing_score?: number
+          trade_id: string
+          user_id: string
+        }
+        Update: {
+          areas_to_review?: string[]
+          consistency_score?: number
+          created_at?: string
+          detected_patterns?: string[]
+          discipline_score?: number
+          educational_note?: string
+          id?: string
+          provider?: string
+          risk_management_score?: number
+          strengths?: string[]
+          summary?: string
+          timing_score?: number
+          trade_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_trade_reviews_trade_id_fkey"
+            columns: ["trade_id"]
+            isOneToOne: true
+            referencedRelation: "trades"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       assets: {
         Row: {
           asset_type: string
@@ -272,6 +331,42 @@ export type Database = {
           virtual_balance?: number
           virtual_credits?: number
           xp?: number
+        }
+        Relationships: []
+      }
+      trader_dna_profiles: {
+        Row: {
+          activity_level: string
+          calculated_at: string
+          consistency_score: number
+          discipline_score: number
+          patience_score: number
+          personality: string
+          position_size_management_score: number
+          risk_control_score: number
+          user_id: string
+        }
+        Insert: {
+          activity_level?: string
+          calculated_at?: string
+          consistency_score?: number
+          discipline_score?: number
+          patience_score?: number
+          personality?: string
+          position_size_management_score?: number
+          risk_control_score?: number
+          user_id: string
+        }
+        Update: {
+          activity_level?: string
+          calculated_at?: string
+          consistency_score?: number
+          discipline_score?: number
+          patience_score?: number
+          personality?: string
+          position_size_management_score?: number
+          risk_control_score?: number
+          user_id?: string
         }
         Relationships: []
       }
