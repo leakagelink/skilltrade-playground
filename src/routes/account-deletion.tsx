@@ -17,7 +17,7 @@ export const Route = createFileRoute("/account-deletion")({
   component: () => (
     <LegalPage
       title="TradeVirt Account Deletion"
-      updated="Version 1.0"
+      updated="Version 1.1"
       sections={[
         {
           heading: "Who operates TradeVirt",
@@ -33,7 +33,7 @@ export const Route = createFileRoute("/account-deletion")({
         },
         {
           heading: "What is deleted",
-          body: "Your authentication record, profile, username, avatar, virtual balance, credits, XP, level, Trading Skill Score, simulated trades, challenge progress, badges, notifications and leaderboard entries are permanently removed.",
+          body: "Your authentication record, profile, username, avatar, virtual balance, credits, XP, level, Trading Skill Score, simulated trades, challenge progress, badges, AI trade reviews, Trader DNA records, notifications and leaderboard entries are permanently removed.",
         },
         {
           heading: "What is retained",

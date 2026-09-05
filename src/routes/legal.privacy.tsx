@@ -14,7 +14,7 @@ export const Route = createFileRoute("/legal/privacy")({
   component: () => (
     <LegalPage
       title="Privacy Policy"
-      updated="Version 1.0"
+      updated="Version 1.1"
       sections={[
         {
           heading: "Who operates TradeVirt",
@@ -49,8 +49,12 @@ export const Route = createFileRoute("/legal/privacy")({
           body: "The application may use third-party market data providers to display market prices and chart information. Market data may be delayed, incomplete or temporarily unavailable and is shown for educational simulation only.",
         },
         {
+          heading: "AI Insights and Trader DNA",
+          body: "When you request an educational AI review of a completed simulated trade, a minimised and anonymised set of simulated trade metrics (asset category, trade direction, entry and exit price, position size as a percentage of your virtual balance, stop loss and take profit usage, holding duration, simulated result and aggregate simulated statistics) is sent to an AI provider through the Lovable AI gateway. Your email address, password, authentication token, user identifier and real personal information are never sent. AI reviews and Trader DNA scores are calculated and stored server-side and are visible only to you.",
+        },
+        {
           heading: "How we use your data",
-          body: "Your data is used only to authenticate you, manage your account, provide paper trading functionality, maintain your simulated portfolio and trade history, calculate your Trading Skill Score, run challenges and leaderboards, and improve reliability. We do not sell your data.",
+          body: "Your data is used only to authenticate you, manage your account, provide paper trading functionality, maintain your simulated portfolio and trade history, calculate your Trading Skill Score, calculate Trader DNA and educational AI insights, run challenges and leaderboards, and improve reliability. We do not sell your data.",
         },
         {
           heading: "Security",
