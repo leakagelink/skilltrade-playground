@@ -225,7 +225,7 @@ export const liveMarketDataProvider: MarketDataProvider = {
       // Preferred source: CoinGecko with automatic key rotation.
       if (hasCoinGeckoKeys() && coinGeckoId(entry.symbol)) {
         try {
-          const cg = await cached(`cg:${entry.symbol}`, 15_000, () => coinGeckoSimplePrice(entry.symbol));
+        const cg = await cached(`cg:${entry.symbol}`, 2_000, () => coinGeckoSimplePrice(entry.symbol));
           return {
             symbol: entry.symbol,
             price: cg.price,
@@ -252,7 +252,7 @@ export const liveMarketDataProvider: MarketDataProvider = {
     // Preferred stock source: Twelve Data with automatic key rotation.
     if (hasTwelveDataKeys()) {
       try {
-        const td = await cached(`td:${entry.symbol}`, 10_000, () => twelveDataQuote(entry.symbol));
+        const td = await cached(`td:${entry.symbol}`, 3_000, () => twelveDataQuote(entry.symbol));
         return {
           symbol: entry.symbol,
           price: td.price,
@@ -305,7 +305,7 @@ export const liveMarketDataProvider: MarketDataProvider = {
 
     if (stocks.length > 0 && hasTwelveDataKeys()) {
       try {
-        const batch = await cached("td:market-list", 30_000, () => twelveDataQuotes(stocks.map(({ symbol }) => symbol)));
+        const batch = await cached("td:market-list", 3_000, () => twelveDataQuotes(stocks.map(({ symbol }) => symbol)));
         for (const [symbol, td] of batch) {
           quotes.set(symbol, {
             symbol,
@@ -323,7 +323,7 @@ export const liveMarketDataProvider: MarketDataProvider = {
 
     if (cryptos.length > 0 && hasCoinGeckoKeys()) {
       try {
-        const batch = await cached("cg:market-list", 30_000, () => coinGeckoSimplePrices(cryptos.map(({ symbol }) => symbol)));
+        const batch = await cached("cg:market-list", 2_000, () => coinGeckoSimplePrices(cryptos.map(({ symbol }) => symbol)));
         for (const [symbol, cg] of batch) {
           quotes.set(symbol, {
             symbol,
