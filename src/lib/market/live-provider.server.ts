@@ -203,6 +203,25 @@ async function coinbaseStats(product: string): Promise<{ last: number; open: num
   return { last: Number(ticker.price ?? stats.last ?? 0), open: Number(stats.open ?? 0), time: ticker.time };
 }
 
+/**
+ * Coinbase's USD exchange-rate snapshot returns the whole crypto watchlist in
+ * one request. It updates much more frequently than CoinGecko's simple-price
+ * snapshot and avoids issuing one request per card on the Markets screen.
+ */
+async function coinbaseUsdRates(): Promise<Map<string, number>> {
+  const payload = await cached("cb:usd-rates", 800, () =>
+    getJson("https://api.coinbase.com/v2/exchange-rates?currency=USD") as Promise<{
+      data?: { rates?: Record<string, string> };
+    }>,
+  );
+  const prices = new Map<string, number>();
+  for (const [symbol, rawRate] of Object.entries(payload.data?.rates ?? {})) {
+    const rate = Number(rawRate);
+    if (Number.isFinite(rate) && rate > 0) prices.set(symbol.toUpperCase(), 1 / rate);
+  }
+  return prices;
+}
+
 /* ------------------------------ provider ------------------------------- */
 
 export const liveMarketDataProvider: MarketDataProvider = {
@@ -222,32 +241,35 @@ export const liveMarketDataProvider: MarketDataProvider = {
     if (!entry) throw new Error(`Unknown symbol ${symbol}`);
 
     if (entry.assetType === "CRYPTO") {
-      // Preferred source: CoinGecko with automatic key rotation.
-      if (hasCoinGeckoKeys() && coinGeckoId(entry.symbol)) {
-        try {
-        const cg = await cached(`cg:${entry.symbol}`, 2_000, () => coinGeckoSimplePrice(entry.symbol));
+      // Coinbase ticker is the primary source for fast crypto movement.
+      try {
+        const { last, open, time } = await coinbaseStats(entry.providerSymbol);
+        if (last > 0) {
           return {
             symbol: entry.symbol,
-            price: cg.price,
-            changePercent: cg.changePercent,
+            price: last,
+            changePercent: open > 0 ? ((last - open) / open) * 100 : 0,
             status: "LIVE",
-            asOf: cg.asOf,
+            asOf: time ? Math.floor(new Date(time).getTime() / 1000) : Math.floor(Date.now() / 1000),
             marketState: "OPEN",
           };
-        } catch {
-          // Every key exhausted or request failed → keyless fallback below.
         }
+      } catch {
+        // Unsupported Coinbase pair or temporary failure → CoinGecko fallback.
       }
 
-      const { last, open, time } = await coinbaseStats(entry.providerSymbol);
-      return {
-        symbol: entry.symbol,
-        price: last,
-        changePercent: open > 0 ? ((last - open) / open) * 100 : 0,
-        status: "LIVE",
-        asOf: time ? Math.floor(new Date(time).getTime() / 1000) : Math.floor(Date.now() / 1000),
-        marketState: "OPEN",
-      };
+      if (hasCoinGeckoKeys() && coinGeckoId(entry.symbol)) {
+        const cg = await cached(`cg:${entry.symbol}`, 5_000, () => coinGeckoSimplePrice(entry.symbol));
+        return {
+          symbol: entry.symbol,
+          price: cg.price,
+          changePercent: cg.changePercent,
+          status: "LIVE",
+          asOf: cg.asOf,
+          marketState: "OPEN",
+        };
+      }
+      throw new Error(`No live crypto quote for ${symbol}`);
     }
     // Preferred stock source: Twelve Data with automatic key rotation.
     if (hasTwelveDataKeys()) {
@@ -321,9 +343,32 @@ export const liveMarketDataProvider: MarketDataProvider = {
       }
     }
 
-    if (cryptos.length > 0 && hasCoinGeckoKeys()) {
+    if (cryptos.length > 0) {
       try {
-        const batch = await cached("cg:market-list", 2_000, () => coinGeckoSimplePrices(cryptos.map(({ symbol }) => symbol)));
+        const rates = await coinbaseUsdRates();
+        for (const { symbol } of cryptos) {
+          const livePrice = rates.get(symbol);
+          if (!livePrice) continue;
+          quotes.set(symbol, {
+            symbol,
+            price: livePrice,
+            changePercent: 0,
+            status: "LIVE",
+            asOf: Math.floor(Date.now() / 1000),
+            marketState: "OPEN",
+          });
+        }
+      } catch {
+        // CoinGecko below remains the resilient batch fallback.
+      }
+    }
+
+    const cryptoMissingAfterCoinbase = cryptos.filter(({ symbol }) => !quotes.has(symbol));
+    if (cryptoMissingAfterCoinbase.length > 0 && hasCoinGeckoKeys()) {
+      try {
+        const batch = await cached("cg:market-list", 5_000, () =>
+          coinGeckoSimplePrices(cryptoMissingAfterCoinbase.map(({ symbol }) => symbol)),
+        );
         for (const [symbol, cg] of batch) {
           quotes.set(symbol, {
             symbol,

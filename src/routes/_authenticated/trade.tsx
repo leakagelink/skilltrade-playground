@@ -39,16 +39,16 @@ function TradePage() {
     [symbols],
   );
 
-  // Crypto refreshes every 2 s, stocks every 3 s so momentum feels live while
-  // keeping each provider inside its rate budget via rotated API keys.
+  // Coinbase crypto rates refresh every second. Stocks stay at three seconds;
+  // their actual price only moves while the exchange/provider publishes ticks.
   const cryptoQuotes = useQuery({
     queryKey: ["quotes", "crypto", cryptoSymbols],
     queryFn: () => loadQuotes({ data: { symbols: cryptoSymbols, requestId: Date.now() } }),
     enabled: cryptoSymbols.length > 0,
-    refetchInterval: 2_000,
+    refetchInterval: 1_000,
     refetchIntervalInBackground: true,
     refetchOnMount: true,
-    staleTime: 1_500,
+    staleTime: 750,
   });
   const stockQuotes = useQuery({
     queryKey: ["quotes", "stocks", stockSymbols],
