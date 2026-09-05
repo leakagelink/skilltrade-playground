@@ -32,10 +32,12 @@ function TradePage() {
     queryKey: ["quotes", symbols],
     queryFn: () => loadQuotes({ data: { symbols, requestId: Date.now() } }),
     enabled: symbols.length > 0,
-    refetchInterval: 1000,
+    // A full market refresh is deliberately paced so upstream limits are not
+    // exhausted by dozens of symbols every second.
+    refetchInterval: 60_000,
     refetchIntervalInBackground: true,
-    refetchOnMount: "always",
-    staleTime: 0,
+    refetchOnMount: true,
+    staleTime: 30_000,
   });
   const quoteBy = useMemo(
     () => new Map((quotes.data?.quotes ?? []).map((q) => [q.symbol, q])),
@@ -97,7 +99,7 @@ function TradePage() {
                 <Link
                   to="/chart/$symbol"
                   params={{ symbol: a.symbol }}
-                  className="bento-tile bento-tile-interactive flex items-center gap-3 p-3.5"
+                  className="bento-tile bento-tile-interactive grid min-w-0 grid-cols-[auto_minmax(0,1fr)_auto_auto] items-center gap-2.5 p-3 sm:gap-3 sm:p-3.5"
                 >
                   <div className="brand-gradient flex h-11 min-w-11 shrink-0 items-center justify-center rounded-2xl px-2 text-[11px] font-extrabold tracking-tight">
                     {a.symbol}
@@ -108,17 +110,18 @@ function TradePage() {
                   </div>
                   {quoteBy.get(a.symbol) ? (
                     (() => {
-                      const qd = quoteBy.get(a.symbol)!;
+                       const qd = quoteBy.get(a.symbol);
+                       if (!qd) return null;
                        const tickMove = tickMoves.get(a.symbol) ?? 0;
                        const up = tickMove !== 0 ? tickMove > 0 : qd.changePercent >= 0;
                       return (
-                        <div className="flex flex-col items-end gap-1">
-                          <p className="num text-sm font-semibold">{price(qd.price)}</p>
+                         <div className="min-w-[4.75rem] shrink-0 text-right">
+                           <p className="num whitespace-nowrap text-sm font-semibold">{price(qd.price)}</p>
                            {a.assetType === "STOCK" && qd.marketState === "CLOSED" ? (
-                             <span className="text-[10px] font-medium text-muted-foreground">Market closed</span>
+                              <span className="block whitespace-nowrap text-[9px] font-medium text-muted-foreground sm:text-[10px]">Market closed</span>
                            ) : null}
                           <span
-                            className={`num inline-flex items-center gap-0.5 rounded-full px-1.5 py-0.5 text-[11px] font-semibold ${
+                             className={`num mt-1 inline-flex items-center gap-0.5 rounded-full px-1.5 py-0.5 text-[10px] font-semibold sm:text-[11px] ${
                               up ? "bg-bull/12 text-bull" : "bg-bear/12 text-bear"
                             }`}
                           >
@@ -131,8 +134,8 @@ function TradePage() {
                       );
                     })()
                   ) : (
-                    <span className="rounded-full bg-secondary px-2 py-0.5 text-[10px] font-medium uppercase text-muted-foreground">
-                      {a.assetType}
+                    <span className="max-w-20 text-right text-[9px] font-medium leading-tight text-muted-foreground sm:text-[10px]">
+                      {quotes.isPending ? "Loading price…" : "Price unavailable"}
                     </span>
                   )}
 

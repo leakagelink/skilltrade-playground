@@ -41,6 +41,7 @@ export interface MarketDataProvider {
   readonly id: string;
   getAssets(): Promise<MarketAsset[]>;
   getLatestPrice(symbol: string): Promise<Quote>;
+  getLatestPrices?(symbols: string[]): Promise<Quote[]>;
   getOHLC(symbol: string, timeframe: Timeframe, limit?: number): Promise<Candle[]>;
   getHistoricalData(symbol: string, timeframe: Timeframe, from: number, to: number): Promise<Candle[]>;
 }

@@ -134,3 +134,34 @@ export async function coinGeckoSimplePrice(symbol: string): Promise<CoinGeckoQuo
     asOf: row.last_updated_at ?? Math.floor(Date.now() / 1000),
   };
 }
+
+/** Fetches the whole crypto watchlist in one request to preserve API credits. */
+export async function coinGeckoSimplePrices(symbols: string[]): Promise<Map<string, CoinGeckoQuote>> {
+  const pairs = symbols.flatMap((symbol) => {
+    const id = coinGeckoId(symbol);
+    return id ? [{ symbol: symbol.toUpperCase(), id }] : [];
+  });
+  if (pairs.length === 0) return new Map();
+
+  const params = new URLSearchParams({
+    ids: pairs.map(({ id }) => id).join(","),
+    vs_currencies: "usd",
+    include_24hr_change: "true",
+    include_last_updated_at: "true",
+  });
+  const payload = (await requestWithRotation("/simple/price", params)) as Record<
+    string,
+    { usd?: number; usd_24h_change?: number; last_updated_at?: number } | undefined
+  >;
+  const quotes = new Map<string, CoinGeckoQuote>();
+  for (const { symbol, id } of pairs) {
+    const row = payload[id];
+    if (!row || typeof row.usd !== "number") continue;
+    quotes.set(symbol, {
+      price: row.usd,
+      changePercent: row.usd_24h_change ?? 0,
+      asOf: row.last_updated_at ?? Math.floor(Date.now() / 1000),
+    });
+  }
+  return quotes;
+}

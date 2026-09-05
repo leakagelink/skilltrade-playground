@@ -108,18 +108,56 @@ export type TwelveDataQuote = {
   marketOpen: boolean;
 };
 
-export async function twelveDataQuote(symbol: string): Promise<TwelveDataQuote> {
-  const payload = await requestWithRotation("/quote", new URLSearchParams({ symbol }));
+function parseMarketOpen(value: unknown): boolean {
+  return value === true || value === 1 || value === "true" || value === "1";
+}
+
+function parseQuote(payload: Record<string, unknown>, symbol: string): TwelveDataQuote | undefined {
   const price = Number(payload["close"] ?? payload["price"]);
-  if (!Number.isFinite(price) || price <= 0) throw new Error(`No Twelve Data price for ${symbol}`);
+  if (!Number.isFinite(price) || price <= 0) return undefined;
   const percent = Number(payload["percent_change"]);
   const timestamp = Number(payload["timestamp"]);
   return {
     price,
     changePercent: Number.isFinite(percent) ? percent : 0,
     asOf: Number.isFinite(timestamp) ? timestamp : Math.floor(Date.now() / 1000),
-    marketOpen: Boolean(payload["is_market_open"]),
+    marketOpen: parseMarketOpen(payload["is_market_open"]),
   };
+}
+
+export async function twelveDataQuote(symbol: string): Promise<TwelveDataQuote> {
+  const payload = await requestWithRotation("/quote", new URLSearchParams({ symbol }));
+  const quote = parseQuote(payload, symbol);
+  if (!quote) throw new Error(`No Twelve Data price for ${symbol}`);
+  return quote;
+}
+
+/** Fetches many stock quotes with one API call instead of one credit burst per symbol. */
+export async function twelveDataQuotes(symbols: string[]): Promise<Map<string, TwelveDataQuote>> {
+  if (symbols.length === 0) return new Map();
+  const normalized = symbols.map((symbol) => symbol.toUpperCase());
+  const payload = await requestWithRotation(
+    "/quote",
+    new URLSearchParams({ symbol: normalized.join(",") }),
+  );
+  const quotes = new Map<string, TwelveDataQuote>();
+
+  // Twelve Data returns a direct quote for one symbol and a symbol-keyed map
+  // for a multi-symbol request.
+  if (normalized.length === 1) {
+    const symbol = normalized[0];
+    if (!symbol) return quotes;
+    const quote = parseQuote(payload, symbol);
+    if (quote) quotes.set(symbol, quote);
+    return quotes;
+  }
+  for (const symbol of normalized) {
+    const row = payload[symbol];
+    if (!row || typeof row !== "object") continue;
+    const quote = parseQuote(row as Record<string, unknown>, symbol);
+    if (quote) quotes.set(symbol, quote);
+  }
+  return quotes;
 }
 
 const INTERVALS: Record<Timeframe, string> = {

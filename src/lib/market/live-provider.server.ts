@@ -1,6 +1,6 @@
 import { CATALOG, catalogEntry } from "./catalog";
-import { coinGeckoId, coinGeckoSimplePrice, hasCoinGeckoKeys } from "./coingecko.server";
-import { hasTwelveDataKeys, twelveDataCandles, twelveDataQuote } from "./twelvedata.server";
+import { coinGeckoId, coinGeckoSimplePrice, coinGeckoSimplePrices, hasCoinGeckoKeys } from "./coingecko.server";
+import { hasTwelveDataKeys, twelveDataCandles, twelveDataQuote, twelveDataQuotes } from "./twelvedata.server";
 import type { Candle, MarketAsset, MarketDataProvider, Quote, Timeframe } from "./types";
 import { TIMEFRAMES } from "./types";
 
@@ -292,6 +292,62 @@ export const liveMarketDataProvider: MarketDataProvider = {
               ? "POST"
               : "CLOSED",
     };
+  },
+
+  async getLatestPrices(symbols: string[]): Promise<Quote[]> {
+    const entries = symbols.flatMap((symbol) => {
+      const entry = catalogEntry(symbol);
+      return entry ? [entry] : [];
+    });
+    const stocks = entries.filter((entry) => entry.assetType === "STOCK");
+    const cryptos = entries.filter((entry) => entry.assetType === "CRYPTO");
+    const quotes = new Map<string, Quote>();
+
+    if (stocks.length > 0 && hasTwelveDataKeys()) {
+      try {
+        const batch = await cached("td:market-list", 30_000, () => twelveDataQuotes(stocks.map(({ symbol }) => symbol)));
+        for (const [symbol, td] of batch) {
+          quotes.set(symbol, {
+            symbol,
+            price: td.price,
+            changePercent: td.changePercent,
+            status: "LIVE",
+            asOf: td.asOf,
+            marketState: td.marketOpen ? "OPEN" : "CLOSED",
+          });
+        }
+      } catch {
+        // Missing batch rows use the normal provider fallback below.
+      }
+    }
+
+    if (cryptos.length > 0 && hasCoinGeckoKeys()) {
+      try {
+        const batch = await cached("cg:market-list", 30_000, () => coinGeckoSimplePrices(cryptos.map(({ symbol }) => symbol)));
+        for (const [symbol, cg] of batch) {
+          quotes.set(symbol, {
+            symbol,
+            price: cg.price,
+            changePercent: cg.changePercent,
+            status: "LIVE",
+            asOf: cg.asOf,
+            marketState: "OPEN",
+          });
+        }
+      } catch {
+        // Missing batch rows use the normal provider fallback below.
+      }
+    }
+
+    const missing = entries.filter(({ symbol }) => !quotes.has(symbol));
+    const settled = await Promise.allSettled(missing.map(({ symbol }) => this.getLatestPrice(symbol)));
+    for (const result of settled) {
+      if (result.status === "fulfilled") quotes.set(result.value.symbol, result.value);
+    }
+    return entries.flatMap(({ symbol }) => {
+      const quote = quotes.get(symbol);
+      return quote ? [quote] : [];
+    });
   },
 
   async getOHLC(symbol: string, timeframe: Timeframe, limit = 200): Promise<Candle[]> {
