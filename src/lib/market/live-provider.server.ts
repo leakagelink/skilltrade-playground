@@ -1,6 +1,8 @@
 import { CATALOG, catalogEntry } from "./catalog";
+import { coinGeckoId, coinGeckoSimplePrice, hasCoinGeckoKeys } from "./coingecko.server";
 import type { Candle, MarketAsset, MarketDataProvider, Quote, Timeframe } from "./types";
 import { TIMEFRAMES } from "./types";
+
 
 /**
  * FREE LIVE MARKET DATA PROVIDER (no API key required).
