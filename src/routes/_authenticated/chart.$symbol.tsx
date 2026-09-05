@@ -59,14 +59,15 @@ function ChartPage() {
     staleTime: 3_000,
   });
 
-  // Fast real-price loop. The request id also prevents browser/CDN GET caching.
+  // Fast real-price loop: crypto every 2 s, stocks every 3 s.
+  const isCrypto = catalogEntry(symbol)?.assetType === "CRYPTO";
   const tick = useQuery({
     queryKey: ["quote", symbol],
     queryFn: () => loadQuote({ data: { symbol, requestId: Date.now() } }),
-    refetchInterval: 4000,
+    refetchInterval: isCrypto ? 2_000 : 3_000,
     refetchIntervalInBackground: true,
     refetchOnMount: true,
-    staleTime: 3_000,
+    staleTime: isCrypto ? 1_500 : 2_000,
   });
 
   const trades = useQuery({
