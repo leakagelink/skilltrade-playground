@@ -249,7 +249,22 @@ export const liveMarketDataProvider: MarketDataProvider = {
         marketState: "OPEN",
       };
     }
-
+    // Preferred stock source: Twelve Data with automatic key rotation.
+    if (hasTwelveDataKeys()) {
+      try {
+        const td = await cached(`td:${entry.symbol}`, 10_000, () => twelveDataQuote(entry.symbol));
+        return {
+          symbol: entry.symbol,
+          price: td.price,
+          changePercent: td.changePercent,
+          status: "LIVE",
+          asOf: td.asOf,
+          marketState: td.marketOpen ? "OPEN" : "CLOSED",
+        };
+      } catch {
+        // Every key exhausted or request failed → Yahoo fallback below.
+      }
+    }
 
     const payload = await yahooLatest(entry.providerSymbol);
     const meta = payload.chart?.result?.[0]?.meta;
