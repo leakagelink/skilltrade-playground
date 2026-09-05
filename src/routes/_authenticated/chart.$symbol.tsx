@@ -13,6 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { TIMEFRAMES, type Timeframe } from "@/lib/market/types";
+import { catalogEntry } from "@/lib/market/catalog";
 import { money, pct, price, signedMoney } from "@/lib/format";
 import { MarketDataNote } from "@/components/Disclaimer";
 import { toast } from "sonner";
@@ -203,11 +204,11 @@ function ChartPage() {
             />
             {quote.status === "SIMULATED"
               ? "Demo market data — the market feed is temporarily unavailable."
-              : quote.status === "LIVE"
-                ? "Current market price from a public crypto data source. Data may be delayed or incomplete. Trades are simulated only."
-                : quote.marketState === "OPEN" || quote.marketState === "PRE" || quote.marketState === "POST"
-                  ? "Latest available stock price from a public market data source. Market data may be delayed. Trades are simulated only."
-                  : "Market closed — showing the latest available price. Market data may be delayed."}
+              : quote.marketState === "CLOSED"
+                ? "Market closed — showing the latest available price. Market data may be delayed."
+                : catalogEntry(symbol)?.assetType === "CRYPTO"
+                  ? "Current market price from a public crypto data source. Data may be delayed or incomplete. Trades are simulated only."
+                  : "Latest available stock price from a public market data source. Market data may be delayed. Trades are simulated only."}
           </p>
         ) : (
           <p className="text-center text-[11px] text-muted-foreground">
