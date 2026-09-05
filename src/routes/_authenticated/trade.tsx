@@ -29,22 +29,42 @@ export const Route = createFileRoute("/_authenticated/trade")({
 function TradePage() {
   const loadQuotes = useServerFn(getQuotes);
   const symbols = useMemo(() => CATALOG.map((asset) => asset.symbol), []);
-  // Continuous real-price loop for the markets list.
-  const quotes = useQuery({
-    queryKey: ["quotes", symbols],
-    queryFn: () => loadQuotes({ data: { symbols, requestId: Date.now() } }),
-    enabled: symbols.length > 0,
-    // A full market refresh is deliberately paced so upstream limits are not
-    // exhausted by dozens of symbols every second.
-    refetchInterval: 60_000,
+  const cryptoSymbols = useMemo(
+    () => symbols.filter((s) => catalogEntry(s)?.assetType === "CRYPTO"),
+    [symbols],
+  );
+  const stockSymbols = useMemo(
+    () => symbols.filter((s) => catalogEntry(s)?.assetType === "STOCK"),
+    [symbols],
+  );
+
+  // Crypto refreshes every 2 s, stocks every 3 s so momentum feels live while
+  // keeping each provider inside its rate budget via rotated API keys.
+  const cryptoQuotes = useQuery({
+    queryKey: ["quotes", "crypto", cryptoSymbols],
+    queryFn: () => loadQuotes({ data: { symbols: cryptoSymbols, requestId: Date.now() } }),
+    enabled: cryptoSymbols.length > 0,
+    refetchInterval: 2_000,
     refetchIntervalInBackground: true,
     refetchOnMount: true,
-    staleTime: 30_000,
+    staleTime: 1_500,
   });
-  const quoteBy = useMemo(
-    () => new Map((quotes.data?.quotes ?? []).map((q) => [q.symbol, q])),
-    [quotes.data],
-  );
+  const stockQuotes = useQuery({
+    queryKey: ["quotes", "stocks", stockSymbols],
+    queryFn: () => loadQuotes({ data: { symbols: stockSymbols, requestId: Date.now() } }),
+    enabled: stockSymbols.length > 0,
+    refetchInterval: 3_000,
+    refetchIntervalInBackground: true,
+    refetchOnMount: true,
+    staleTime: 2_000,
+  });
+
+  const quoteBy = useMemo(() => {
+    const map = new Map<string, Quote>();
+    for (const q of cryptoQuotes.data?.quotes ?? []) map.set(q.symbol, q);
+    for (const q of stockQuotes.data?.quotes ?? []) map.set(q.symbol, q);
+    return map;
+  }, [cryptoQuotes.data, stockQuotes.data]);
   const [q, setQ] = useState("");
   const [tab, setTab] = useState<"ALL" | "STOCK" | "CRYPTO">("ALL");
   const previousPrices = useRef(new Map<string, number>());
