@@ -17,7 +17,7 @@ export function AppHeader({
   showSettings?: boolean;
 }) {
   return (
-    <header className="glass-panel sticky top-0 z-30 flex items-center gap-3 border-x-0 border-t-0 px-4 py-3">
+    <header className="glass-panel safe-top sticky top-0 z-30 flex items-center gap-3 border-x-0 border-t-0 px-4 pb-3">
       {back ? (
         <Link
           to={back}

@@ -183,6 +183,14 @@
   font-variant-numeric: tabular-nums;
 }
 
+@utility safe-top {
+  padding-top: calc(env(safe-area-inset-top, 0px) + 0.75rem);
+}
+
+@utility safe-top-section {
+  padding-top: calc(env(safe-area-inset-top, 0px) + 1.75rem);
+}
+
 @utility safe-bottom {
   padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 0.5rem);
 }

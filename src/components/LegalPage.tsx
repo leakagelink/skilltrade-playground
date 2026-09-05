@@ -12,7 +12,7 @@ export function LegalPage({
 }) {
   return (
     <main className="min-h-screen bg-background">
-      <header className="sticky top-0 z-30 flex items-center gap-3 border-b border-border bg-background/90 px-4 py-3 backdrop-blur">
+      <header className="safe-top sticky top-0 z-30 flex items-center gap-3 border-b border-border bg-background/90 px-4 pb-3 backdrop-blur">
         <Link to="/" className="-ml-2 flex size-9 items-center justify-center rounded-full text-muted-foreground hover:bg-secondary" aria-label="Go back">
           <ChevronLeft className="size-5" />
         </Link>
