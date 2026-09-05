@@ -87,7 +87,7 @@ export async function recomputeProfile(admin: Admin, userId: string) {
   return { totalXp, level, score: breakdown.score };
 }
 
-async function grantBadge(admin: Admin, userId: string, code: string) {
+export async function grantBadge(admin: Admin, userId: string, code: string) {
   const { data: badge } = await admin.from("badges").select("id, name").eq("code", code).maybeSingle();
   if (!badge) return;
   const { data: existing } = await admin
