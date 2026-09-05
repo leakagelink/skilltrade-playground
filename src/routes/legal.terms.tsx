@@ -45,7 +45,11 @@ export const Route = createFileRoute("/legal/terms")({
           body: "Market prices and chart data may be delayed, incomplete or temporarily unavailable, and are provided solely for educational simulation purposes. The service is provided on an as-is basis without warranty of accuracy, availability or fitness for a particular purpose, and nothing in it constitutes financial, investment, trading or legal advice.",
         },
         {
-          heading: "7. Changes",
+          heading: "7. AI insights, Trader DNA and Trading Personality",
+          body: "AI-generated insights are based on simulated trading activity and are provided for educational and informational purposes only. They do not constitute financial, investment, trading or legal advice and do not guarantee trading performance or future market outcomes. Trader DNA and Trading Personality are educational, gamified summaries of simulated activity and are not financial assessments, investment recommendations or psychological evaluations. AI features are free in this version and may be subject to fair-use limits.",
+        },
+        {
+          heading: "8. Changes",
           body: "These terms may be updated as the application evolves. Continued use after an update constitutes acceptance of the revised terms.",
         },
       ]}

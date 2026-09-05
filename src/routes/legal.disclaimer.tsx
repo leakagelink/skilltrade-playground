@@ -48,6 +48,10 @@ export const Route = createFileRoute("/legal/disclaimer")({
           heading: "AI and automated insights",
           body: "AI-generated insights and trade reviews are provided for educational and informational purposes only. They do not constitute financial or investment advice and do not guarantee trading performance or future market outcomes. Where an AI simulation is shown, its performance is generated on simulated data only.",
         },
+        {
+          heading: "Trader DNA and Trading Personality",
+          body: "Trader DNA and Trading Personality features are educational and gamified summaries based on your simulated trading activity. They are not financial assessments, investment recommendations or psychological evaluations, and they do not predict real-world trading ability or outcomes.",
+        },
       ]}
     />
   ),
