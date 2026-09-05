@@ -1,5 +1,6 @@
 import { CATALOG, catalogEntry } from "./catalog";
 import { coinGeckoId, coinGeckoSimplePrice, hasCoinGeckoKeys } from "./coingecko.server";
+import { hasTwelveDataKeys, twelveDataCandles, twelveDataQuote } from "./twelvedata.server";
 import type { Candle, MarketAsset, MarketDataProvider, Quote, Timeframe } from "./types";
 import { TIMEFRAMES } from "./types";
 
@@ -248,7 +249,22 @@ export const liveMarketDataProvider: MarketDataProvider = {
         marketState: "OPEN",
       };
     }
-
+    // Preferred stock source: Twelve Data with automatic key rotation.
+    if (hasTwelveDataKeys()) {
+      try {
+        const td = await cached(`td:${entry.symbol}`, 10_000, () => twelveDataQuote(entry.symbol));
+        return {
+          symbol: entry.symbol,
+          price: td.price,
+          changePercent: td.changePercent,
+          status: "LIVE",
+          asOf: td.asOf,
+          marketState: td.marketOpen ? "OPEN" : "CLOSED",
+        };
+      } catch {
+        // Every key exhausted or request failed → Yahoo fallback below.
+      }
+    }
 
     const payload = await yahooLatest(entry.providerSymbol);
     const meta = payload.chart?.result?.[0]?.meta;
@@ -282,13 +298,24 @@ export const liveMarketDataProvider: MarketDataProvider = {
     const entry = catalogEntry(symbol);
     if (!entry) throw new Error(`Unknown symbol ${symbol}`);
 
-    let candles: Candle[];
+    let candles: Candle[] = [];
     if (entry.assetType === "CRYPTO") {
       candles = await coinbaseCandles(entry.providerSymbol, timeframe);
     } else {
-      const payload = await yahooChart(entry.providerSymbol, timeframe);
-      candles = yahooToCandles(payload);
-      if (timeframe === "4h") candles = aggregate(candles, bucketSeconds("4h"));
+      if (hasTwelveDataKeys()) {
+        try {
+          candles = await cached(`tdc:${entry.symbol}:${timeframe}`, 30_000, () =>
+            twelveDataCandles(entry.symbol, timeframe, Math.max(limit, 200)),
+          );
+        } catch {
+          candles = [];
+        }
+      }
+      if (candles.length === 0) {
+        const payload = await yahooChart(entry.providerSymbol, timeframe);
+        candles = yahooToCandles(payload);
+        if (timeframe === "4h") candles = aggregate(candles, bucketSeconds("4h"));
+      }
     }
     if (candles.length === 0) throw new Error(`No candles for ${symbol}`);
     return candles.slice(-limit);
