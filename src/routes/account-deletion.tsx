@@ -17,7 +17,7 @@ export const Route = createFileRoute("/account-deletion")({
   component: () => (
     <LegalPage
       title="TradeVirt Account Deletion"
-      updated="Version 1.1"
+      updated="Version 1.2"
       sections={[
         {
           heading: "Who operates TradeVirt",

@@ -1,9 +1,10 @@
 import { Link } from "@tanstack/react-router";
-import { Home, CandlestickChart, Sparkles, Target, Trophy, User } from "lucide-react";
+import { Home, CandlestickChart, Sparkles, Swords, Target, Trophy, User } from "lucide-react";
 
 const TABS = [
   { to: "/home", label: "Home", icon: Home },
   { to: "/trade", label: "Trade", icon: CandlestickChart },
+  { to: "/ai-arena", label: "Arena", icon: Swords },
   { to: "/insights", label: "AI", icon: Sparkles },
   { to: "/challenges", label: "Goals", icon: Target },
   { to: "/leaderboard", label: "Ranks", icon: Trophy },
@@ -18,13 +19,13 @@ export function BottomNav() {
           <li key={to} className="flex-1">
             <Link
               to={to}
-              className="group relative flex min-h-13 flex-col items-center justify-center gap-1 rounded-3xl px-1 py-2 text-[10px] font-semibold tracking-wide text-muted-foreground transition-all duration-200"
+              className="group relative flex min-h-13 flex-col items-center justify-center gap-0.5 rounded-2xl px-0.5 py-2 text-[9px] font-semibold tracking-wide text-muted-foreground transition-all duration-200"
               activeProps={{
                 className:
                   "text-primary-foreground bg-primary shadow-[0_8px_24px_-10px_oklch(0.78_0.17_158/70%)]",
               }}
             >
-              <Icon className="size-5 transition-transform duration-200 group-active:scale-90" strokeWidth={2.1} />
+              <Icon className="size-[18px] transition-transform duration-200 group-active:scale-90" strokeWidth={2.1} />
               <span>{label}</span>
             </Link>
           </li>

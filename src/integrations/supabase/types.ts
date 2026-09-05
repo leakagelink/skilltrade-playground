@@ -14,6 +14,69 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_arena_sessions: {
+        Row: {
+          ai_cash: number
+          ai_return: number | null
+          ai_score: number | null
+          bot_id: string
+          created_at: string
+          end_time: string
+          id: string
+          last_bot_tick_at: string
+          result_summary: string | null
+          start_time: string
+          starting_balance: number
+          status: string
+          updated_at: string
+          user_cash: number
+          user_id: string
+          user_return: number | null
+          user_score: number | null
+          winner: string | null
+        }
+        Insert: {
+          ai_cash?: number
+          ai_return?: number | null
+          ai_score?: number | null
+          bot_id: string
+          created_at?: string
+          end_time: string
+          id?: string
+          last_bot_tick_at?: string
+          result_summary?: string | null
+          start_time?: string
+          starting_balance?: number
+          status?: string
+          updated_at?: string
+          user_cash?: number
+          user_id: string
+          user_return?: number | null
+          user_score?: number | null
+          winner?: string | null
+        }
+        Update: {
+          ai_cash?: number
+          ai_return?: number | null
+          ai_score?: number | null
+          bot_id?: string
+          created_at?: string
+          end_time?: string
+          id?: string
+          last_bot_tick_at?: string
+          result_summary?: string | null
+          start_time?: string
+          starting_balance?: number
+          status?: string
+          updated_at?: string
+          user_cash?: number
+          user_id?: string
+          user_return?: number | null
+          user_score?: number | null
+          winner?: string | null
+        }
+        Relationships: []
+      }
       ai_trade_reviews: {
         Row: {
           areas_to_review: string[]
@@ -69,6 +132,80 @@ export type Database = {
             columns: ["trade_id"]
             isOneToOne: true
             referencedRelation: "trades"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      arena_trades: {
+        Row: {
+          arena_session_id: string
+          asset_type: string
+          closed_at: string | null
+          created_at: string
+          current_price: number | null
+          direction: string
+          entry_price: number
+          exit_price: number | null
+          id: string
+          opened_at: string
+          owner_type: string
+          pnl: number | null
+          position_size: number
+          quantity: number
+          status: string
+          stop_loss: number | null
+          symbol: string
+          take_profit: number | null
+          unrealized_pnl: number | null
+        }
+        Insert: {
+          arena_session_id: string
+          asset_type: string
+          closed_at?: string | null
+          created_at?: string
+          current_price?: number | null
+          direction: string
+          entry_price: number
+          exit_price?: number | null
+          id?: string
+          opened_at?: string
+          owner_type: string
+          pnl?: number | null
+          position_size: number
+          quantity: number
+          status?: string
+          stop_loss?: number | null
+          symbol: string
+          take_profit?: number | null
+          unrealized_pnl?: number | null
+        }
+        Update: {
+          arena_session_id?: string
+          asset_type?: string
+          closed_at?: string | null
+          created_at?: string
+          current_price?: number | null
+          direction?: string
+          entry_price?: number
+          exit_price?: number | null
+          id?: string
+          opened_at?: string
+          owner_type?: string
+          pnl?: number | null
+          position_size?: number
+          quantity?: number
+          status?: string
+          stop_loss?: number | null
+          symbol?: string
+          take_profit?: number | null
+          unrealized_pnl?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "arena_trades_arena_session_id_fkey"
+            columns: ["arena_session_id"]
+            isOneToOne: false
+            referencedRelation: "ai_arena_sessions"
             referencedColumns: ["id"]
           },
         ]

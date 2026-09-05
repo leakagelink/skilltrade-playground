@@ -14,7 +14,7 @@ export const Route = createFileRoute("/legal/terms")({
   component: () => (
     <LegalPage
       title="Terms of Service"
-      updated="Version 1.1"
+      updated="Version 1.2"
       sections={[
         {
           heading: "0. Who operates TradeVirt",
