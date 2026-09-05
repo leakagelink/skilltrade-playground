@@ -5,10 +5,13 @@ import { BottomNav } from "@/components/BottomNav";
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
   beforeLoad: async () => {
-    const { data, error } = await supabase.auth.getUser();
-    if (error || !data.user) throw redirect({ to: "/auth" });
-    return { user: data.user };
+    // Read the locally stored session (no network round-trip on every screen
+    // change). Server functions still verify the token on their side.
+    const { data, error } = await supabase.auth.getSession();
+    if (error || !data.session?.user) throw redirect({ to: "/auth" });
+    return { user: data.session.user };
   },
+
   component: AuthedLayout,
 });
 
