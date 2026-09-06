@@ -133,6 +133,15 @@ function RootComponent() {
 
   useQueryCachePersistence(queryClient);
 
+  // Initialise Google Mobile Ads (native builds only) and warm the ad cache.
+  useEffect(() => {
+    void import("@/lib/ads/admob-bridge").then(async (ads) => {
+      if (!(await ads.adsAvailable())) return;
+      void ads.preloadRewarded();
+      void ads.preloadInterstitial();
+    });
+  }, []);
+
   useEffect(() => {
     const { data } = supabase.auth.onAuthStateChange((event) => {
       if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return;

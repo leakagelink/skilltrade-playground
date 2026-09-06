@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { recordInterstitialShown, requestInterstitial } from "@/lib/ads.functions";
 import type { InterstitialPlacement } from "./config";
-import { preloadInterstitial, showInterstitialAd } from "./admob.client";
+import { preloadInterstitial, showInterstitialAd } from "./admob-bridge";
 
 /**
  * Shows an interstitial only at a natural break, after the user has already

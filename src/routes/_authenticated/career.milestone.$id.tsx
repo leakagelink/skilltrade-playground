@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useParams } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate, useParams } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getCareerStatus } from "@/lib/career.functions";
@@ -7,6 +7,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { DisclaimerNote } from "@/components/Disclaimer";
+import { RewardedAdOffer } from "@/components/ads/RewardedAdOffer";
+import { useInterstitialContinue } from "@/lib/ads/useInterstitial";
 
 export const Route = createFileRoute("/_authenticated/career/milestone/$id")({
   head: () => ({
@@ -27,6 +29,8 @@ export const Route = createFileRoute("/_authenticated/career/milestone/$id")({
 
 function MilestonePage() {
   const { id } = useParams({ from: "/_authenticated/career/milestone/$id" });
+  const navigate = useNavigate();
+  const showAdThenContinue = useInterstitialContinue();
   const load = useServerFn(getCareerStatus);
   const career = useQuery({ queryKey: ["career"], queryFn: () => load(), staleTime: 15_000 });
 
@@ -86,8 +90,22 @@ function MilestonePage() {
               <p className="text-sm text-muted-foreground">{mission.goal}</p>
             </section>
 
-            <Button asChild variant="secondary" size="sm">
-              <Link to="/career">Back to career</Link>
+            {mission.completed ? (
+              <RewardedAdOffer
+                placement="CAREER"
+                title="Optional milestone bonus"
+                onGranted={() => void career.refetch()}
+              />
+            ) : null}
+
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() =>
+                void showAdThenContinue("CAREER_MILESTONE_CONTINUE", () => navigate({ to: "/career" }))
+              }
+            >
+              Continue
             </Button>
           </>
         )}

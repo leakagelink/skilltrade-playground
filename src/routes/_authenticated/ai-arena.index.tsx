@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -18,6 +18,8 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DisclaimerNote, MarketDataNote, SimulationBadge } from "@/components/Disclaimer";
 import { AiOpponentCard, ArenaResultCard, ArenaScoreCard, VersusPanel } from "@/components/arena/ArenaParts";
+import { RewardedAdOffer } from "@/components/ads/RewardedAdOffer";
+import { useInterstitialContinue } from "@/lib/ads/useInterstitial";
 import { AssetLogo } from "@/components/AssetLogo";
 import { money, signedMoney } from "@/lib/format";
 
@@ -50,6 +52,8 @@ function countdownOf(ms: number): string {
 
 function ArenaPage() {
   const qc = useQueryClient();
+  const navigate = useNavigate();
+  const showAdThenContinue = useInterstitialContinue();
   const load = useServerFn(getArenaState);
   const start = useServerFn(startArena);
   const open = useServerFn(openArenaTrade);
@@ -57,7 +61,7 @@ function ArenaPage() {
   const end = useServerFn(endArenaNow);
   const [now, setNow] = useState(() => Date.now());
 
-  const { data, isLoading, isError } = useQuery({
+  const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["arena"],
     queryFn: () => load(),
     refetchInterval: 20_000,
@@ -299,11 +303,25 @@ function ArenaPage() {
           </>
         )}
 
-        <Button asChild variant="secondary" className="h-11 w-full rounded-2xl text-sm font-semibold">
-          <Link to="/ai-arena/history">
-            <History className="size-4" /> Arena history
-          </Link>
-        </Button>
+        <RewardedAdOffer placement="ARENA" title="Optional Arena bonus" onGranted={() => void refetch()} />
+
+        {lastResult ? (
+          <Button
+            variant="secondary"
+            className="h-11 w-full rounded-2xl text-sm font-semibold"
+            onClick={() =>
+              void showAdThenContinue("ARENA_RESULT_CONTINUE", () => navigate({ to: "/ai-arena/history" }))
+            }
+          >
+            <History className="size-4" /> Continue to Arena history
+          </Button>
+        ) : (
+          <Button asChild variant="secondary" className="h-11 w-full rounded-2xl text-sm font-semibold">
+            <Link to="/ai-arena/history">
+              <History className="size-4" /> Arena history
+            </Link>
+          </Button>
+        )}
 
         <DisclaimerNote text="The AI Arena is a simulated trading competition using virtual funds. No real-money trading is available, and virtual balances, scores and rewards have no monetary value. AI Arena opponents use predefined simulation strategies." />
         <MarketDataNote />

@@ -4,14 +4,15 @@
  */
 export const FEATURE_FLAGS = {
   bannerAds: false,
-  interstitialAds: false,
+  /** Version 2.0: genuine Google AdMob interstitials at natural breaks only. */
+  interstitialAds: true,
   nativeAds: false,
   /**
-   * Version 1.0 production: rewarded advertisements are completely disabled.
-   * The provider/verification architecture is kept for a future release, but no
-   * user-facing entry point exists and the server rejects every grant request.
+   * Version 2.0: optional Google AdMob rewarded ads. Rewards are virtual only
+   * (extra AI analysis / bonus XP), granted server-side after a genuine SDK
+   * reward callback. Never credits, never money.
    */
-  rewardedAds: false,
+  rewardedAds: true,
   subscriptions: false,
   aiTradeReviewAdvanced: false,
   aiBotMode: true, // simulation-only placeholder
