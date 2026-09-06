@@ -173,23 +173,6 @@ function Detail({ label, value }: { label: string; value: string }) {
   );
 }
 
-function TradeRow({ trade }: { trade: { id: string; symbol: string; direction: string; entry_price: number; position_size: number; unrealized_pnl: number | null } }) {
-  const pnl = Number(trade.unrealized_pnl ?? 0);
-  return (
-    <div className="surface-card flex items-center gap-3 p-4">
-      <div className="min-w-0 flex-1">
-        <p className="text-sm font-semibold">
-          {trade.symbol} · {trade.direction}
-        </p>
-        <p className="num text-xs text-muted-foreground">
-          Entry {price(Number(trade.entry_price))} · {money(Number(trade.position_size))}
-        </p>
-      </div>
-      <span className={`num shrink-0 whitespace-nowrap text-sm font-semibold ${pnl >= 0 ? "text-bull" : "text-bear"}`}>{signedMoney(pnl)}</span>
-    </div>
-  );
-}
-
 function CareerCard() {
   const loadCareer = useServerFn(getCareerStatus);
   const career = useQuery({ queryKey: ["career"], queryFn: () => loadCareer(), staleTime: 30_000 });
