@@ -10,6 +10,7 @@ import { DisclaimerNote, SimulationBadge } from "@/components/Disclaimer";
 import { money, pct, signedMoney } from "@/lib/format";
 import { Coins, Gift, TrendingUp, Trophy, Wallet } from "lucide-react";
 import { toast } from "sonner";
+import { trackEvent } from "@/lib/analytics";
 
 export const Route = createFileRoute("/_authenticated/home")({
   head: () => ({
@@ -78,6 +79,7 @@ function HomePage() {
     mutationFn: () => claim(),
     onSuccess: (r) => {
       toast.success(`+${r.granted} Trading Credits claimed.`);
+      void trackEvent("daily_reward_claimed");
       qc.invalidateQueries({ queryKey: ["dashboard"] });
     },
     onError: (e: Error) => toast.error(e.message || "Could not claim your reward right now."),

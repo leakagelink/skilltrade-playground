@@ -20,6 +20,7 @@ import { money, pct, price, signedMoney } from "@/lib/format";
 import { MarketDataNote } from "@/components/Disclaimer";
 import { toast } from "sonner";
 import { ArrowDownRight, ArrowUpRight } from "lucide-react";
+import { trackEvent } from "@/lib/analytics";
 
 export const Route = createFileRoute("/_authenticated/chart/$symbol")({
   head: ({ params }) => ({
@@ -117,6 +118,10 @@ function ChartPage() {
       }),
     onSuccess: (r) => {
       toast.success(`Simulated ${direction} opened at ${price(r.entryPrice)}.`);
+      void trackEvent("trade_opened", {
+        asset_type: catalogEntry(symbol)?.assetType ?? "UNKNOWN",
+        market_type: direction,
+      });
       setSheetOpen(false);
       setNotes("");
       qc.invalidateQueries();
@@ -128,6 +133,7 @@ function ChartPage() {
     mutationFn: (tradeId: string) => close({ data: { tradeId } }),
     onSuccess: () => {
       toast.success("Trade closed. Review added to your history.");
+      void trackEvent("trade_closed", { asset_type: catalogEntry(symbol)?.assetType ?? "UNKNOWN" });
       qc.invalidateQueries();
       navigate({ to: "/profile" });
     },

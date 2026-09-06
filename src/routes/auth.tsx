@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { BrandLogo, BrandMark } from "@/components/BrandLogo";
+import { trackEvent } from "@/lib/analytics";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -63,6 +64,7 @@ function AuthPage() {
       toast.error(error.message);
       return;
     }
+    void trackEvent("login_completed", { method: "password" });
     navigate({ to: "/home", replace: true });
   }
 
@@ -89,6 +91,7 @@ function AuthPage() {
       return;
     }
     if (data.session) {
+      void trackEvent("sign_up_completed", { method: "password" });
       navigate({ to: "/onboarding", replace: true });
       return;
     }

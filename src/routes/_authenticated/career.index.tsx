@@ -9,6 +9,7 @@ import { Progress } from "@/components/ui/progress";
 import { EmptyState } from "@/components/EmptyState";
 import { DisclaimerNote, SimulationBadge } from "@/components/Disclaimer";
 import { Check, ChevronRight, CircleDashed, Compass, Lock, Rocket, Trophy } from "lucide-react";
+import { trackEvent } from "@/lib/analytics";
 
 export const Route = createFileRoute("/_authenticated/career/")({
   head: () => ({
@@ -37,7 +38,10 @@ function CareerPage() {
 
   const pick = useMutation({
     mutationFn: (specialization: string) => choose({ data: { specialization } }),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["career"] }),
+    onSuccess: (_r, specialization) => {
+      void trackEvent("career_mode_started", { career_stage: specialization });
+      qc.invalidateQueries({ queryKey: ["career"] });
+    },
   });
 
   const d = career.data;
