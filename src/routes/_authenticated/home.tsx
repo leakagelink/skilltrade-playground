@@ -2,7 +2,8 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { claimDailyReward, getDashboard, syncOpenTrades } from "@/lib/trading.functions";
+import { claimDailyReward, getDashboard, getTrades, syncOpenTrades } from "@/lib/trading.functions";
+import { OpenPositions } from "@/components/OpenPositions";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -227,6 +228,9 @@ function HomePage() {
 
 
       <section className="space-y-3 px-5">
+        <p className="section-title">Open positions</p>
+        <OpenPositionsSection />
+
         {p.virtualCredits === 0 ? (
           <div className="bento-tile p-4">
             <p className="text-sm font-semibold">You need Trading Credits to open a new trade.</p>
@@ -247,6 +251,19 @@ function HomePage() {
       </section>
     </main>
   );
+}
+
+function OpenPositionsSection() {
+  const loadTrades = useServerFn(getTrades);
+  const trades = useQuery({
+    queryKey: ["trades"],
+    queryFn: () => loadTrades(),
+    refetchInterval: 30_000,
+    staleTime: 10_000,
+  });
+  const open = (trades.data?.trades ?? []).filter((t) => t.status === "OPEN");
+  if (trades.isLoading) return <Skeleton className="h-24 w-full rounded-2xl" />;
+  return <OpenPositions trades={open} emptyText="Open a simulated trade to see it here with live P&L." />;
 }
 
 function Stat({ label, value, tone }: { label: string; value: string; tone?: "bull" | "bear" }) {

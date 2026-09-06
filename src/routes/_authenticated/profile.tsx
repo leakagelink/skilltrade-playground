@@ -7,6 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { EmptyState } from "@/components/EmptyState";
+import { OpenPositions } from "@/components/OpenPositions";
 import { DisclaimerNote } from "@/components/Disclaimer";
 import { dateTime, money, price, signedMoney } from "@/lib/format";
 import { ChevronRight, History, Compass } from "lucide-react";
@@ -168,23 +169,6 @@ function Detail({ label, value }: { label: string; value: string }) {
     <div>
       <p className="text-[11px] text-muted-foreground">{label}</p>
       <p className="num font-medium">{value}</p>
-    </div>
-  );
-}
-
-function TradeRow({ trade }: { trade: { id: string; symbol: string; direction: string; entry_price: number; position_size: number; unrealized_pnl: number | null } }) {
-  const pnl = Number(trade.unrealized_pnl ?? 0);
-  return (
-    <div className="surface-card flex items-center gap-3 p-4">
-      <div className="min-w-0 flex-1">
-        <p className="text-sm font-semibold">
-          {trade.symbol} · {trade.direction}
-        </p>
-        <p className="num text-xs text-muted-foreground">
-          Entry {price(Number(trade.entry_price))} · {money(Number(trade.position_size))}
-        </p>
-      </div>
-      <span className={`num shrink-0 whitespace-nowrap text-sm font-semibold ${pnl >= 0 ? "text-bull" : "text-bear"}`}>{signedMoney(pnl)}</span>
     </div>
   );
 }
