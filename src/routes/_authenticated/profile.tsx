@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getDashboard, getTrades } from "@/lib/trading.functions";
@@ -9,7 +9,8 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { EmptyState } from "@/components/EmptyState";
 import { DisclaimerNote } from "@/components/Disclaimer";
 import { dateTime, money, price, signedMoney } from "@/lib/format";
-import { History } from "lucide-react";
+import { ChevronRight, History, Compass } from "lucide-react";
+import { getCareerStatus } from "@/lib/career.functions";
 
 export const Route = createFileRoute("/_authenticated/profile")({
   head: () => ({
@@ -73,6 +74,10 @@ function ProfilePage() {
             </div>
           </div>
         )}
+
+        <CareerCard />
+
+
 
         <Tabs defaultValue="closed">
           <TabsList className="grid h-11 w-full grid-cols-2 rounded-2xl bg-secondary p-1">
@@ -185,5 +190,26 @@ function TradeRow({ trade }: { trade: { id: string; symbol: string; direction: s
       </div>
       <span className={`num text-sm font-semibold ${pnl >= 0 ? "text-bull" : "text-bear"}`}>{signedMoney(pnl)}</span>
     </div>
+  );
+}
+
+function CareerCard() {
+  const loadCareer = useServerFn(getCareerStatus);
+  const career = useQuery({ queryKey: ["career"], queryFn: () => loadCareer(), staleTime: 30_000 });
+  const c = career.data;
+
+  return (
+    <Link to="/career" className="bento-tile flex items-center gap-3 p-4" aria-label="Open Trading Career">
+      <div className="flex size-10 items-center justify-center rounded-2xl bg-secondary text-primary">
+        <Compass className="size-5" aria-hidden />
+      </div>
+      <div className="min-w-0 flex-1">
+        <p className="text-sm font-bold">Trading Career</p>
+        <p className="truncate text-xs text-muted-foreground">
+          {c ? `${c.currentStageName} · ${c.careerTitle} · ${c.progressPercent}% to ${c.nextStage ?? "complete"}` : "Your educational simulation journey"}
+        </p>
+      </div>
+      <ChevronRight className="size-4 shrink-0 text-muted-foreground" aria-hidden />
+    </Link>
   );
 }

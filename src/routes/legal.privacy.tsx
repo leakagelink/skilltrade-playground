@@ -57,8 +57,12 @@ export const Route = createFileRoute("/legal/privacy")({
           body: "The AI Arena is a simulated trading competition against rule-based AI opponents using virtual funds. If you take part, we store your Arena sessions, the simulated Arena trades you place, the AI opponent's simulated trades, timings and the resulting Arena Scores. This activity is visible only to you, is calculated on our servers, and involves no real money, deposits, withdrawals or prizes of monetary value.",
         },
         {
+          heading: "Trading Career Mode",
+          body: "Career Mode records your simulation progress: your current career stage, the cosmetic career title you have reached, completed career milestones and the educational learning path you select. This progress is calculated on our servers from activity you already carry out in the app (simulated trades, challenges, AI reviews and AI Arena sessions) and is visible only to you. Career rewards are virtual XP, titles and badges with no monetary value.",
+        },
+        {
           heading: "How we use your data",
-          body: "Your data is used only to authenticate you, manage your account, provide paper trading functionality, maintain your simulated portfolio and trade history, calculate your Trading Skill Score, calculate Trader DNA and educational AI insights, run challenges, AI Arena competitions and leaderboards, and improve reliability. We do not sell your data.",
+          body: "Your data is used only to authenticate you, manage your account, provide paper trading functionality, maintain your simulated portfolio and trade history, calculate your Trading Skill Score, calculate Trader DNA and educational AI insights, run challenges, AI Arena competitions, Career Mode progression and leaderboards, and improve reliability. We do not sell your data.",
         },
         {
           heading: "Security",
@@ -74,7 +78,7 @@ export const Route = createFileRoute("/legal/privacy")({
         },
         {
           heading: "Deleting your data and retention",
-          body: `You can delete your account from Settings inside the app, which removes your account immediately, or email ${APP_INFO.supportEmail} from your registered address. Deletion removes your profile, simulated trades, credit history, XP, challenge progress, AI reviews, Trader DNA records and AI Arena sessions and Arena trades. Backup copies may persist for a short period before being overwritten, and anonymised or legally required records may be retained.`,
+          body: `You can delete your account from Settings inside the app, which removes your account immediately, or email ${APP_INFO.supportEmail} from your registered address. Deletion removes your profile, simulated trades, credit history, XP, challenge progress, AI reviews, Trader DNA records, AI Arena sessions and Arena trades, and Career Mode progress and milestones. Backup copies may persist for a short period before being overwritten, and anonymised or legally required records may be retained.`,
         },
       ]}
     />
