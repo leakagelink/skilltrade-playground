@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button";
 import { DisclaimerNote } from "@/components/Disclaimer";
 import { RewardedAdOffer } from "@/components/ads/RewardedAdOffer";
 import { useInterstitialContinue } from "@/lib/ads/useInterstitial";
+import { useEffect } from "react";
+import { trackEvent } from "@/lib/analytics";
 
 export const Route = createFileRoute("/_authenticated/career/milestone/$id")({
   head: () => ({
@@ -36,6 +38,11 @@ function MilestonePage() {
 
   const mission = career.data?.missions.find((m) => m.key === id);
   const percent = mission ? Math.round((mission.current / mission.target) * 100) : 0;
+
+  const completed = mission?.completed ?? false;
+  useEffect(() => {
+    if (completed) void trackEvent("career_level_completed", { career_level: id });
+  }, [completed, id]);
 
   return (
     <main>
