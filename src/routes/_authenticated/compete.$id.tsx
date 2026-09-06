@@ -8,6 +8,7 @@ import { closeCompetitionTrade, getCompetition, openCompetitionTrade } from "@/l
 import { COMPETITION_DISCLOSURES, statusLabel } from "@/lib/compete/config";
 import { AppHeader } from "@/components/AppHeader";
 import { AssetLogo } from "@/components/AssetLogo";
+import { catalogEntry } from "@/lib/market/catalog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -155,7 +156,7 @@ function CompetitionPage() {
                         selected === s ? "border-primary bg-primary/15 text-primary" : "border-border text-muted-foreground"
                       }`}
                     >
-                      <AssetLogo symbol={s} className="size-4" />
+                      <AssetLogo symbol={s} assetType={catalogEntry(s)?.assetType ?? "STOCK"} size={16} className="size-4" />
                       {s}
                     </button>
                   ))}
