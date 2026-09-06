@@ -27,7 +27,9 @@ import { Route as LegalSupportRouteImport } from './routes/legal.support'
 import { Route as LegalTermsRouteImport } from './routes/legal.terms'
 import { Route as AuthenticatedAiArenaIndexRouteImport } from './routes/_authenticated/ai-arena.index'
 import { Route as AuthenticatedAiArenaHistoryRouteImport } from './routes/_authenticated/ai-arena.history'
+import { Route as AuthenticatedCareerIndexRouteImport } from './routes/_authenticated/career.index'
 import { Route as AuthenticatedChartSymbolRouteImport } from './routes/_authenticated/chart.$symbol'
+import { Route as AuthenticatedCareerMilestoneIdRouteImport } from './routes/_authenticated/career.milestone.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -121,10 +123,22 @@ const AuthenticatedAiArenaHistoryRoute =
     path: '/ai-arena/history',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedCareerIndexRoute =
+  AuthenticatedCareerIndexRouteImport.update({
+    id: '/career/',
+    path: '/career/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedChartSymbolRoute =
   AuthenticatedChartSymbolRouteImport.update({
     id: '/chart/$symbol',
     path: '/chart/$symbol',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedCareerMilestoneIdRoute =
+  AuthenticatedCareerMilestoneIdRouteImport.update({
+    id: '/career/milestone/$id',
+    path: '/career/milestone/$id',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 
@@ -147,6 +161,8 @@ export interface FileRoutesByFullPath {
   '/ai-arena/history': typeof AuthenticatedAiArenaHistoryRoute
   '/chart/$symbol': typeof AuthenticatedChartSymbolRoute
   '/ai-arena/': typeof AuthenticatedAiArenaIndexRoute
+  '/career/': typeof AuthenticatedCareerIndexRoute
+  '/career/milestone/$id': typeof AuthenticatedCareerMilestoneIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -167,6 +183,8 @@ export interface FileRoutesByTo {
   '/ai-arena/history': typeof AuthenticatedAiArenaHistoryRoute
   '/chart/$symbol': typeof AuthenticatedChartSymbolRoute
   '/ai-arena': typeof AuthenticatedAiArenaIndexRoute
+  '/career': typeof AuthenticatedCareerIndexRoute
+  '/career/milestone/$id': typeof AuthenticatedCareerMilestoneIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -189,6 +207,8 @@ export interface FileRoutesById {
   '/_authenticated/ai-arena/history': typeof AuthenticatedAiArenaHistoryRoute
   '/_authenticated/chart/$symbol': typeof AuthenticatedChartSymbolRoute
   '/_authenticated/ai-arena/': typeof AuthenticatedAiArenaIndexRoute
+  '/_authenticated/career/': typeof AuthenticatedCareerIndexRoute
+  '/_authenticated/career/milestone/$id': typeof AuthenticatedCareerMilestoneIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -211,6 +231,8 @@ export interface FileRouteTypes {
     | '/ai-arena/history'
     | '/chart/$symbol'
     | '/ai-arena/'
+    | '/career/'
+    | '/career/milestone/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -231,6 +253,8 @@ export interface FileRouteTypes {
     | '/ai-arena/history'
     | '/chart/$symbol'
     | '/ai-arena'
+    | '/career'
+    | '/career/milestone/$id'
   id:
     | '__root__'
     | '/'
@@ -252,6 +276,8 @@ export interface FileRouteTypes {
     | '/_authenticated/ai-arena/history'
     | '/_authenticated/chart/$symbol'
     | '/_authenticated/ai-arena/'
+    | '/_authenticated/career/'
+    | '/_authenticated/career/milestone/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -393,11 +419,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAiArenaHistoryRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/career/': {
+      id: '/_authenticated/career/'
+      path: '/career'
+      fullPath: '/career/'
+      preLoaderRoute: typeof AuthenticatedCareerIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/chart/$symbol': {
       id: '/_authenticated/chart/$symbol'
       path: '/chart/$symbol'
       fullPath: '/chart/$symbol'
       preLoaderRoute: typeof AuthenticatedChartSymbolRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/career/milestone/$id': {
+      id: '/_authenticated/career/milestone/$id'
+      path: '/career/milestone/$id'
+      fullPath: '/career/milestone/$id'
+      preLoaderRoute: typeof AuthenticatedCareerMilestoneIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
   }
@@ -415,6 +455,8 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAiArenaHistoryRoute: typeof AuthenticatedAiArenaHistoryRoute
   AuthenticatedChartSymbolRoute: typeof AuthenticatedChartSymbolRoute
   AuthenticatedAiArenaIndexRoute: typeof AuthenticatedAiArenaIndexRoute
+  AuthenticatedCareerIndexRoute: typeof AuthenticatedCareerIndexRoute
+  AuthenticatedCareerMilestoneIdRoute: typeof AuthenticatedCareerMilestoneIdRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -429,6 +471,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAiArenaHistoryRoute: AuthenticatedAiArenaHistoryRoute,
   AuthenticatedChartSymbolRoute: AuthenticatedChartSymbolRoute,
   AuthenticatedAiArenaIndexRoute: AuthenticatedAiArenaIndexRoute,
+  AuthenticatedCareerIndexRoute: AuthenticatedCareerIndexRoute,
+  AuthenticatedCareerMilestoneIdRoute: AuthenticatedCareerMilestoneIdRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
