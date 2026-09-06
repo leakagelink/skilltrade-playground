@@ -396,6 +396,203 @@ export type Database = {
         }
         Relationships: []
       }
+      competition_participants: {
+        Row: {
+          cash: number
+          competition_id: string
+          created_at: string
+          drawdown: number | null
+          equity: number | null
+          id: string
+          joined_at: string
+          rank: number | null
+          return_pct: number | null
+          rewarded: boolean
+          score: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          cash?: number
+          competition_id: string
+          created_at?: string
+          drawdown?: number | null
+          equity?: number | null
+          id?: string
+          joined_at?: string
+          rank?: number | null
+          return_pct?: number | null
+          rewarded?: boolean
+          score?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          cash?: number
+          competition_id?: string
+          created_at?: string
+          drawdown?: number | null
+          equity?: number | null
+          id?: string
+          joined_at?: string
+          rank?: number | null
+          return_pct?: number | null
+          rewarded?: boolean
+          score?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "competition_participants_competition_id_fkey"
+            columns: ["competition_id"]
+            isOneToOne: false
+            referencedRelation: "competitions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      competition_trades: {
+        Row: {
+          asset_type: string
+          closed_at: string | null
+          competition_id: string
+          created_at: string
+          current_price: number | null
+          direction: string
+          entry_price: number
+          exit_price: number | null
+          id: string
+          opened_at: string
+          participant_id: string
+          pnl: number | null
+          position_size: number
+          quantity: number
+          status: string
+          stop_loss: number | null
+          symbol: string
+          take_profit: number | null
+          unrealized_pnl: number | null
+        }
+        Insert: {
+          asset_type: string
+          closed_at?: string | null
+          competition_id: string
+          created_at?: string
+          current_price?: number | null
+          direction: string
+          entry_price: number
+          exit_price?: number | null
+          id?: string
+          opened_at?: string
+          participant_id: string
+          pnl?: number | null
+          position_size: number
+          quantity: number
+          status?: string
+          stop_loss?: number | null
+          symbol: string
+          take_profit?: number | null
+          unrealized_pnl?: number | null
+        }
+        Update: {
+          asset_type?: string
+          closed_at?: string | null
+          competition_id?: string
+          created_at?: string
+          current_price?: number | null
+          direction?: string
+          entry_price?: number
+          exit_price?: number | null
+          id?: string
+          opened_at?: string
+          participant_id?: string
+          pnl?: number | null
+          position_size?: number
+          quantity?: number
+          status?: string
+          stop_loss?: number | null
+          symbol?: string
+          take_profit?: number | null
+          unrealized_pnl?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "competition_trades_competition_id_fkey"
+            columns: ["competition_id"]
+            isOneToOne: false
+            referencedRelation: "competitions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "competition_trades_participant_id_fkey"
+            columns: ["participant_id"]
+            isOneToOne: false
+            referencedRelation: "competition_participants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      competitions: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          duration_days: number
+          end_time: string | null
+          id: string
+          invite_code: string | null
+          is_public: boolean
+          kind: string
+          market_category: string
+          max_participants: number
+          period_key: string | null
+          result_summary: string | null
+          start_time: string | null
+          starting_balance: number
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          duration_days?: number
+          end_time?: string | null
+          id?: string
+          invite_code?: string | null
+          is_public?: boolean
+          kind: string
+          market_category?: string
+          max_participants?: number
+          period_key?: string | null
+          result_summary?: string | null
+          start_time?: string | null
+          starting_balance?: number
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          duration_days?: number
+          end_time?: string | null
+          id?: string
+          invite_code?: string | null
+          is_public?: boolean
+          kind?: string
+          market_category?: string
+          max_participants?: number
+          period_key?: string | null
+          result_summary?: string | null
+          start_time?: string | null
+          starting_balance?: number
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       credit_transactions: {
         Row: {
           amount: number
@@ -507,11 +704,14 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null
+          country: string | null
           created_at: string
           id: string
           is_leaderboard_visible: boolean
+          is_public_profile: boolean
           level: number
           onboarding_completed: boolean
+          show_country: boolean
           trading_skill_score: number
           updated_at: string
           username: string
@@ -521,11 +721,14 @@ export type Database = {
         }
         Insert: {
           avatar_url?: string | null
+          country?: string | null
           created_at?: string
           id: string
           is_leaderboard_visible?: boolean
+          is_public_profile?: boolean
           level?: number
           onboarding_completed?: boolean
+          show_country?: boolean
           trading_skill_score?: number
           updated_at?: string
           username: string
@@ -535,11 +738,14 @@ export type Database = {
         }
         Update: {
           avatar_url?: string | null
+          country?: string | null
           created_at?: string
           id?: string
           is_leaderboard_visible?: boolean
+          is_public_profile?: boolean
           level?: number
           onboarding_completed?: boolean
+          show_country?: boolean
           trading_skill_score?: number
           updated_at?: string
           username?: string
@@ -770,6 +976,18 @@ export type Database = {
           trading_skill_score: number
           user_id: string
           username: string
+        }[]
+      }
+      get_social_leaderboard: {
+        Args: { _country?: string; _limit?: number; _offset?: number }
+        Returns: {
+          avatar_url: string
+          country: string
+          level: number
+          trading_skill_score: number
+          user_id: string
+          username: string
+          xp: number
         }[]
       }
     }
