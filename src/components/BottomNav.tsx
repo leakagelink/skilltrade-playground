@@ -13,6 +13,31 @@ const TABS = [
 ] as const;
 
 export function BottomNav() {
+  const router = useRouter();
+
+  // Warm up every tab's code bundle once the app is idle so tab switches feel instant.
+  useEffect(() => {
+    let cancelled = false;
+    const warm = () => {
+      if (cancelled) return;
+      for (const { to } of TABS) {
+        void router.preloadRoute({ to }).catch(() => {});
+      }
+    };
+    const idle =
+      typeof window !== "undefined" && "requestIdleCallback" in window
+        ? window.requestIdleCallback(warm, { timeout: 3000 })
+        : window.setTimeout(warm, 1500);
+    return () => {
+      cancelled = true;
+      if (typeof window !== "undefined" && "cancelIdleCallback" in window) {
+        window.cancelIdleCallback(idle as number);
+      } else {
+        window.clearTimeout(idle as number);
+      }
+    };
+  }, [router]);
+
   return (
     <nav
       aria-label="Main"
