@@ -7,7 +7,7 @@
  * can never write competition state.
  */
 import { pnlFor, addNotification, awardXp, grantBadge, recomputeProfile } from "../engine.server";
-import { catalogEntry } from "../market/catalog";
+
 import {
   COMPETITION_SCORE_WEIGHTS,
   COMPETITION_XP,
