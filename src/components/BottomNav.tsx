@@ -24,17 +24,14 @@ export function BottomNav() {
         void router.preloadRoute({ to }).catch(() => {});
       }
     };
-    const idle =
-      typeof window !== "undefined" && "requestIdleCallback" in window
-        ? window.requestIdleCallback(warm, { timeout: 3000 })
-        : window.setTimeout(warm, 1500);
+    const ric = (globalThis as { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number })
+      .requestIdleCallback;
+    const cic = (globalThis as { cancelIdleCallback?: (id: number) => void }).cancelIdleCallback;
+    const handle = ric ? ric(warm, { timeout: 3000 }) : (setTimeout(warm, 1500) as unknown as number);
     return () => {
       cancelled = true;
-      if (typeof window !== "undefined" && "cancelIdleCallback" in window) {
-        window.cancelIdleCallback(idle as number);
-      } else {
-        window.clearTimeout(idle as number);
-      }
+      if (ric && cic) cic(handle);
+      else clearTimeout(handle);
     };
   }, [router]);
 
