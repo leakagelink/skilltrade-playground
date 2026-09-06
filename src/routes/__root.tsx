@@ -136,6 +136,11 @@ function RootComponent() {
 
   useQueryCachePersistence(queryClient);
 
+  // App open (native builds only — no-op on web/SSR).
+  useEffect(() => {
+    void trackEvent("app_open");
+  }, []);
+
   // Initialise Google Mobile Ads (native builds only) and warm the ad cache.
   useEffect(() => {
     void import("@/lib/ads/admob-bridge").then(async (ads) => {
