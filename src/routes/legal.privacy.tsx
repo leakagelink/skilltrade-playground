@@ -41,9 +41,14 @@ export const Route = createFileRoute("/legal/privacy")({
           body: "TradeVirt shows advertisements supplied by Google AdMob (Google Mobile Ads SDK) in the Android app: optional rewarded video ads that you choose to watch, and occasional full-screen interstitial ads at natural break points. Ads are never shown during sign-in, onboarding, trading, charts, portfolio, settings, legal pages or account deletion. Google may collect and process device and advertising identifiers to serve and measure ads, as described in Google's Privacy Policy (policies.google.com/privacy) and Google's advertising policies. Where required, a Google-provided consent form (UMP) is displayed before personalised ads are served, and you can reset or delete your advertising ID in Android settings. Rewards from ads are virtual only (an extra AI analysis or bonus XP) and have no monetary value. We limit ads to a maximum of 5 rewarded and 3 interstitial ads per day.",
         },
         {
-          heading: "Third-party services",
-          body: "We use a managed cloud backend (Supabase) for authentication, database storage and server functions, Google Sign-In for optional authentication, and public third-party market data sources for stock and crypto prices. Google AdMob (Google Mobile Ads SDK) is used for advertising in the Android app. No separate analytics SDK is active.",
+          heading: "Analytics and crash reporting",
+          body: "In the Android app we use Google Firebase Analytics and Firebase Crashlytics to understand which features are used and to detect crashes. Firebase Analytics records anonymous app-usage events (for example: a simulated trade was opened, a challenge was completed, a screen was viewed) together with device and app information and an app-instance/advertising identifier. Crashlytics records crash and error diagnostics, including device state and a technical error label. We never send your email address, username, password, authentication token, account identifier, virtual balance or individual trade details to these services. Firebase Authentication, Firestore, Firebase Storage and push messaging are not used. This data is processed by Google as described in Google's Privacy Policy (policies.google.com/privacy) and is never sold. Analytics and crash reporting are not active in the web version.",
         },
+        {
+          heading: "Third-party services",
+          body: "We use a managed cloud backend (Supabase) for authentication, database storage and server functions, Google Sign-In for optional authentication, and public third-party market data sources for stock and crypto prices. In the Android app we also use Google AdMob (Google Mobile Ads SDK) for advertising and Google Firebase Analytics and Crashlytics for anonymous usage statistics and crash reporting.",
+        },
+
         {
           heading: "Market data providers",
           body: "The application may use third-party market data providers to display market prices and chart information. Market data may be delayed, incomplete or temporarily unavailable and is shown for educational simulation only.",
