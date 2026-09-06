@@ -177,13 +177,8 @@ function AuthPage() {
           </TabsContent>
         </Tabs>
 
-        <div className="my-6 flex items-center gap-3 text-xs text-muted-foreground">
-          <span className="h-px flex-1 bg-border" /> or <span className="h-px flex-1 bg-border" />
-        </div>
 
-        <Button variant="outline" onClick={handleGoogle} disabled={loading} className="h-13 w-full rounded-2xl border-border/70 bg-elevated/40">
-          Continue with Google
-        </Button>
+
 
         <p className="mt-8 text-center text-[11px] leading-relaxed text-muted-foreground">
           By continuing you agree that TradeVirt is a simulated paper trading application for
