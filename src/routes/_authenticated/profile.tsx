@@ -86,11 +86,7 @@ function ProfilePage() {
           </TabsList>
 
           <TabsContent value="open" className="mt-4 space-y-2">
-            {open.length === 0 ? (
-              <EmptyState icon={History} title="No open trades" description="Your active simulated positions appear here." />
-            ) : (
-              open.map((t) => <TradeRow key={t.id} trade={t} />)
-            )}
+            <OpenPositions trades={open} />
           </TabsContent>
 
           <TabsContent value="closed" className="mt-4">
