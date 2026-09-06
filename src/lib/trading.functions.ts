@@ -560,7 +560,8 @@ export const getLeaderboard = createServerFn({ method: "GET" })
     period: (["DAILY", "WEEKLY", "ALL_TIME"] as const).includes(data?.period) ? data.period : "ALL_TIME",
   }))
   .handler(async ({ data, context }) => {
-    const { data: rows, error } = await context.supabase.rpc("get_leaderboard", {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: rows, error } = await supabaseAdmin.rpc("get_leaderboard", {
       _period: data.period,
       _limit: 50,
     });
