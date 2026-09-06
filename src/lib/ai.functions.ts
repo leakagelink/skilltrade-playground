@@ -87,11 +87,18 @@ export const getAiInsights = createServerFn({ method: "GET" })
     const since = new Date(Date.now() - 86_400_000).toISOString();
     const usedToday = (reviews ?? []).filter((r) => String(r["created_at"]) > since).length;
 
+    const { data: adActivity } = await admin
+      .from("user_ad_activity")
+      .select("bonus_ai_analyses")
+      .eq("user_id", userId)
+      .eq("activity_date", new Date().toISOString().slice(0, 10))
+      .maybeSingle();
+
     return {
       username: (profile?.username as string) ?? "Trader",
       dna,
       comparison,
-      dailyLimit: AI_ANALYSIS_DAILY_LIMIT,
+      dailyLimit: AI_ANALYSIS_DAILY_LIMIT + Number(adActivity?.["bonus_ai_analyses"] ?? 0),
       usedToday,
       reviews: (reviews ?? []).map((r) => {
         const trade = (r as Record<string, unknown>)["trades"] as Record<string, unknown> | null;
