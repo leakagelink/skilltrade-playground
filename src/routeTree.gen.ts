@@ -32,6 +32,7 @@ import { Route as AuthenticatedChartSymbolRouteImport } from './routes/_authenti
 import { Route as AuthenticatedCompeteIndexRouteImport } from './routes/_authenticated/compete.index'
 import { Route as AuthenticatedCompeteIdRouteImport } from './routes/_authenticated/compete.$id'
 import { Route as AuthenticatedCareerMilestoneIdRouteImport } from './routes/_authenticated/career.milestone.$id'
+import { Route as AuthenticatedCompeteJoinCodeRouteImport } from './routes/_authenticated/compete.join.$code'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -154,6 +155,12 @@ const AuthenticatedCareerMilestoneIdRoute =
     path: '/career/milestone/$id',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedCompeteJoinCodeRoute =
+  AuthenticatedCompeteJoinCodeRouteImport.update({
+    id: '/compete/join/$code',
+    path: '/compete/join/$code',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -178,6 +185,7 @@ export interface FileRoutesByFullPath {
   '/career/': typeof AuthenticatedCareerIndexRoute
   '/compete/': typeof AuthenticatedCompeteIndexRoute
   '/career/milestone/$id': typeof AuthenticatedCareerMilestoneIdRoute
+  '/compete/join/$code': typeof AuthenticatedCompeteJoinCodeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -202,6 +210,7 @@ export interface FileRoutesByTo {
   '/career': typeof AuthenticatedCareerIndexRoute
   '/compete': typeof AuthenticatedCompeteIndexRoute
   '/career/milestone/$id': typeof AuthenticatedCareerMilestoneIdRoute
+  '/compete/join/$code': typeof AuthenticatedCompeteJoinCodeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -228,6 +237,7 @@ export interface FileRoutesById {
   '/_authenticated/career/': typeof AuthenticatedCareerIndexRoute
   '/_authenticated/compete/': typeof AuthenticatedCompeteIndexRoute
   '/_authenticated/career/milestone/$id': typeof AuthenticatedCareerMilestoneIdRoute
+  '/_authenticated/compete/join/$code': typeof AuthenticatedCompeteJoinCodeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -254,6 +264,7 @@ export interface FileRouteTypes {
     | '/career/'
     | '/compete/'
     | '/career/milestone/$id'
+    | '/compete/join/$code'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -278,6 +289,7 @@ export interface FileRouteTypes {
     | '/career'
     | '/compete'
     | '/career/milestone/$id'
+    | '/compete/join/$code'
   id:
     | '__root__'
     | '/'
@@ -303,6 +315,7 @@ export interface FileRouteTypes {
     | '/_authenticated/career/'
     | '/_authenticated/compete/'
     | '/_authenticated/career/milestone/$id'
+    | '/_authenticated/compete/join/$code'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -479,6 +492,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCareerMilestoneIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/compete/join/$code': {
+      id: '/_authenticated/compete/join/$code'
+      path: '/compete/join/$code'
+      fullPath: '/compete/join/$code'
+      preLoaderRoute: typeof AuthenticatedCompeteJoinCodeRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
@@ -498,6 +518,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedCareerIndexRoute: typeof AuthenticatedCareerIndexRoute
   AuthenticatedCompeteIndexRoute: typeof AuthenticatedCompeteIndexRoute
   AuthenticatedCareerMilestoneIdRoute: typeof AuthenticatedCareerMilestoneIdRoute
+  AuthenticatedCompeteJoinCodeRoute: typeof AuthenticatedCompeteJoinCodeRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -516,6 +537,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedCareerIndexRoute: AuthenticatedCareerIndexRoute,
   AuthenticatedCompeteIndexRoute: AuthenticatedCompeteIndexRoute,
   AuthenticatedCareerMilestoneIdRoute: AuthenticatedCareerMilestoneIdRoute,
+  AuthenticatedCompeteJoinCodeRoute: AuthenticatedCompeteJoinCodeRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
