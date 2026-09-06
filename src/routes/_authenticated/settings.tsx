@@ -25,6 +25,7 @@ import { DisclaimerNote } from "@/components/Disclaimer";
 import { SocialPrivacyCard } from "@/components/SocialPrivacyCard";
 import { toast } from "sonner";
 import { ChevronRight, LogOut } from "lucide-react";
+import { resetAnalytics, trackEvent } from "@/lib/analytics";
 
 export const Route = createFileRoute("/_authenticated/settings")({
   head: () => ({
@@ -74,6 +75,8 @@ function SettingsPage() {
     await qc.cancelQueries();
     qc.clear();
     await supabase.auth.signOut();
+    void trackEvent("logout_completed");
+    void resetAnalytics();
     navigate({ to: "/auth", replace: true });
   }
 

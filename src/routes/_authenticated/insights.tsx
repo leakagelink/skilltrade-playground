@@ -13,6 +13,8 @@ import { DisclaimerNote } from "@/components/Disclaimer";
 import { dateTime, signedMoney } from "@/lib/format";
 import { Activity, Share2, Sparkles } from "lucide-react";
 import { toast } from "sonner";
+import { useEffect } from "react";
+import { trackEvent } from "@/lib/analytics";
 
 export const Route = createFileRoute("/_authenticated/insights")({
   head: () => ({
@@ -68,6 +70,7 @@ function InsightsPage() {
     onSettled: () => setPending(null),
     onSuccess: () => {
       toast.success("Educational review ready.");
+      void trackEvent("ai_coach_used");
       qc.invalidateQueries({ queryKey: ["ai-insights"] });
     },
     onError: (e: Error) =>
@@ -76,6 +79,10 @@ function InsightsPage() {
 
   const d = insights.data;
   const dna = d?.dna;
+
+  useEffect(() => {
+    if (dna) void trackEvent("trader_dna_viewed");
+  }, [dna]);
 
   const share = async () => {
     if (!dna) return;

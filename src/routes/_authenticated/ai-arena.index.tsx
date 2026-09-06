@@ -22,6 +22,7 @@ import { RewardedAdOffer } from "@/components/ads/RewardedAdOffer";
 import { useInterstitialContinue } from "@/lib/ads/useInterstitial";
 import { AssetLogo } from "@/components/AssetLogo";
 import { money, signedMoney } from "@/lib/format";
+import { trackEvent } from "@/lib/analytics";
 
 export const Route = createFileRoute("/_authenticated/ai-arena/")({
   head: () => ({
@@ -77,8 +78,9 @@ function ArenaPage() {
 
   const startMutation = useMutation({
     mutationFn: (botId: string) => start({ data: { botId } }),
-    onSuccess: () => {
+    onSuccess: (_r, botId) => {
       toast.success("Arena challenge started. Good luck!");
+      void trackEvent("ai_arena_started", { ai_bot_type: botId });
       invalidate();
     },
     onError: (e: Error) => toast.error(e.message || "Could not create the Arena challenge."),
