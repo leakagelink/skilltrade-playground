@@ -29,6 +29,7 @@ import { Route as AuthenticatedAiArenaIndexRouteImport } from './routes/_authent
 import { Route as AuthenticatedAiArenaHistoryRouteImport } from './routes/_authenticated/ai-arena.history'
 import { Route as AuthenticatedCareerIndexRouteImport } from './routes/_authenticated/career.index'
 import { Route as AuthenticatedChartSymbolRouteImport } from './routes/_authenticated/chart.$symbol'
+import { Route as AuthenticatedCompeteIndexRouteImport } from './routes/_authenticated/compete.index'
 import { Route as AuthenticatedCareerMilestoneIdRouteImport } from './routes/_authenticated/career.milestone.$id'
 
 const IndexRoute = IndexRouteImport.update({
@@ -135,6 +136,12 @@ const AuthenticatedChartSymbolRoute =
     path: '/chart/$symbol',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedCompeteIndexRoute =
+  AuthenticatedCompeteIndexRouteImport.update({
+    id: '/compete/',
+    path: '/compete/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedCareerMilestoneIdRoute =
   AuthenticatedCareerMilestoneIdRouteImport.update({
     id: '/career/milestone/$id',
@@ -162,6 +169,7 @@ export interface FileRoutesByFullPath {
   '/chart/$symbol': typeof AuthenticatedChartSymbolRoute
   '/ai-arena/': typeof AuthenticatedAiArenaIndexRoute
   '/career/': typeof AuthenticatedCareerIndexRoute
+  '/compete/': typeof AuthenticatedCompeteIndexRoute
   '/career/milestone/$id': typeof AuthenticatedCareerMilestoneIdRoute
 }
 export interface FileRoutesByTo {
@@ -184,6 +192,7 @@ export interface FileRoutesByTo {
   '/chart/$symbol': typeof AuthenticatedChartSymbolRoute
   '/ai-arena': typeof AuthenticatedAiArenaIndexRoute
   '/career': typeof AuthenticatedCareerIndexRoute
+  '/compete': typeof AuthenticatedCompeteIndexRoute
   '/career/milestone/$id': typeof AuthenticatedCareerMilestoneIdRoute
 }
 export interface FileRoutesById {
@@ -208,6 +217,7 @@ export interface FileRoutesById {
   '/_authenticated/chart/$symbol': typeof AuthenticatedChartSymbolRoute
   '/_authenticated/ai-arena/': typeof AuthenticatedAiArenaIndexRoute
   '/_authenticated/career/': typeof AuthenticatedCareerIndexRoute
+  '/_authenticated/compete/': typeof AuthenticatedCompeteIndexRoute
   '/_authenticated/career/milestone/$id': typeof AuthenticatedCareerMilestoneIdRoute
 }
 export interface FileRouteTypes {
@@ -232,6 +242,7 @@ export interface FileRouteTypes {
     | '/chart/$symbol'
     | '/ai-arena/'
     | '/career/'
+    | '/compete/'
     | '/career/milestone/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -254,6 +265,7 @@ export interface FileRouteTypes {
     | '/chart/$symbol'
     | '/ai-arena'
     | '/career'
+    | '/compete'
     | '/career/milestone/$id'
   id:
     | '__root__'
@@ -277,6 +289,7 @@ export interface FileRouteTypes {
     | '/_authenticated/chart/$symbol'
     | '/_authenticated/ai-arena/'
     | '/_authenticated/career/'
+    | '/_authenticated/compete/'
     | '/_authenticated/career/milestone/$id'
   fileRoutesById: FileRoutesById
 }
@@ -433,6 +446,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedChartSymbolRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/compete/': {
+      id: '/_authenticated/compete/'
+      path: '/compete'
+      fullPath: '/compete/'
+      preLoaderRoute: typeof AuthenticatedCompeteIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/career/milestone/$id': {
       id: '/_authenticated/career/milestone/$id'
       path: '/career/milestone/$id'
@@ -456,6 +476,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedChartSymbolRoute: typeof AuthenticatedChartSymbolRoute
   AuthenticatedAiArenaIndexRoute: typeof AuthenticatedAiArenaIndexRoute
   AuthenticatedCareerIndexRoute: typeof AuthenticatedCareerIndexRoute
+  AuthenticatedCompeteIndexRoute: typeof AuthenticatedCompeteIndexRoute
   AuthenticatedCareerMilestoneIdRoute: typeof AuthenticatedCareerMilestoneIdRoute
 }
 
@@ -472,6 +493,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedChartSymbolRoute: AuthenticatedChartSymbolRoute,
   AuthenticatedAiArenaIndexRoute: AuthenticatedAiArenaIndexRoute,
   AuthenticatedCareerIndexRoute: AuthenticatedCareerIndexRoute,
+  AuthenticatedCompeteIndexRoute: AuthenticatedCompeteIndexRoute,
   AuthenticatedCareerMilestoneIdRoute: AuthenticatedCareerMilestoneIdRoute,
 }
 
