@@ -204,22 +204,42 @@ async function coinbaseStats(product: string): Promise<{ last: number; open: num
 }
 
 /**
- * Coinbase's USD exchange-rate snapshot returns the whole crypto watchlist in
- * one request. It updates much more frequently than CoinGecko's simple-price
- * snapshot and avoids issuing one request per card on the Markets screen.
+ * Kraken's public ticker returns the whole crypto watchlist in ONE request and
+ * ticks in real time. Coinbase's /v2/exchange-rates snapshot was used before
+ * but is heavily cached upstream (the same price for minutes), which made the
+ * Markets and portfolio screens look frozen.
  */
-async function coinbaseUsdRates(): Promise<Map<string, number>> {
-  const payload = await cached("cb:usd-rates", 800, () =>
-    getJson("https://api.coinbase.com/v2/exchange-rates?currency=USD") as Promise<{
-      data?: { rates?: Record<string, string> };
+const KRAKEN_PAIR: Record<string, string> = {
+  BTC: "XXBTZUSD",
+  ETH: "XETHZUSD",
+  LTC: "XLTCZUSD",
+  XRP: "XXRPZUSD",
+  DOGE: "XDGUSD",
+};
+
+function krakenPair(symbol: string): string {
+  return KRAKEN_PAIR[symbol] ?? `${symbol}USD`;
+}
+
+async function krakenTickers(symbols: string[]): Promise<Map<string, { price: number; open: number }>> {
+  const pairs = symbols.map(krakenPair);
+  const key = `kr:${pairs.join(",")}`;
+  const payload = await cached(key, 700, () =>
+    getJson(`https://api.kraken.com/0/public/Ticker?pair=${pairs.join(",")}`) as Promise<{
+      result?: Record<string, { c?: string[]; o?: string }>;
     }>,
   );
-  const prices = new Map<string, number>();
-  for (const [symbol, rawRate] of Object.entries(payload.data?.rates ?? {})) {
-    const rate = Number(rawRate);
-    if (Number.isFinite(rate) && rate > 0) prices.set(symbol.toUpperCase(), 1 / rate);
+  const byPair = payload.result ?? {};
+  const out = new Map<string, { price: number; open: number }>();
+  for (const symbol of symbols) {
+    const row = byPair[krakenPair(symbol)];
+    const price = Number(row?.c?.[0]);
+    const open = Number(row?.o);
+    if (Number.isFinite(price) && price > 0) {
+      out.set(symbol, { price, open: Number.isFinite(open) ? open : 0 });
+    }
   }
-  return prices;
+  return out;
 }
 
 /* ------------------------------ provider ------------------------------- */
@@ -345,14 +365,14 @@ export const liveMarketDataProvider: MarketDataProvider = {
 
     if (cryptos.length > 0) {
       try {
-        const rates = await coinbaseUsdRates();
+        const rates = await krakenTickers(cryptos.map(({ symbol }) => symbol));
         for (const { symbol } of cryptos) {
-          const livePrice = rates.get(symbol);
-          if (!livePrice) continue;
+          const row = rates.get(symbol);
+          if (!row) continue;
           quotes.set(symbol, {
             symbol,
-            price: livePrice,
-            changePercent: 0,
+            price: row.price,
+            changePercent: row.open > 0 ? ((row.price - row.open) / row.open) * 100 : 0,
             status: "LIVE",
             asOf: Math.floor(Date.now() / 1000),
             marketState: "OPEN",
