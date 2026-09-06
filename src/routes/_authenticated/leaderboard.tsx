@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getLeaderboard } from "@/lib/trading.functions";
@@ -30,6 +30,9 @@ type Period = "DAILY" | "WEEKLY" | "ALL_TIME";
 
 function LeaderboardPage() {
   const load = useServerFn(getLeaderboard);
+  useEffect(() => {
+    void trackEvent("leaderboard_viewed");
+  }, []);
   const [period, setPeriod] = useState<Period>("ALL_TIME");
   const { data, isLoading } = useQuery({
     queryKey: ["leaderboard", period],
