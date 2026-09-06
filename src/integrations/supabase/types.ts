@@ -270,6 +270,84 @@ export type Database = {
         }
         Relationships: []
       }
+      career_mission_completions: {
+        Row: {
+          completed_at: string
+          id: string
+          mission_key: string
+          reward_xp: number
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string
+          id?: string
+          mission_key: string
+          reward_xp?: number
+          user_id: string
+        }
+        Update: {
+          completed_at?: string
+          id?: string
+          mission_key?: string
+          reward_xp?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      career_progress: {
+        Row: {
+          career_title: string
+          career_xp: number
+          created_at: string
+          current_stage: string
+          specialization: string | null
+          unlocked_specializations: string[]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          career_title?: string
+          career_xp?: number
+          created_at?: string
+          current_stage?: string
+          specialization?: string | null
+          unlocked_specializations?: string[]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          career_title?: string
+          career_xp?: number
+          created_at?: string
+          current_stage?: string
+          specialization?: string | null
+          unlocked_specializations?: string[]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      career_stage_unlocks: {
+        Row: {
+          id: string
+          stage_key: string
+          unlocked_at: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          stage_key: string
+          unlocked_at?: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          stage_key?: string
+          unlocked_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       challenges: {
         Row: {
           challenge_type: string
