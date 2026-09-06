@@ -86,8 +86,22 @@ function MilestonePage() {
               <p className="text-sm text-muted-foreground">{mission.goal}</p>
             </section>
 
-            <Button asChild variant="secondary" size="sm">
-              <Link to="/career">Back to career</Link>
+            {mission.completed ? (
+              <RewardedAdOffer
+                placement="CAREER"
+                title="Optional milestone bonus"
+                onGranted={() => void career.refetch()}
+              />
+            ) : null}
+
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() =>
+                void showAdThenContinue("CAREER_MILESTONE_CONTINUE", () => navigate({ to: "/career" }))
+              }
+            >
+              Continue
             </Button>
           </>
         )}
