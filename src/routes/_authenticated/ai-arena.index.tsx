@@ -299,11 +299,25 @@ function ArenaPage() {
           </>
         )}
 
-        <Button asChild variant="secondary" className="h-11 w-full rounded-2xl text-sm font-semibold">
-          <Link to="/ai-arena/history">
-            <History className="size-4" /> Arena history
-          </Link>
-        </Button>
+        <RewardedAdOffer placement="ARENA" title="Optional Arena bonus" onGranted={() => void refetch()} />
+
+        {lastResult ? (
+          <Button
+            variant="secondary"
+            className="h-11 w-full rounded-2xl text-sm font-semibold"
+            onClick={() =>
+              void showAdThenContinue("ARENA_RESULT_CONTINUE", () => navigate({ to: "/ai-arena/history" }))
+            }
+          >
+            <History className="size-4" /> Continue to Arena history
+          </Button>
+        ) : (
+          <Button asChild variant="secondary" className="h-11 w-full rounded-2xl text-sm font-semibold">
+            <Link to="/ai-arena/history">
+              <History className="size-4" /> Arena history
+            </Link>
+          </Button>
+        )}
 
         <DisclaimerNote text="The AI Arena is a simulated trading competition using virtual funds. No real-money trading is available, and virtual balances, scores and rewards have no monetary value. AI Arena opponents use predefined simulation strategies." />
         <MarketDataNote />
