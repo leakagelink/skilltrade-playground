@@ -16,7 +16,21 @@ npm install
 ```powershell
 npx cap add android      # only the first time
 npx cap sync android
+npm run android:setup
 ```
+
+`npm run android:setup` is a one-shot, repeatable script. After every
+`npx cap sync android` it:
+
+- copies `android-config\google-services.json` to `android\app\google-services.json`
+  (and aborts if the package name is not `online.tradevirt.app`),
+- adds the Google Services + Firebase Crashlytics Gradle plugins,
+- adds the AdMob application id meta-data and the INTERNET / AD_ID permissions.
+
+It never adds Firebase Android SDK dependencies — the Capacitor Firebase
+plugins already provide them, so there is no duplicate initialisation.
+Steps 3 and 4 below are what the script performs; verify them if you prefer
+to do it manually.
 
 Package name: `online.tradevirt.app` — this must match the package name
 registered in your Google AdMob app.
