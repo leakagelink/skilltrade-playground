@@ -239,11 +239,11 @@ export async function evaluateCareerProgress(admin: Admin, userId: string): Prom
     { onConflict: "user_id" },
   );
 
-  const currentReqs = requirementStatus(metrics, currentStage.key);
+  const pendingReqs = requirementStatus(metrics, pendingStage.key);
   const stages: CareerStageStatus[] = CAREER_STAGES.map((s, i) => {
     const reqs = requirementStatus(metrics, s.key);
     const state: CareerStageStatus["state"] =
-      i < highest ? "COMPLETED" : i === currentIndex ? "CURRENT" : "LOCKED";
+      i < highest ? "COMPLETED" : i === pendingIndex ? "CURRENT" : "LOCKED";
     return {
       key: s.key,
       name: s.name,
@@ -261,11 +261,8 @@ export async function evaluateCareerProgress(admin: Admin, userId: string): Prom
     currentStage: currentStage.key,
     currentStageName: currentStage.name,
     careerTitle,
-    progressPercent: highest >= CAREER_STAGES.length ? 100 : stageProgress(currentReqs),
-    nextStage:
-      highest >= CAREER_STAGES.length
-        ? null
-        : (CAREER_STAGES[currentIndex]?.name ?? null),
+    progressPercent: highest >= CAREER_STAGES.length ? 100 : stageProgress(pendingReqs),
+    nextStage: highest >= CAREER_STAGES.length ? null : pendingStage.name,
     stages,
     missions,
     specialization: selected,
