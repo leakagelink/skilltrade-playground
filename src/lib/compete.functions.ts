@@ -512,11 +512,11 @@ export const getSocialLeaderboard = createServerFn({ method: "GET" })
   }))
   .handler(async ({ data, context }) => {
     const pageSize = 25;
-    const { data: rows, error } = await context.supabase.rpc("get_social_leaderboard", {
-      _country: data.country ?? undefined,
-      _limit: pageSize,
-      _offset: data.page * pageSize,
-    });
+    const args = { _limit: pageSize, _offset: data.page * pageSize };
+    const { data: rows, error } = await context.supabase.rpc(
+      "get_social_leaderboard",
+      data.country ? { ...args, _country: data.country } : args,
+    );
     if (error) fail("Could not load the leaderboard right now.");
     return {
       me: context.userId,
