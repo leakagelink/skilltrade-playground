@@ -3,11 +3,15 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getLeaderboard } from "@/lib/trading.functions";
+import { getSocialLeaderboard } from "@/lib/compete.functions";
+import { COUNTRIES } from "@/lib/compete/config";
+import { Button } from "@/components/ui/button";
 import { AppHeader } from "@/components/AppHeader";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/EmptyState";
-import { Trophy } from "lucide-react";
+import { Trophy, Users } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_authenticated/leaderboard")({
   head: () => ({
@@ -36,6 +40,20 @@ function LeaderboardPage() {
       <AppHeader title="Leaderboard" subtitle="Ranked by Trading Skill Score" showSettings />
 
       <div className="space-y-4 p-5">
+        <Link to="/compete" className="surface-card flex items-center justify-between gap-3 p-4">
+          <div>
+            <p className="flex items-center gap-1.5 text-sm font-semibold">
+              <Users className="size-4 text-primary" /> Compete with friends
+            </p>
+            <p className="text-[11px] text-muted-foreground">
+              Friend challenges, open challenges and weekly tournaments — virtual funds only.
+            </p>
+          </div>
+          <Button size="sm" variant="secondary">Open</Button>
+        </Link>
+
+        <GlobalRanks />
+
         <Tabs value={period} onValueChange={(v) => setPeriod(v as Period)}>
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="DAILY">Daily</TabsTrigger>
@@ -87,5 +105,59 @@ function LeaderboardPage() {
         </p>
       </div>
     </main>
+  );
+}
+
+/** Version 1.4 global / country ranking of traders who opted into a public profile. */
+function GlobalRanks() {
+  const load = useServerFn(getSocialLeaderboard);
+  const [country, setCountry] = useState<string>("");
+  const { data, isLoading } = useQuery({
+    queryKey: ["social-leaderboard", country],
+    queryFn: () => load({ data: { country: country || null, page: 0 } }),
+    staleTime: 60_000,
+  });
+
+  return (
+    <section className="surface-card space-y-3 p-4">
+      <div className="flex items-center justify-between gap-3">
+        <p className="text-sm font-semibold">Global & country ranks</p>
+        <select
+          value={country}
+          onChange={(e) => setCountry(e.target.value)}
+          className="h-9 rounded-xl border border-border bg-background px-2 text-xs"
+        >
+          <option value="">Global</option>
+          {COUNTRIES.map((c) => (
+            <option key={c} value={c}>{c}</option>
+          ))}
+        </select>
+      </div>
+
+      {isLoading ? (
+        <Skeleton className="h-20 w-full rounded-xl" />
+      ) : !data?.rows.length ? (
+        <p className="text-xs text-muted-foreground">
+          No public traders here yet. Turn on a public profile in Settings to appear.
+        </p>
+      ) : (
+        <ul className="space-y-1.5">
+          {data.rows.map((r) => (
+            <li key={r.user_id} className="flex items-center gap-3 border-t border-border/60 pt-1.5 text-xs">
+              <span className="num w-5 text-muted-foreground">{r.rank}</span>
+              <span className="min-w-0 flex-1 truncate font-semibold">
+                {r.username}
+                {r.country ? <span className="ml-1 text-muted-foreground">· {r.country}</span> : null}
+              </span>
+              <span className="text-muted-foreground">Lv {r.level}</span>
+              <span className="num font-semibold text-primary">{r.trading_skill_score}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+      <p className="text-[11px] text-muted-foreground">
+        Only traders who chose a public profile appear here. Emails and private trades are never shown.
+      </p>
+    </section>
   );
 }
