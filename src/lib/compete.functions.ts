@@ -8,7 +8,7 @@ import {
   MARKET_CATEGORIES,
   type MarketCategory,
 } from "./compete/config";
-import { catalog } from "./market/catalog";
+import { CATALOG } from "./market/catalog";
 
 /**
  * Version 1.4 Social Competition server functions.
@@ -59,9 +59,7 @@ function serializeCompetition(c: Record<string, unknown>) {
 }
 
 function symbolsFor(category: string) {
-  return catalog()
-    .filter((a) => category === "ALL" || a.assetType === category)
-    .map((a) => a.symbol);
+  return CATALOG.filter((a) => category === "ALL" || a.assetType === category).map((a) => a.symbol);
 }
 
 /* ------------------------------------------------------------------ */
@@ -429,7 +427,7 @@ export const openCompetitionTrade = createServerFn({ method: "POST" })
       if (data.takeProfit != null && data.takeProfit >= entry) fail("Take profit must be below the entry price.");
     }
 
-    const asset = catalog().find((a) => a.symbol === data.symbol);
+    const asset = CATALOG.find((a) => a.symbol === data.symbol);
     const { error } = await admin.from("competition_trades").insert({
       participant_id: participant.id,
       competition_id: data.competitionId,
@@ -515,7 +513,7 @@ export const getSocialLeaderboard = createServerFn({ method: "GET" })
   .handler(async ({ data, context }) => {
     const pageSize = 25;
     const { data: rows, error } = await context.supabase.rpc("get_social_leaderboard", {
-      _country: data.country,
+      _country: data.country ?? undefined,
       _limit: pageSize,
       _offset: data.page * pageSize,
     });
