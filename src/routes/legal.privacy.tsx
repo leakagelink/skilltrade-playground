@@ -38,11 +38,11 @@ export const Route = createFileRoute("/legal/privacy")({
         },
         {
           heading: "Advertising",
-          body: "Version 1.0 of TradeVirt contains no advertising SDK and shows no advertisements. No advertising or tracking identifiers are collected. If advertising is ever introduced, this policy will be updated before it becomes active.",
+          body: "TradeVirt shows advertisements supplied by Google AdMob (Google Mobile Ads SDK) in the Android app: optional rewarded video ads that you choose to watch, and occasional full-screen interstitial ads at natural break points. Ads are never shown during sign-in, onboarding, trading, charts, portfolio, settings, legal pages or account deletion. Google may collect and process device and advertising identifiers to serve and measure ads, as described in Google's Privacy Policy (policies.google.com/privacy) and Google's advertising policies. Where required, a Google-provided consent form (UMP) is displayed before personalised ads are served, and you can reset or delete your advertising ID in Android settings. Rewards from ads are virtual only (an extra AI analysis or bonus XP) and have no monetary value. We limit ads to a maximum of 5 rewarded and 3 interstitial ads per day.",
         },
         {
           heading: "Third-party services",
-          body: "We use a managed cloud backend (Supabase) for authentication, database storage and server functions, Google Sign-In for optional authentication, and public third-party market data sources for stock and crypto prices. No analytics or advertising SDK is active in Version 1.0.",
+          body: "We use a managed cloud backend (Supabase) for authentication, database storage and server functions, Google Sign-In for optional authentication, and public third-party market data sources for stock and crypto prices. Google AdMob (Google Mobile Ads SDK) is used for advertising in the Android app. No separate analytics SDK is active.",
         },
         {
           heading: "Market data providers",

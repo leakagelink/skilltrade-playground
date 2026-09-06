@@ -38,7 +38,7 @@ export const Route = createFileRoute("/legal/terms")({
         },
         {
           heading: "5. Rewards",
-          body: "All Version 1.0 rewards are virtual: XP, levels, badges, virtual Trading Credits and leaderboard position. Trading Credits come from the new-account bonus, the 24-hour daily reward and challenges only; Version 1.0 contains no advertisements and no way to earn credits from advertising. No cash, cryptocurrency, gift cards or other prizes of monetary value are offered.",
+          body: "All Version 1.0 rewards are virtual: XP, levels, badges, virtual Trading Credits and leaderboard position. Trading Credits come from the new-account bonus, the 24-hour daily reward and challenges only, and can never be earned from advertising. TradeVirt shows optional Google AdMob rewarded ads and occasional interstitial ads; watching a rewarded ad can unlock only an extra AI analysis or bonus XP, both virtual and limited per day. No cash, cryptocurrency, gift cards or other prizes of monetary value are offered.",
         },
         {
           heading: "6. No warranty and market data",
