@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      ad_reward_grants: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          id: string
+          nonce: string
+          placement: string
+          reward_amount: number
+          reward_type: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          nonce: string
+          placement: string
+          reward_amount?: number
+          reward_type: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          nonce?: string
+          placement?: string
+          reward_amount?: number
+          reward_type?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       ai_arena_sessions: {
         Row: {
           ai_cash: number
@@ -867,6 +903,48 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      user_ad_activity: {
+        Row: {
+          activity_date: string
+          ai_coach_rewards: number
+          arena_rewards: number
+          bonus_ai_analyses: number
+          career_rewards: number
+          created_at: string
+          interstitial_ads_shown: number
+          last_interstitial_at: string | null
+          rewarded_ads_completed: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          activity_date?: string
+          ai_coach_rewards?: number
+          arena_rewards?: number
+          bonus_ai_analyses?: number
+          career_rewards?: number
+          created_at?: string
+          interstitial_ads_shown?: number
+          last_interstitial_at?: string | null
+          rewarded_ads_completed?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          activity_date?: string
+          ai_coach_rewards?: number
+          arena_rewards?: number
+          bonus_ai_analyses?: number
+          career_rewards?: number
+          created_at?: string
+          interstitial_ads_shown?: number
+          last_interstitial_at?: string | null
+          rewarded_ads_completed?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       user_badges: {
         Row: {
