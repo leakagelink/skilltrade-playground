@@ -22,6 +22,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { DisclaimerNote } from "@/components/Disclaimer";
+import { SocialPrivacyCard } from "@/components/SocialPrivacyCard";
 import { toast } from "sonner";
 import { ChevronRight, LogOut } from "lucide-react";
 
@@ -127,6 +128,10 @@ function SettingsPage() {
             />
           </div>
         </section>
+
+        <SocialPrivacyCard />
+
+
 
         <section className="surface-card divide-y divide-border overflow-hidden">
           <LegalLink to="/legal/terms" label="Terms of Service" />

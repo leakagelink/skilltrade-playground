@@ -635,6 +635,20 @@ export const deleteMyAccount = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    // Competition rows are not cascaded by the auth user record, so remove them first.
+    const { data: participations } = await supabaseAdmin
+      .from("competition_participants")
+      .select("id")
+      .eq("user_id", context.userId);
+    const participantIds = (participations ?? []).map((p) => String(p.id));
+    if (participantIds.length) {
+      await supabaseAdmin.from("competition_trades").delete().in("participant_id", participantIds);
+      await supabaseAdmin.from("competition_participants").delete().in("id", participantIds);
+    }
+    await supabaseAdmin.from("competitions").delete().eq("created_by", context.userId).neq("status", "ACTIVE");
+
     await supabaseAdmin.auth.admin.deleteUser(context.userId);
     return { ok: true };
   });
+

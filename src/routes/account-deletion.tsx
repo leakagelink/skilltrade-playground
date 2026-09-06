@@ -33,7 +33,7 @@ export const Route = createFileRoute("/account-deletion")({
         },
         {
           heading: "What is deleted",
-          body: "Your authentication record, profile, username, avatar, virtual balance, credits, XP, level, Trading Skill Score, simulated trades, challenge progress, badges, AI trade reviews, Trader DNA records, AI Arena sessions and Arena trades, Career Mode progress and milestones, notifications and leaderboard entries are permanently removed.",
+          body: "Your authentication record, profile, username, avatar, virtual balance, credits, XP, level, Trading Skill Score, simulated trades, challenge progress, badges, AI trade reviews, Trader DNA records, AI Arena sessions and Arena trades, Career Mode progress and milestones, social competition participation and competition trades, notifications and leaderboard entries are permanently removed.",
         },
         {
           heading: "What is retained",
