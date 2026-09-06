@@ -513,7 +513,8 @@ export const getSocialLeaderboard = createServerFn({ method: "GET" })
   .handler(async ({ data, context }) => {
     const pageSize = 25;
     const args = { _limit: pageSize, _offset: data.page * pageSize };
-    const { data: rows, error } = await context.supabase.rpc(
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: rows, error } = await supabaseAdmin.rpc(
       "get_social_leaderboard",
       data.country ? { ...args, _country: data.country } : args,
     );
