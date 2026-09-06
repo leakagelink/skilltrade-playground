@@ -11,7 +11,7 @@ import {
   REWARD_BY_PLACEMENT,
   type RewardedPlacement,
 } from "@/lib/ads/config";
-import { adsAvailable, preloadRewarded, showRewardedAd } from "@/lib/ads/admob.client";
+import { adsAvailable, preloadRewarded, showRewardedAd } from "@/lib/ads/admob-bridge";
 
 export function useAdStatus() {
   const load = useServerFn(getAdStatus);
