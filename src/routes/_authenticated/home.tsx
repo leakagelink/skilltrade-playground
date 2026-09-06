@@ -31,7 +31,6 @@ function HomePage() {
   const load = useServerFn(getDashboard);
   const sync = useServerFn(syncOpenTrades);
   const claim = useServerFn(claimDailyReward);
-  const loadTrades = useServerFn(getTrades);
   const [live, setLive] = useState<{ openPnl: number; equity: number } | null>(null);
   const [now, setNow] = useState(() => Date.now());
 
