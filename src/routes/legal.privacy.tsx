@@ -87,7 +87,7 @@ export const Route = createFileRoute("/legal/privacy")({
         },
         {
           heading: "Deleting your data and retention",
-          body: `You can delete your account from Settings inside the app, which removes your account immediately, or email ${APP_INFO.supportEmail} from your registered address. Deletion removes your profile, simulated trades, credit history, XP, challenge progress, AI reviews, Trader DNA records, AI Arena sessions and Arena trades, Career Mode progress and milestones, and your competition participation and competition trades. Backup copies may persist for a short period before being overwritten, and anonymised or legally required records may be retained.`,
+          body: `You can delete your account from Settings inside the app, which removes your account immediately, or email ${APP_INFO.supportEmail} from your registered address. Deletion removes your profile, simulated trades, credit history, XP, challenge progress, AI reviews, Trader DNA records, AI Arena sessions and Arena trades, Career Mode progress and milestones, your competition participation and competition trades, and your ad-reward records. Anonymous analytics and crash reports held by Google Firebase are not linked to your account and are retained and deleted according to Google's own retention settings. Backup copies may persist for a short period before being overwritten, and anonymised or legally required records may be retained.`,
         },
       ]}
     />
