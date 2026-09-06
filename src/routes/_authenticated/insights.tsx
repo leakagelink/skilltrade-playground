@@ -5,6 +5,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { getAiInsights, requestTradeReview } from "@/lib/ai.functions";
 import { getTrades } from "@/lib/trading.functions";
 import { AppHeader } from "@/components/AppHeader";
+import { RewardedAdOffer } from "@/components/ads/RewardedAdOffer";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/EmptyState";
