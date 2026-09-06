@@ -12,7 +12,7 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
-import { reportNonFatal } from "@/lib/analytics";
+import { reportNonFatal, trackEvent } from "@/lib/analytics";
 import { Toaster } from "@/components/ui/sonner";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -135,6 +135,11 @@ function RootComponent() {
   const router = useRouter();
 
   useQueryCachePersistence(queryClient);
+
+  // App open (native builds only — no-op on web/SSR).
+  useEffect(() => {
+    void trackEvent("app_open");
+  }, []);
 
   // Initialise Google Mobile Ads (native builds only) and warm the ad cache.
   useEffect(() => {

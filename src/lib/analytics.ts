@@ -11,6 +11,7 @@
  */
 
 export type AnalyticsEvent =
+  | "app_open"
   | "sign_up_completed"
   | "login_completed"
   | "logout_completed"
