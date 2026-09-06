@@ -226,6 +226,7 @@ export const completeRewardedAd = createServerFn({ method: "POST" })
         context.userId,
         "Optional bonus unlocked",
         `${amount} bonus XP added. Virtual only — no cash value.`,
+        "REWARD",
       );
       message = `${amount} bonus XP added.`;
     } else {
