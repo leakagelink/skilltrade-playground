@@ -98,17 +98,8 @@ function AuthPage() {
     setSent(true);
   }
 
-  async function handleGoogle() {
-    setLoading(true);
-    const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
-    if (result.error) {
-      setLoading(false);
-      toast.error("Google sign-in is unavailable right now.");
-      return;
-    }
-    if (result.redirected) return;
-    navigate({ to: "/home", replace: true });
-  }
+
+
 
   if (sent) {
     return (
