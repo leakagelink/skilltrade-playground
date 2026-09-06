@@ -128,6 +128,10 @@ function SettingsPage() {
           </div>
         </section>
 
+        <SocialPrivacyCard />
+
+
+
         <section className="surface-card divide-y divide-border overflow-hidden">
           <LegalLink to="/legal/terms" label="Terms of Service" />
           <LegalLink to="/legal/privacy" label="Privacy Policy" />
