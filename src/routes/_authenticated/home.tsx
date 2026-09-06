@@ -116,14 +116,18 @@ function HomePage() {
   return (
     <main className="pb-8">
       <section className="mesh-bg safe-top-section relative overflow-hidden px-5 pb-6">
-        <div className="animate-rise flex items-start justify-between gap-3">
-          <div>
+        <div className="animate-rise grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
+          <div className="min-w-0">
             <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
               Welcome back
             </p>
-            <h1 className="mt-1 text-[26px] font-extrabold leading-tight tracking-tight">{p.username}</h1>
+            <h1 className="mt-1 truncate text-[22px] font-extrabold leading-tight tracking-tight sm:text-[26px]">
+              {p.username}
+            </h1>
           </div>
-          <SimulationBadge />
+          <div className="shrink-0">
+            <SimulationBadge />
+          </div>
         </div>
 
         {/* Hero equity card */}
@@ -146,7 +150,7 @@ function HomePage() {
               ) : null}
             </div>
 
-            <p className="num mt-2 text-[40px] font-bold leading-none tracking-tight">{money(equity)}</p>
+            <p className="num mt-2 text-[clamp(1.75rem,9vw,2.5rem)] font-bold leading-none tracking-tight">{money(equity)}</p>
 
             <div className="mt-4 grid grid-cols-2 gap-2">
               <div className="rounded-2xl bg-primary-foreground/12 px-3 py-2 backdrop-blur-sm">
@@ -186,7 +190,7 @@ function HomePage() {
             <div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
               <Trophy className="size-3.5" /> Skill score
             </div>
-            <p className="num mt-2 text-3xl font-bold text-primary">{p.skillScore}</p>
+            <p className="num mt-2 text-2xl font-bold text-primary sm:text-3xl">{p.skillScore}</p>
             <p className="text-[11px] text-muted-foreground">out of 1000</p>
           </Link>
 
@@ -211,7 +215,7 @@ function HomePage() {
         </div>
 
         <p className="section-title mt-6">Performance</p>
-        <div className="bento-tile animate-rise mt-2 grid grid-cols-3 gap-y-4 p-4">
+        <div className="bento-tile animate-rise mt-2 grid grid-cols-2 gap-x-3 gap-y-4 p-4 sm:grid-cols-3">
           <Stat label="Total P&L" value={signedMoney(s.totalPnl)} tone={s.totalPnl >= 0 ? "bull" : "bear"} />
           <Stat label="Win rate" value={`${s.winRate}%`} />
           <Stat label="Trades" value={String(s.totalTrades)} />
@@ -247,10 +251,10 @@ function HomePage() {
 
 function Stat({ label, value, tone }: { label: string; value: string; tone?: "bull" | "bear" }) {
   return (
-    <div>
-      <p className="text-[10px] uppercase tracking-wide text-muted-foreground">{label}</p>
+    <div className="min-w-0">
+      <p className="truncate text-[10px] uppercase tracking-wide text-muted-foreground">{label}</p>
       <p
-        className={`num mt-0.5 text-base font-semibold ${
+        className={`num mt-0.5 break-words text-sm font-semibold sm:text-base ${
           tone === "bull" ? "text-bull" : tone === "bear" ? "text-bear" : ""
         }`}
       >

@@ -57,14 +57,14 @@ function ProfilePage() {
                     Level {p.level} · {p.levelTitle}
                   </p>
                 </div>
-                <div className="ml-auto text-right">
+                <div className="ml-auto shrink-0 text-right">
                   <p className="text-[10px] uppercase tracking-wider opacity-75">Skill</p>
                   <p className="num text-2xl font-bold">{p.skillScore}</p>
                 </div>
               </div>
             </div>
 
-            <div className="bento-tile grid grid-cols-3 gap-y-4 p-4 text-center">
+            <div className="bento-tile grid grid-cols-2 gap-x-3 gap-y-4 p-4 text-center sm:grid-cols-3">
               <Metric label="Win rate" value={`${s.winRate}%`} />
               <Metric label="Trades" value={String(s.totalTrades)} />
               <Metric label="Net P&L" value={signedMoney(s.totalPnl)} tone={s.totalPnl >= 0 ? "bull" : "bear"} />
@@ -110,7 +110,7 @@ function ProfilePage() {
                             </p>
                             <p className="text-[11px] text-muted-foreground">{dateTime(t.opened_at)}</p>
                           </div>
-                          <span className={`num text-sm font-semibold ${pnl >= 0 ? "text-bull" : "text-bear"}`}>
+                          <span className={`num shrink-0 whitespace-nowrap text-sm font-semibold ${pnl >= 0 ? "text-bull" : "text-bear"}`}>
                             {signedMoney(pnl)}
                           </span>
                         </div>
@@ -158,11 +158,11 @@ function ProfilePage() {
 
 function Metric({ label, value, tone }: { label: string; value: string; tone?: "bull" | "bear" }) {
   return (
-    <div>
-      <p className={`num text-base font-semibold ${tone === "bull" ? "text-bull" : tone === "bear" ? "text-bear" : ""}`}>
+    <div className="min-w-0">
+      <p className={`num break-words text-sm font-semibold sm:text-base ${tone === "bull" ? "text-bull" : tone === "bear" ? "text-bear" : ""}`}>
         {value}
       </p>
-      <p className="text-[11px] text-muted-foreground">{label}</p>
+      <p className="truncate text-[11px] text-muted-foreground">{label}</p>
     </div>
   );
 }
@@ -188,7 +188,7 @@ function TradeRow({ trade }: { trade: { id: string; symbol: string; direction: s
           Entry {price(Number(trade.entry_price))} · {money(Number(trade.position_size))}
         </p>
       </div>
-      <span className={`num text-sm font-semibold ${pnl >= 0 ? "text-bull" : "text-bear"}`}>{signedMoney(pnl)}</span>
+      <span className={`num shrink-0 whitespace-nowrap text-sm font-semibold ${pnl >= 0 ? "text-bull" : "text-bear"}`}>{signedMoney(pnl)}</span>
     </div>
   );
 }

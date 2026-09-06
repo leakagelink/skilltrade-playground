@@ -269,7 +269,7 @@ function InsightsPage() {
                         </span>
                       </div>
                       <p className="text-[11px] text-muted-foreground">{dateTime(r.createdAt)}</p>
-                      <div className="grid grid-cols-4 gap-2 text-center">
+                      <div className="grid grid-cols-2 gap-2 text-center sm:grid-cols-4">
                         <ScorePill label="Risk" value={r.riskManagementScore} />
                         <ScorePill label="Discipline" value={r.disciplineScore} />
                         <ScorePill label="Timing" value={r.timingScore} />
@@ -327,7 +327,7 @@ function TrendRow({
   const delta = Math.round((current - previous) * 10) / 10;
   return (
     <div className="flex items-center gap-3 text-sm">
-      <span className="flex-1 text-muted-foreground">{label}</span>
+      <span className="min-w-0 flex-1 truncate text-muted-foreground">{label}</span>
       <span className="num text-xs text-muted-foreground">
         {previous}
         {suffix}
@@ -336,7 +336,7 @@ function TrendRow({
         {current}
         {suffix}
       </span>
-      <span className={`num w-16 text-right text-xs font-semibold ${delta >= 0 ? "text-bull" : "text-bear"}`}>
+      <span className={`num w-12 shrink-0 text-right text-xs font-semibold sm:w-16 ${delta >= 0 ? "text-bull" : "text-bear"}`}>
         {delta >= 0 ? "+" : ""}
         {delta}
       </span>
@@ -346,9 +346,9 @@ function TrendRow({
 
 function ScorePill({ label, value }: { label: string; value: number }) {
   return (
-    <div className="rounded-2xl bg-secondary/70 px-2 py-2">
+    <div className="min-w-0 rounded-2xl bg-secondary/70 px-2 py-2">
       <p className="num text-base font-bold">{value}</p>
-      <p className="text-[10px] uppercase tracking-wide text-muted-foreground">{label}</p>
+      <p className="truncate text-[10px] uppercase tracking-wide text-muted-foreground">{label}</p>
     </div>
   );
 }
