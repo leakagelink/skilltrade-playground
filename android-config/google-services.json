@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "923705894281",
+    "project_id": "tradevirt",
+    "storage_bucket": "tradevirt.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:923705894281:android:1cf01d20eee7ee1e796d58",
+        "android_client_info": {
+          "package_name": "online.tradevirt.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDPY1naBvc13Yue12xfW-zmYFDpsPsEdqg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
