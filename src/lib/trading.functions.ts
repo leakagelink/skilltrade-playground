@@ -3,7 +3,6 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { isEnabled } from "./feature-flags";
 
 const DAILY_REWARD_CREDITS = 3;
-const REWARDED_AD_CREDITS = 1;
 
 export class AppError extends Error {}
 
@@ -478,45 +477,6 @@ export const claimDailyReward = createServerFn({ method: "POST" })
     return { credits, granted: DAILY_REWARD_CREDITS };
   });
 
-/**
- * Rewarded-ad credit grant. The client may only report an ad completion token;
- * the server decides whether it is valid. In TEST MODE the token is accepted
- * with a rate limit so the flow can be exercised before a real ad SDK exists.
- */
-export const grantRewardedAdCredit = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .inputValidator((data: { completionToken: string; providerId: string }) => ({
-    completionToken: String(data?.completionToken ?? ""),
-    providerId: String(data?.providerId ?? ""),
-  }))
-  .handler(async ({ data, context }) => {
-    // Version 1.0: rewarded ads are fully disabled in production. The architecture
-    // is preserved for a future release, but no credits can ever be granted here.
-    if (!isEnabled("rewardedAds")) fail("Rewarded ads are currently unavailable.");
-
-    const userId = context.userId;
-    const { admin, adjustCredits, recomputeProfile } = await loadEngine();
-    const { verifyAdCompletion } = await import("./ads/verify.server");
-
-    const verified = await verifyAdCompletion(data.providerId, data.completionToken, userId);
-    if (!verified) fail("We could not verify that reward. Please try again.");
-
-    // Rate limit: max 10 ad rewards per rolling 24h.
-    const { count } = await admin
-      .from("credit_transactions")
-      .select("id", { count: "exact", head: true })
-      .eq("user_id", userId)
-      .eq("source", "REWARDED_AD")
-      .gte("created_at", new Date(Date.now() - 86400000).toISOString());
-    if ((count ?? 0) >= 10) fail("You have reached today's limit for rewarded credits.");
-
-    const { data: profile } = await admin.from("profiles").select("virtual_credits").eq("id", userId).single();
-    const credits = Number(profile?.virtual_credits ?? 0) + REWARDED_AD_CREDITS;
-    await admin.from("profiles").update({ virtual_credits: credits }).eq("id", userId);
-    await adjustCredits(admin, userId, REWARDED_AD_CREDITS, "REWARDED_AD");
-    await recomputeProfile(admin, userId);
-    return { credits, granted: REWARDED_AD_CREDITS };
-  });
 
 /* ------------------------------------------------------------------ */
 /* Challenges, leaderboard, profile                                    */
