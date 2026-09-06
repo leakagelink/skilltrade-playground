@@ -170,7 +170,7 @@ function ArenaPage() {
               </p>
             ) : null}
 
-            <div className="bento-tile grid grid-cols-3 gap-y-3 p-4">
+            <div className="bento-tile grid grid-cols-2 gap-x-3 gap-y-3 p-4 sm:grid-cols-3">
               <Stat label="Arena cash" value={money(active.user.cash)} />
               <Stat label="Open P&L" value={signedMoney(active.user.openPnl)} />
               <Stat label="Closed P&L" value={signedMoney(active.user.realizedPnl)} />
@@ -334,9 +334,9 @@ function ArenaPage() {
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div>
-      <p className="text-[10px] uppercase tracking-wide text-muted-foreground">{label}</p>
-      <p className="num mt-0.5 text-sm font-semibold">{value}</p>
+    <div className="min-w-0">
+      <p className="truncate text-[10px] uppercase tracking-wide text-muted-foreground">{label}</p>
+      <p className="num mt-0.5 break-words text-sm font-semibold">{value}</p>
     </div>
   );
 }
@@ -422,8 +422,8 @@ function ArenaTicket({
         ))}
       </div>
 
-      <div className="grid grid-cols-3 gap-2">
-        <label className="text-[11px] text-muted-foreground">
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+        <label className="col-span-2 text-[11px] text-muted-foreground sm:col-span-1">
           Size (USD)
           <Input value={size} inputMode="decimal" onChange={(e) => setSize(e.target.value)} className="mt-1 h-10" />
         </label>

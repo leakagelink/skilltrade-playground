@@ -83,7 +83,7 @@ function ArenaHistoryPage() {
                 <p className="mt-1 text-[11px] text-muted-foreground">
                   {shortDate(s.startTime)} — {shortDate(s.endTime)}
                 </p>
-                <div className="mt-3 grid grid-cols-4 gap-2 text-[11px]">
+                <div className="mt-3 grid grid-cols-2 gap-2 text-[11px] sm:grid-cols-4">
                   <Cell label="Your return" value={s.userReturn == null ? "—" : pct(s.userReturn)} />
                   <Cell label="AI return" value={s.aiReturn == null ? "—" : pct(s.aiReturn)} />
                   <Cell label="Your score" value={s.userScore == null ? "—" : String(s.userScore)} />
@@ -105,8 +105,8 @@ function ArenaHistoryPage() {
 
 function Cell({ label, value }: { label: string; value: string }) {
   return (
-    <div>
-      <p className="text-muted-foreground">{label}</p>
+    <div className="min-w-0">
+      <p className="truncate text-muted-foreground">{label}</p>
       <p className="num font-semibold">{value}</p>
     </div>
   );

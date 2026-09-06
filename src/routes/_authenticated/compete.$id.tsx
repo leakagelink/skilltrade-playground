@@ -161,8 +161,8 @@ function CompetitionPage() {
                     </button>
                   ))}
                 </div>
-                <div className="grid grid-cols-3 gap-2">
-                  <Input value={size} onChange={(e) => setSize(e.target.value)} placeholder="Size" className="num" />
+                <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+                  <Input value={size} onChange={(e) => setSize(e.target.value)} placeholder="Size" className="num col-span-2 sm:col-span-1" />
                   <Input
                     value={stopLoss}
                     onChange={(e) => setStopLoss(e.target.value)}
