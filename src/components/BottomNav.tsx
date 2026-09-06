@@ -1,4 +1,5 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useRouter } from "@tanstack/react-router";
+import { useEffect } from "react";
 import { Home, CandlestickChart, Sparkles, Swords, Target, Trophy, User } from "lucide-react";
 
 const TABS = [
