@@ -1,0 +1,2 @@
+REVOKE EXECUTE ON FUNCTION public.get_social_leaderboard(text, integer, integer) FROM anon, public;
+GRANT EXECUTE ON FUNCTION public.get_social_leaderboard(text, integer, integer) TO authenticated, service_role;
