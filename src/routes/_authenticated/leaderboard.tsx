@@ -12,6 +12,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/EmptyState";
 import { Trophy, Users } from "lucide-react";
 import { Link } from "@tanstack/react-router";
+import { trackEvent } from "@/lib/analytics";
 
 export const Route = createFileRoute("/_authenticated/leaderboard")({
   head: () => ({
