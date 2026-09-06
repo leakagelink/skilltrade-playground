@@ -213,9 +213,10 @@ export async function evaluateCareerProgress(admin: Admin, userId: string): Prom
     );
   }
 
-  const currentIndex = Math.min(highest, CAREER_STAGES.length - 1);
-  const currentStage = CAREER_STAGES[currentIndex]!;
+  const pendingIndex = Math.min(highest, CAREER_STAGES.length - 1);
+  const pendingStage = CAREER_STAGES[pendingIndex]!;
   const achievedStage = highest > 0 ? CAREER_STAGES[highest - 1]! : CAREER_STAGES[0]!;
+  const currentStage = achievedStage;
   const careerTitle = highest > 0 ? achievedStage.title : CAREER_STAGES[0]!.title;
 
   /* --- specializations --- */
