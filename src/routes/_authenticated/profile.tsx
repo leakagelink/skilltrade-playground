@@ -74,6 +74,10 @@ function ProfilePage() {
           </div>
         )}
 
+        <CareerCard />
+
+
+
         <Tabs defaultValue="closed">
           <TabsList className="grid h-11 w-full grid-cols-2 rounded-2xl bg-secondary p-1">
             <TabsTrigger value="open">Open ({open.length})</TabsTrigger>
