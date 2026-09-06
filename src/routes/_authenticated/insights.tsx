@@ -227,6 +227,13 @@ function InsightsPage() {
                     hours.
                   </p>
                 </div>
+                <div className="mt-3">
+                  <RewardedAdOffer
+                    placement="AI_COACH"
+                    title="Need one more analysis today?"
+                    onGranted={() => void insights.refetch()}
+                  />
+                </div>
               </section>
             ) : null}
 
