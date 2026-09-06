@@ -155,7 +155,15 @@ export const requestTradeReview = createServerFn({ method: "POST" })
       .select("id", { count: "exact", head: true })
       .eq("user_id", userId)
       .gt("created_at", since);
-    if ((count ?? 0) >= AI_ANALYSIS_DAILY_LIMIT) {
+    // Optional ad-earned bonus analyses raise today's limit (virtual only).
+    const { data: adActivity } = await admin
+      .from("user_ad_activity")
+      .select("bonus_ai_analyses")
+      .eq("user_id", userId)
+      .eq("activity_date", new Date().toISOString().slice(0, 10))
+      .maybeSingle();
+    const bonusToday = Number(adActivity?.["bonus_ai_analyses"] ?? 0);
+    if ((count ?? 0) >= AI_ANALYSIS_DAILY_LIMIT + bonusToday) {
       throw new AiError("Your AI analysis limit has been reached for today. Please try again later.");
     }
 
