@@ -5,6 +5,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { getAiInsights, requestTradeReview } from "@/lib/ai.functions";
 import { getTrades } from "@/lib/trading.functions";
 import { AppHeader } from "@/components/AppHeader";
+import { RewardedAdOffer } from "@/components/ads/RewardedAdOffer";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/EmptyState";
@@ -226,6 +227,13 @@ function InsightsPage() {
                     {d.usedToday} of {d.dailyLimit} educational AI reviews used in the last 24
                     hours.
                   </p>
+                </div>
+                <div className="mt-3">
+                  <RewardedAdOffer
+                    placement="AI_COACH"
+                    title="Need one more analysis today?"
+                    onGranted={() => void insights.refetch()}
+                  />
                 </div>
               </section>
             ) : null}
