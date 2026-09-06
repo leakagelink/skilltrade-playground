@@ -32,26 +32,6 @@ const FEATURES = [
   { icon: Trophy, title: "Leaderboards", body: "Compete on skill, not on raw profit." },
 ];
 
-/**
- * Supabase persists its session in localStorage under an "sb-<ref>-auth-token"
- * key. Reading it lets a returning signed-in user skip the marketing screen
- * entirely instead of seeing it flash while getSession() resolves.
- */
-function hasStoredSession(): boolean {
-  if (typeof window === "undefined") return false;
-  try {
-    for (let i = 0; i < window.localStorage.length; i++) {
-      const key = window.localStorage.key(i);
-      if (key && key.startsWith("sb-") && key.endsWith("-auth-token") && window.localStorage.getItem(key)) {
-        return true;
-      }
-    }
-  } catch {
-    // Storage blocked → fall back to the async session check below.
-  }
-  return false;
-}
-
 function Landing() {
   const navigate = useNavigate();
   // "checking" while the stored session is verified; a returning user therefore
@@ -60,10 +40,10 @@ function Landing() {
 
   useEffect(() => {
     let active = true;
-    if (hasStoredSession()) setState("redirecting");
-    supabase.auth.getSession().then(({ data }) => {
+    if (readStoredSession()) setState("redirecting");
+    getSessionSafe().then((session) => {
       if (!active) return;
-      if (data.session) {
+      if (session) {
         setState("redirecting");
         navigate({ to: "/home", replace: true });
       } else {
