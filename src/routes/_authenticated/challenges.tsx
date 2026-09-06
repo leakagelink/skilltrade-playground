@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getBadges, getChallenges } from "@/lib/trading.functions";
@@ -7,6 +7,8 @@ import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/EmptyState";
 import { Award, CheckCircle2, Target } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useInterstitialContinue } from "@/lib/ads/useInterstitial";
 
 export const Route = createFileRoute("/_authenticated/challenges")({
   head: () => ({
@@ -21,6 +23,8 @@ export const Route = createFileRoute("/_authenticated/challenges")({
 });
 
 function ChallengesPage() {
+  const navigate = useNavigate();
+  const showAdThenContinue = useInterstitialContinue();
   const loadChallenges = useServerFn(getChallenges);
   const loadBadges = useServerFn(getBadges);
   const challenges = useQuery({ queryKey: ["challenges"], queryFn: () => loadChallenges() });
@@ -28,6 +32,7 @@ function ChallengesPage() {
 
   const daily = (challenges.data?.challenges ?? []).filter((c) => c.type === "DAILY");
   const weekly = (challenges.data?.challenges ?? []).filter((c) => c.type === "WEEKLY");
+  const hasCompleted = (challenges.data?.challenges ?? []).some((c) => c.status === "COMPLETED");
 
   return (
     <main>
@@ -46,6 +51,17 @@ function ChallengesPage() {
           <>
             <Section title="Daily" items={daily} />
             <Section title="Weekly" items={weekly} />
+            {hasCompleted ? (
+              <Button
+                variant="secondary"
+                className="h-11 w-full rounded-2xl text-sm font-semibold"
+                onClick={() =>
+                  void showAdThenContinue("CHALLENGE_COMPLETE_CONTINUE", () => navigate({ to: "/home" }))
+                }
+              >
+                Continue
+              </Button>
+            ) : null}
           </>
         )}
 
