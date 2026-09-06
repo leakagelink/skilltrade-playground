@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { getSessionSafe, readStoredSession } from "@/lib/session";
 import { Button } from "@/components/ui/button";
 import { CandlestickChart, Loader2, ShieldCheck, Target, Trophy } from "lucide-react";
 import { SimulationBadge } from "@/components/Disclaimer";

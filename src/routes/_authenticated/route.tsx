@@ -1,5 +1,5 @@
 import { createFileRoute, Outlet, redirect, useLocation } from "@tanstack/react-router";
-import { supabase } from "@/integrations/supabase/client";
+import { getSessionSafe } from "@/lib/session";
 import { BottomNav } from "@/components/BottomNav";
 
 export const Route = createFileRoute("/_authenticated")({
@@ -7,9 +7,9 @@ export const Route = createFileRoute("/_authenticated")({
   beforeLoad: async () => {
     // Read the locally stored session (no network round-trip on every screen
     // change). Server functions still verify the token on their side.
-    const { data, error } = await supabase.auth.getSession();
-    if (error || !data.session?.user) throw redirect({ to: "/auth" });
-    return { user: data.session.user };
+    const session = await getSessionSafe();
+    if (!session?.user) throw redirect({ to: "/auth" });
+    return { user: session.user };
   },
 
   component: AuthedLayout,

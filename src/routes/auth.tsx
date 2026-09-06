@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { getSessionSafe } from "@/lib/session";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -36,9 +37,9 @@ function AuthPage() {
 
   useEffect(() => {
     let active = true;
-    supabase.auth.getSession().then(({ data }) => {
+    getSessionSafe().then((session) => {
       if (!active) return;
-      if (data.session) navigate({ to: "/home", replace: true });
+      if (session) navigate({ to: "/home", replace: true });
       else setCheckingSession(false);
     });
     return () => {
