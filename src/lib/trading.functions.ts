@@ -609,10 +609,8 @@ export const deleteMyAccount = createServerFn({ method: "POST" })
     }
 
     // Advertising records (daily counters and one-time reward grants).
-    {
-      await supabaseAdmin.from("ad_reward_grants").delete().eq("user_id", userId);
-      await supabaseAdmin.from("user_ad_activity").delete().eq("user_id", userId);
-    }
+    await supabaseAdmin.from("ad_reward_grants").delete().eq("user_id", context.userId);
+    await supabaseAdmin.from("user_ad_activity").delete().eq("user_id", context.userId);
     await supabaseAdmin.from("competitions").delete().eq("created_by", context.userId).neq("status", "ACTIVE");
 
     await supabaseAdmin.auth.admin.deleteUser(context.userId);
