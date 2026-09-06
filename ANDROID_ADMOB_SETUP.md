@@ -16,7 +16,21 @@ npm install
 ```powershell
 npx cap add android      # only the first time
 npx cap sync android
+npm run android:setup
 ```
+
+`npm run android:setup` is a one-shot, repeatable script. After every
+`npx cap sync android` it:
+
+- copies `android-config\google-services.json` to `android\app\google-services.json`
+  (and aborts if the package name is not `online.tradevirt.app`),
+- adds the Google Services + Firebase Crashlytics Gradle plugins,
+- adds the AdMob application id meta-data and the INTERNET / AD_ID permissions.
+
+It never adds Firebase Android SDK dependencies — the Capacitor Firebase
+plugins already provide them, so there is no duplicate initialisation.
+Steps 3 and 4 below are what the script performs; verify them if you prefer
+to do it manually.
 
 Package name: `online.tradevirt.app` — this must match the package name
 registered in your Google AdMob app.
@@ -116,3 +130,24 @@ the Capacitor `appId`. Do not change either.
 - Google Mobile Ads (AdMob) is initialised by its own plugin; the Firebase
   plugins initialise the Firebase app separately, so there is no duplicate
   initialisation.
+
+---
+
+# Architecture notes (audit)
+
+- **Android build architecture:** Capacitor (`capacitor.config.ts`,
+  `appId: online.tradevirt.app`). The native project is generated on your
+  machine by `npx cap add android`; it is intentionally not committed, so no
+  Android build happens in Lovable. The AAB is produced in Android Studio.
+- **`server.url = https://tradevirt.online`:** the WebView loads the published
+  site remotely. Capacitor still injects its native bridge into that page, so
+  AdMob, Firebase Analytics and Crashlytics plugins work normally. Two
+  consequences: (1) the phone must be online for the app to load, and (2) web
+  code changes only reach the app after you Publish. Crashlytics captures
+  native crashes and the non-fatals reported from the app; JavaScript errors are
+  reported as non-fatals with a type label only.
+- **Firebase web SDK is never used.** `src/lib/analytics.ts` no-ops on web/SSR
+  and the Vite config maps `firebase/*` to a local stub so the plugins' web
+  fallbacks never pull the optional Firebase JS SDK into the bundle.
+- **No duplicate initialisation:** Google Mobile Ads is initialised by the AdMob
+  plugin, Firebase by `google-services.json` via the Google Services plugin.
