@@ -61,8 +61,12 @@ export const Route = createFileRoute("/legal/privacy")({
           body: "Career Mode records your simulation progress: your current career stage, the cosmetic career title you have reached, completed career milestones and the educational learning path you select. This progress is calculated on our servers from activity you already carry out in the app (simulated trades, challenges, AI reviews and AI Arena sessions) and is visible only to you. Career rewards are virtual XP, titles and badges with no monetary value.",
         },
         {
+          heading: "Social competitions and public profiles",
+          body: "If you take part in friend challenges, open challenges or weekly tournaments, we store your participation, the simulated trades you place inside that competition, your virtual balance for it and the resulting Simulation Competition Score and ranking. Competition results are visible to the other participants of the same competition. You may optionally select a country and turn on a public trader profile; when enabled, other users can see only your username, avatar, level, Trading Skill Score, badges and (if you allow it) your country. We never display your email address, phone number, account identifiers, precise location or your private trades. TradeVirt does not request device location, and every competition uses virtual funds only with no entry fee, wager, cash prize or transferable reward.",
+        },
+        {
           heading: "How we use your data",
-          body: "Your data is used only to authenticate you, manage your account, provide paper trading functionality, maintain your simulated portfolio and trade history, calculate your Trading Skill Score, calculate Trader DNA and educational AI insights, run challenges, AI Arena competitions, Career Mode progression and leaderboards, and improve reliability. We do not sell your data.",
+          body: "Your data is used only to authenticate you, manage your account, provide paper trading functionality, maintain your simulated portfolio and trade history, calculate your Trading Skill Score, calculate Trader DNA and educational AI insights, run challenges, AI Arena competitions, social competitions and tournaments, Career Mode progression and leaderboards, and improve reliability. We do not sell your data.",
         },
         {
           heading: "Security",
@@ -78,7 +82,7 @@ export const Route = createFileRoute("/legal/privacy")({
         },
         {
           heading: "Deleting your data and retention",
-          body: `You can delete your account from Settings inside the app, which removes your account immediately, or email ${APP_INFO.supportEmail} from your registered address. Deletion removes your profile, simulated trades, credit history, XP, challenge progress, AI reviews, Trader DNA records, AI Arena sessions and Arena trades, and Career Mode progress and milestones. Backup copies may persist for a short period before being overwritten, and anonymised or legally required records may be retained.`,
+          body: `You can delete your account from Settings inside the app, which removes your account immediately, or email ${APP_INFO.supportEmail} from your registered address. Deletion removes your profile, simulated trades, credit history, XP, challenge progress, AI reviews, Trader DNA records, AI Arena sessions and Arena trades, Career Mode progress and milestones, and your competition participation and competition trades. Backup copies may persist for a short period before being overwritten, and anonymised or legally required records may be retained.`,
         },
       ]}
     />
