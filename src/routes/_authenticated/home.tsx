@@ -116,14 +116,18 @@ function HomePage() {
   return (
     <main className="pb-8">
       <section className="mesh-bg safe-top-section relative overflow-hidden px-5 pb-6">
-        <div className="animate-rise flex items-start justify-between gap-3">
-          <div>
+        <div className="animate-rise grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
+          <div className="min-w-0">
             <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
               Welcome back
             </p>
-            <h1 className="mt-1 text-[26px] font-extrabold leading-tight tracking-tight">{p.username}</h1>
+            <h1 className="mt-1 truncate text-[22px] font-extrabold leading-tight tracking-tight sm:text-[26px]">
+              {p.username}
+            </h1>
           </div>
-          <SimulationBadge />
+          <div className="shrink-0">
+            <SimulationBadge />
+          </div>
         </div>
 
         {/* Hero equity card */}
