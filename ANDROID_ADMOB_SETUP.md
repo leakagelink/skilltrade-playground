@@ -69,3 +69,50 @@ own device traffic never hits the live units.
 ## app-ads.txt
 
 Already served at `https://tradevirt.online/app-ads.txt`.
+
+---
+
+# Firebase (Analytics + Crashlytics)
+
+The repository has **no checked-in `android/` folder** — it is generated on your
+machine by Capacitor. So the Firebase config file lives in the repo at:
+
+`android-config/google-services.json`
+
+After generating the Android project, copy it into place (PowerShell):
+
+```powershell
+npx cap add android      # first time only
+npx cap sync android
+Copy-Item android-config\google-services.json android\app\google-services.json -Force
+```
+
+## Gradle changes (one time, in the generated project)
+
+`android\build.gradle` — inside `dependencies` of `buildscript`:
+
+```gradle
+classpath 'com.google.gms:google-services:4.4.2'
+classpath 'com.google.firebase:firebase-crashlytics-gradle:3.0.2'
+```
+
+`android\app\build.gradle` — at the bottom of the file:
+
+```gradle
+apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.firebase.crashlytics'
+```
+
+No manual Firebase dependencies are needed: `@capacitor-firebase/analytics`
+and `@capacitor-firebase/crashlytics` bring the Android SDKs in automatically.
+
+Package name in `google-services.json` is `online.tradevirt.app` — it matches
+the Capacitor `appId`. Do not change either.
+
+## Notes
+
+- Firebase Authentication / Firestore / Storage / Messaging are **not** used.
+  Supabase remains the only auth and database.
+- Google Mobile Ads (AdMob) is initialised by its own plugin; the Firebase
+  plugins initialise the Firebase app separately, so there is no duplicate
+  initialisation.

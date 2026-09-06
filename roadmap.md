@@ -15,3 +15,10 @@
 - Rewarded placements: AI Coach bonus analysis, Career milestone, Arena result. Interstitials: career milestone / challenge / arena continue.
 - Legacy simulated rewarded-ad code (fake countdown, test token endpoint) removed.
 - Privacy, Terms and account deletion updated; Android setup in ANDROID_ADMOB_SETUP.md.
+
+## Firebase Analytics + Crashlytics (native Android only)
+- @capacitor-firebase/analytics and @capacitor-firebase/crashlytics installed; google-services.json stored at android-config/ (no android/ folder in repo).
+- Centralized service src/lib/analytics.ts with a strict non-personal parameter allow-list; no-op on web/SSR.
+- Events: sign_up_completed, login_completed, logout_completed, trade_opened, trade_closed, daily_reward_claimed, ai_coach_used, trader_dna_viewed, ai_arena_started, career_mode_started, career_level_completed, leaderboard_viewed.
+- Crashlytics: automatic crash capture plus a non-fatal from the root error boundary (no PII, no tokens).
+- Firebase web SDK stubbed in vite config (native-only usage); production build verified.
