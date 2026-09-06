@@ -365,14 +365,14 @@ export const liveMarketDataProvider: MarketDataProvider = {
 
     if (cryptos.length > 0) {
       try {
-        const rates = await coinbaseUsdRates();
+        const rates = await krakenTickers(cryptos.map(({ symbol }) => symbol));
         for (const { symbol } of cryptos) {
-          const livePrice = rates.get(symbol);
-          if (!livePrice) continue;
+          const row = rates.get(symbol);
+          if (!row) continue;
           quotes.set(symbol, {
             symbol,
-            price: livePrice,
-            changePercent: 0,
+            price: row.price,
+            changePercent: row.open > 0 ? ((row.price - row.open) / row.open) * 100 : 0,
             status: "LIVE",
             asOf: Math.floor(Date.now() / 1000),
             marketState: "OPEN",
