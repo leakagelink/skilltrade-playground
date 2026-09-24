@@ -53,9 +53,10 @@ export const AD_LIMITS = {
   AI_COACH_REWARDED_PER_DAY: 3,
   CAREER_REWARDED_PER_DAY: 1,
   ARENA_REWARDED_PER_DAY: 1,
+  DAILY_DOUBLE_PER_DAY: 1,
 } as const;
 
-export const REWARDED_PLACEMENTS = ["AI_COACH", "CAREER", "ARENA"] as const;
+export const REWARDED_PLACEMENTS = ["AI_COACH", "CAREER", "ARENA", "DAILY_DOUBLE"] as const;
 export type RewardedPlacement = (typeof REWARDED_PLACEMENTS)[number];
 
 export const INTERSTITIAL_PLACEMENTS = [
@@ -68,11 +69,13 @@ export type InterstitialPlacement = (typeof INTERSTITIAL_PLACEMENTS)[number];
 /** Every reward is virtual, non-transferable and has no monetary value. */
 export const REWARD_BY_PLACEMENT: Record<
   RewardedPlacement,
-  { type: "AI_ANALYSIS" | "XP"; amount: number; label: string }
+  { type: "AI_ANALYSIS" | "XP" | "CREDITS"; amount: number; label: string }
 > = {
   AI_COACH: { type: "AI_ANALYSIS", amount: 1, label: "1 extra AI analysis today" },
   CAREER: { type: "XP", amount: 25, label: "25 bonus XP" },
   ARENA: { type: "XP", amount: 25, label: "25 bonus XP" },
+  /** Doubles today's daily reward (matches DAILY_REWARD_CREDITS on the server). */
+  DAILY_DOUBLE: { type: "CREDITS", amount: 3, label: "+3 bonus Trading Credits (2x daily reward)" },
 };
 
 export const AD_DISCLOSURE =
