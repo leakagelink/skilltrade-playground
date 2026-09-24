@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
+import { RewardedAdOffer } from "@/components/ads/RewardedAdOffer";
 import { claimDailyReward, getDashboard, getTrades, syncOpenTrades } from "@/lib/trading.functions";
 import { OpenPositions } from "@/components/OpenPositions";
 import { Button } from "@/components/ui/button";
@@ -82,6 +83,7 @@ function HomePage() {
       toast.success(`+${r.granted} Trading Credits claimed.`);
       void trackEvent("daily_reward_claimed");
       qc.invalidateQueries({ queryKey: ["dashboard"] });
+      qc.invalidateQueries({ queryKey: ["ad-status"] });
     },
     onError: (e: Error) => toast.error(e.message || "Could not claim your reward right now."),
   });
@@ -213,6 +215,14 @@ function HomePage() {
               {canClaim ? "Claim credits" : "Claimed"}
             </Button>
           </div>
+        </div>
+
+        <div className="mt-3">
+          <RewardedAdOffer
+            placement="DAILY_DOUBLE"
+            title="Double today's daily reward"
+            onGranted={() => void qc.invalidateQueries({ queryKey: ["dashboard"] })}
+          />
         </div>
 
         <p className="section-title mt-6">Performance</p>

@@ -90,13 +90,38 @@ async function saveActivity(db: Admin, userId: string, patch: Partial<Activity>)
 function placementCount(a: Activity, placement: RewardedPlacement): number {
   if (placement === "AI_COACH") return a.ai_coach_rewards;
   if (placement === "CAREER") return a.career_rewards;
+  if (placement === "DAILY_DOUBLE") return 0; // checked via dailyDoubleEligible
   return a.arena_rewards;
 }
 
 function placementCap(placement: RewardedPlacement): number {
   if (placement === "AI_COACH") return AD_LIMITS.AI_COACH_REWARDED_PER_DAY;
   if (placement === "CAREER") return AD_LIMITS.CAREER_REWARDED_PER_DAY;
+  if (placement === "DAILY_DOUBLE") return AD_LIMITS.DAILY_DOUBLE_PER_DAY;
   return AD_LIMITS.ARENA_REWARDED_PER_DAY;
+}
+
+/**
+ * Daily-double is only offered once the user has claimed today's daily reward
+ * and has not already doubled that claim.
+ */
+async function dailyDoubleEligible(db: Admin, userId: string): Promise<boolean> {
+  const { data: last } = await db
+    .from("daily_rewards")
+    .select("claimed_at, next_claim_at")
+    .eq("user_id", userId)
+    .order("claimed_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (!last || new Date(String(last["next_claim_at"])).getTime() <= Date.now()) return false;
+  const { count } = await db
+    .from("ad_reward_grants")
+    .select("id", { count: "exact", head: true })
+    .eq("user_id", userId)
+    .eq("placement", "DAILY_DOUBLE")
+    .eq("status", "COMPLETED")
+    .gte("completed_at", String(last["claimed_at"]));
+  return (count ?? 0) === 0;
 }
 
 function rewardedAllowed(a: Activity, placement: RewardedPlacement): boolean {
@@ -127,6 +152,8 @@ export const getAdStatus = createServerFn({ method: "GET" })
         AI_COACH: rewardedAllowed(a, "AI_COACH"),
         CAREER: rewardedAllowed(a, "CAREER"),
         ARENA: rewardedAllowed(a, "ARENA"),
+        DAILY_DOUBLE:
+          rewardedAllowed(a, "DAILY_DOUBLE") && (await dailyDoubleEligible(db, context.userId)),
       } as Record<RewardedPlacement, boolean>,
     };
   });
@@ -144,7 +171,10 @@ export const startRewardedAd = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const db = await admin();
     const a = await todayActivity(db, context.userId);
-    if (!rewardedAllowed(a, data.placement)) {
+    if (
+      !rewardedAllowed(a, data.placement) ||
+      (data.placement === "DAILY_DOUBLE" && !(await dailyDoubleEligible(db, context.userId)))
+    ) {
       throw new AdError("Daily ad reward limit reached. Please try again tomorrow.");
     }
     const reward = REWARD_BY_PLACEMENT[data.placement];
@@ -210,13 +240,34 @@ export const completeRewardedAd = createServerFn({ method: "POST" })
       patch.bonus_ai_analyses = activity.bonus_ai_analyses + Number(grant["reward_amount"] ?? 1);
     } else if (placement === "CAREER") {
       patch.career_rewards = activity.career_rewards + 1;
-    } else {
+    } else if (placement === "ARENA") {
       patch.arena_rewards = activity.arena_rewards + 1;
     }
     await saveActivity(db, context.userId, patch);
 
     let message = "";
-    if (String(grant["reward_type"]) === "XP") {
+    if (String(grant["reward_type"]) === "CREDITS") {
+      const { adjustCredits, addNotification } = await import("./engine.server");
+      const amount = Number(grant["reward_amount"] ?? 0);
+      const { data: profile } = await db
+        .from("profiles")
+        .select("virtual_credits")
+        .eq("id", context.userId)
+        .single();
+      await db
+        .from("profiles")
+        .update({ virtual_credits: Number(profile?.virtual_credits ?? 0) + amount })
+        .eq("id", context.userId);
+      await adjustCredits(db, context.userId, amount, "AD_BONUS_DAILY_DOUBLE");
+      await addNotification(
+        db,
+        context.userId,
+        "Daily reward doubled",
+        `+${amount} bonus Trading Credits. Virtual only — no cash value.`,
+        "REWARD",
+      );
+      message = `+${amount} bonus Trading Credits added.`;
+    } else if (String(grant["reward_type"]) === "XP") {
       const { awardXp, recomputeProfile, addNotification } = await import("./engine.server");
       const amount = Number(grant["reward_amount"] ?? 0);
       await awardXp(db, context.userId, amount, `AD_BONUS_${placement}`);
