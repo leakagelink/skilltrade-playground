@@ -118,6 +118,24 @@ export const getTrades = createServerFn({ method: "GET" })
     return { trades: data ?? [] };
   });
 
+/** Fast trade price: batch source first (Kraken/Coinbase/Twelve Data), then single-symbol fallback, each time-boxed. */
+async function fastQuote(symbol: string) {
+  const { getMarketDataProvider } = await import("./market/provider.server");
+  const provider = getMarketDataProvider();
+  const timeout = <T,>(p: Promise<T>, ms: number) =>
+    Promise.race([p, new Promise<never>((_, r) => setTimeout(() => r(new Error("timeout")), ms))]);
+  if (provider.getLatestPrices) {
+    try {
+      const qs = await timeout(provider.getLatestPrices([symbol]), 4000);
+      const q = qs.find((x) => x.symbol === symbol && x.price > 0);
+      if (q) return q;
+    } catch {
+      /* fall through */
+    }
+  }
+  return timeout(provider.getLatestPrice(symbol), 6000);
+}
+
 export const openTrade = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: {
@@ -147,40 +165,23 @@ export const openTrade = createServerFn({ method: "POST" })
       await loadEngine();
     const { getMarketDataProvider } = await import("./market/provider.server");
 
-    const { data: profile } = await admin
-      .from("profiles")
-      .select("virtual_credits, virtual_balance")
-      .eq("id", userId)
-      .single();
+    const [profileRes, assetRes, openRes, quoteRes] = await Promise.all([
+      admin.from("profiles").select("virtual_credits, virtual_balance").eq("id", userId).single(),
+      admin.from("assets").select("id, symbol, asset_type").eq("symbol", data.symbol).eq("is_active", true).maybeSingle(),
+      admin.from("trades").select("position_size").eq("user_id", userId).eq("status", "OPEN"),
+      fastQuote(data.symbol).then((q) => ({ q }), () => ({ q: null })),
+    ]);
+    const profile = profileRes.data;
     if (!profile) fail("Profile not found.");
-
     if (Number(profile.virtual_credits) < 1) fail("You need Trading Credits to open a new trade.");
-
-    const { data: asset } = await admin
-      .from("assets")
-      .select("id, symbol, asset_type")
-      .eq("symbol", data.symbol)
-      .eq("is_active", true)
-      .maybeSingle();
+    const asset = assetRes.data;
     if (!asset) fail("This asset is not available for simulated trading.");
-
-    // Exposure limit: total open position size must stay within virtual balance.
-    const { data: openTrades } = await admin
-      .from("trades")
-      .select("position_size")
-      .eq("user_id", userId)
-      .eq("status", "OPEN");
-    const exposure = (openTrades ?? []).reduce((a, t) => a + Number(t.position_size), 0);
+    const exposure = (openRes.data ?? []).reduce((a, t) => a + Number(t.position_size), 0);
     if (exposure + data.positionSize > Number(profile.virtual_balance)) {
       fail("Position size exceeds your available virtual balance.");
     }
-
-    let quote;
-    try {
-      quote = await getMarketDataProvider().getLatestPrice(data.symbol);
-    } catch {
-      fail("Market data is temporarily unavailable. Please try again later.");
-    }
+    const quote = quoteRes.q;
+    if (!quote) fail("Market data is temporarily unavailable. Please try again later.");
     const entry = quote.price;
 
     if (data.stopLoss != null) {
@@ -216,10 +217,12 @@ export const openTrade = createServerFn({ method: "POST" })
       .from("profiles")
       .update({ virtual_credits: Number(profile.virtual_credits) - 1 })
       .eq("id", userId);
-    await adjustCredits(admin, userId, -1, "TRADE_COST");
-    await awardXp(admin, userId, XP_REWARDS.OPEN_TRADE, "OPEN_TRADE");
+    await Promise.all([
+      adjustCredits(admin, userId, -1, "TRADE_COST"),
+      awardXp(admin, userId, XP_REWARDS.OPEN_TRADE, "OPEN_TRADE"),
+    ]);
     await recomputeProfile(admin, userId);
-    await evaluateChallenges(admin, userId);
+    void evaluateChallenges(admin, userId).catch(() => {});
 
     return { tradeId: trade.id as string, entryPrice: entry };
   });
@@ -255,7 +258,7 @@ export const closeTrade = createServerFn({ method: "POST" })
 
     let quote;
     try {
-      quote = await getMarketDataProvider().getLatestPrice(trade.symbol as string);
+      quote = await fastQuote(trade.symbol as string);
     } catch {
       fail("Market data is temporarily unavailable. Please try again later.");
     }
@@ -326,7 +329,7 @@ export const closeTrade = createServerFn({ method: "POST" })
       "TRADE",
     );
     await recomputeProfile(admin, userId);
-    await evaluateChallenges(admin, userId);
+    void evaluateChallenges(admin, userId).catch(() => {});
 
     return { exitPrice: exit, pnl, status, review };
   });
