@@ -12,7 +12,7 @@ const TABS = [
   { to: "/profile", label: "Profile", icon: User },
 ] as const;
 
-export function BottomNav() {
+export function BottomNav({ bottomOffset = 0 }: { bottomOffset?: number }) {
   const router = useRouter();
 
   // Warm up every tab's code bundle once the app is idle so tab switches feel instant.
@@ -38,7 +38,8 @@ export function BottomNav() {
   return (
     <nav
       aria-label="Main"
-      className="safe-bottom fixed inset-x-0 bottom-0 z-40 px-2 pb-2 sm:px-4 sm:pb-3"
+      className="safe-bottom fixed inset-x-0 z-40 px-2 pb-2 sm:px-4 sm:pb-3"
+      style={{ bottom: bottomOffset }}
     >
       <ul className="glass-panel mx-auto grid w-full max-w-md grid-cols-7 items-stretch gap-0.5 rounded-[1.5rem] p-1 shadow-[0_20px_40px_-24px_oklch(0_0_0/90%)] sm:gap-1 sm:rounded-[1.75rem] sm:p-1.5">
         {TABS.map(({ to, label, icon: Icon }) => (
