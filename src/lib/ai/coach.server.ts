@@ -100,52 +100,54 @@ function isSafe(review: CoachReview): boolean {
   return !BANNED.some((phrase) => text.includes(phrase));
 }
 
+/**
+ * Built-in rule-based review. Runs entirely on our server — no external AI
+ * service and no Lovable AI credits are used.
+ */
 export async function generateTradeReview(input: CoachInput): Promise<CoachReview> {
-  const apiKey = process.env["LOVABLE_API_KEY"];
-  if (!apiKey) throw new AiUnavailableError();
+  void AI_URL; void AI_MODEL; void SYSTEM_PROMPT;
+  const strengths: string[] = [];
+  const areas: string[] = [];
+  const patterns: string[] = [];
 
-  let res: Response;
-  try {
-    res = await fetch(AI_URL, {
-      method: "POST",
-      headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: AI_MODEL,
-        messages: [
-          { role: "system", content: SYSTEM_PROMPT },
-          { role: "user", content: JSON.stringify(input) },
-        ],
-        response_format: { type: "json_object" },
-      }),
-    });
-  } catch {
-    throw new AiUnavailableError();
-  }
+  let risk = 50;
+  if (input.hadStopLoss) { risk += 20; strengths.push("Your simulated trade used a stop-loss."); }
+  else { risk -= 15; areas.push("This simulated trade had no stop-loss set."); }
+  if (input.hadTakeProfit) { risk += 10; strengths.push("A take-profit level was defined in advance."); }
+  if (input.positionSizePctOfBalance > 25) { risk -= 20; areas.push("The position size was relatively large compared to your virtual balance."); patterns.push("Large position size"); }
+  else if (input.positionSizePctOfBalance <= 10) { risk += 10; strengths.push("Position size was modest relative to your virtual balance."); }
+  if (input.plannedRiskReward !== null && input.plannedRiskReward >= 2) { risk += 10; strengths.push("The planned reward-to-risk ratio was at least 2:1."); }
 
-  if (!res.ok) throw new AiUnavailableError();
+  let discipline = 55;
+  const cr = input.closeReason.toUpperCase();
+  if (cr.includes("STOP") || cr.includes("TAKE") || cr.includes("TP") || cr.includes("SL")) { discipline += 20; patterns.push("Closed by a pre-set level"); }
+  else if (input.hadStopLoss || input.hadTakeProfit) { discipline -= 5; patterns.push("Closed manually before pre-set levels"); }
+  if (input.historicalStopLossUsagePct >= 60) discipline += 15;
+  else if (input.historicalTrades >= 5 && input.historicalStopLossUsagePct < 30) { discipline -= 10; areas.push("Stop-loss usage across your simulated history is low."); }
 
-  let parsed: Record<string, unknown>;
-  try {
-    const payload = (await res.json()) as { choices?: { message?: { content?: string } }[] };
-    const content = payload.choices?.[0]?.message?.content ?? "";
-    const json = content.slice(content.indexOf("{"), content.lastIndexOf("}") + 1);
-    parsed = JSON.parse(json) as Record<string, unknown>;
-  } catch {
-    throw new AiUnavailableError();
-  }
+  let timing = 50 + Math.max(-30, Math.min(30, input.resultPctOfPosition * 3));
+  if (input.holdMinutes < 2) { timing -= 10; patterns.push("Very short holding time"); }
+
+  let consistency = 40;
+  if (input.historicalTrades >= 20) consistency += 20; else if (input.historicalTrades >= 5) consistency += 10;
+  consistency += Math.round((input.historicalWinRate - 50) / 2);
+
+  const outcome = input.resultPctOfPosition >= 0 ? "closed with a simulated gain" : "closed with a simulated loss";
+  const summary = `Your simulated ${input.direction} trade in ${input.assetCategory.toLowerCase()} ${outcome} of ${input.resultPctOfPosition.toFixed(2)}% after about ${Math.round(input.holdMinutes)} minutes.`;
+  if (!strengths.length) strengths.push("The trade was completed and recorded for review.");
+  if (!areas.length) areas.push("Keep reviewing position size and exit planning on each simulated trade.");
 
   const review: CoachReview = {
-    risk_management_score: num(parsed["risk_management_score"]),
-    discipline_score: num(parsed["discipline_score"]),
-    timing_score: num(parsed["timing_score"]),
-    consistency_score: num(parsed["consistency_score"]),
-    summary: typeof parsed["summary"] === "string" ? parsed["summary"].slice(0, 600) : "",
-    strengths: strings(parsed["strengths"]),
-    areas_to_review: strings(parsed["areas_to_review"]),
-    detected_patterns: strings(parsed["detected_patterns"]),
-    educational_note: typeof parsed["educational_note"] === "string" ? parsed["educational_note"].slice(0, 400) : "",
+    risk_management_score: num(risk),
+    discipline_score: num(discipline),
+    timing_score: num(timing),
+    consistency_score: num(consistency),
+    summary,
+    strengths: strengths.slice(0, 3),
+    areas_to_review: areas.slice(0, 3),
+    detected_patterns: patterns.slice(0, 3),
+    educational_note: "Defining a stop-loss and a sensible position size before entering helps keep simulated risk consistent across trades.",
   };
-
-  if (!review.summary || !isSafe(review)) throw new AiUnavailableError();
+  if (!isSafe(review)) throw new AiUnavailableError();
   return review;
 }
