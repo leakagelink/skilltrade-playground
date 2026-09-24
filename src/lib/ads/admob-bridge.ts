@@ -12,6 +12,7 @@ import {
   AD_FLAGS,
   ADMOB_APP_ID,
   ADS_USE_TEST_ADS,
+  BANNER_AD_UNIT_ID,
   INTERSTITIAL_AD_UNIT_ID,
   REWARDED_AD_UNIT_ID,
 } from "./config";
@@ -153,4 +154,82 @@ export async function showInterstitialAd(): Promise<boolean> {
     interstitialLoaded = false;
     return false;
   }
+}
+
+/* ------------------------------------------------------------------ */
+/* Banner ads (small, bottom, reserved space — never over content)     */
+/* ------------------------------------------------------------------ */
+
+let bannerVisible = false;
+let bannerHeight = 0;
+const bannerHeightListeners = new Set<(height: number) => void>();
+let bannerListenersAttached = false;
+
+function setBannerHeight(height: number): void {
+  const next = Number.isFinite(height) && height > 0 ? height : 0;
+  if (next === bannerHeight) return;
+  bannerHeight = next;
+  for (const listener of bannerHeightListeners) listener(bannerHeight);
+}
+
+/** Subscribes to the on-screen banner height (0 when no banner is showing). */
+export function subscribeBannerHeight(listener: (height: number) => void): () => void {
+  bannerHeightListeners.add(listener);
+  listener(bannerHeight);
+  return () => {
+    bannerHeightListeners.delete(listener);
+  };
+}
+
+async function attachBannerListeners(mod: AdMobModule): Promise<void> {
+  if (bannerListenersAttached) return;
+  bannerListenersAttached = true;
+  try {
+    await mod.AdMob.addListener(mod.BannerAdPluginEvents.SizeChanged, (info) => {
+      setBannerHeight(info?.height ?? 0);
+    });
+    await mod.AdMob.addListener(mod.BannerAdPluginEvents.FailedToLoad, () => {
+      setBannerHeight(0);
+    });
+  } catch {
+    /* listeners are optional — layout simply keeps its default spacing */
+  }
+}
+
+/** Shows the adaptive banner at the bottom of the screen. */
+export async function showBannerAd(): Promise<boolean> {
+  if (!AD_FLAGS.BANNER_ADS_ENABLED) return false;
+  const mod = await initAds();
+  if (!mod) return false;
+  await attachBannerListeners(mod);
+  try {
+    if (!bannerVisible) {
+      await mod.AdMob.showBanner({
+        adId: BANNER_AD_UNIT_ID,
+        adSize: mod.BannerAdSize.ADAPTIVE_BANNER,
+        position: mod.BannerAdPosition.BOTTOM_CENTER,
+        isTesting: ADS_USE_TEST_ADS,
+        margin: 0,
+      });
+      bannerVisible = true;
+    } else {
+      await mod.AdMob.resumeBanner();
+    }
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/** Hides (does not destroy) the banner so it can be resumed cheaply later. */
+export async function hideBannerAd(): Promise<void> {
+  if (!bannerVisible) return;
+  const mod = await initAds();
+  if (!mod) return;
+  try {
+    await mod.AdMob.hideBanner();
+  } catch {
+    /* ignore */
+  }
+  setBannerHeight(0);
 }
