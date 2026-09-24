@@ -76,6 +76,7 @@ Then in Android Studio: **Build → Generate Signed Bundle / APK → Android App
 | App ID | `ca-app-pub-1475323931624357~4494827471` |
 | Rewarded | `ca-app-pub-1475323931624357/7892970831` |
 | Interstitial | `ca-app-pub-1475323931624357/2850573316` |
+| Banner | `ca-app-pub-1475323931624357/3185317484` |
 
 Non-production builds automatically use Google's official test units, so your
 own device traffic never hits the live units.
