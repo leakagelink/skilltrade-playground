@@ -156,9 +156,14 @@ function RootComponent() {
     let remove: (() => void) | undefined;
     let cancelled = false;
     void (async () => {
-      const { Capacitor } = await import("@capacitor/core");
+      const { Capacitor, registerPlugin } = await import("@capacitor/core");
       if (!Capacitor.isNativePlatform()) return;
-      const { App } = await import("@capacitor/app");
+      // Native App plugin (installed in the Android build); used via the
+      // registry so the web bundle never imports @capacitor/app.
+      const App = registerPlugin<{
+        addListener: (e: "backButton", cb: () => void) => Promise<{ remove: () => Promise<void> }>;
+        minimizeApp: () => Promise<void>;
+      }>("App");
       const handle = await App.addListener("backButton", () => {
         const path = window.location.pathname;
         const isRoot = path === "/" || path === "/home" || path === "/auth";
