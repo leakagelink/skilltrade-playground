@@ -74,15 +74,20 @@ export function RewardedAdOffer({
   const reward = REWARD_BY_PLACEMENT[placement];
 
   return (
-    <section className="bento-tile space-y-2 p-4">
-      <h2 className="text-sm font-bold">{title}</h2>
-      <p className="text-xs text-muted-foreground">
+    <section className="bento-tile w-full min-w-0 max-w-full space-y-2.5 overflow-hidden p-3.5 sm:p-4">
+      <h2 className="break-words text-sm font-bold leading-snug">{title}</h2>
+      <p className="break-words text-xs leading-relaxed text-muted-foreground">
         Watch a short ad to unlock {reward.label}. This is completely optional.
       </p>
-      <Button size="sm" disabled={watch.isPending} onClick={() => watch.mutate()}>
+      <Button
+        size="sm"
+        className="h-auto min-h-10 w-full whitespace-normal break-words rounded-xl px-3 py-2 text-center text-xs font-semibold leading-tight sm:w-auto"
+        disabled={watch.isPending}
+        onClick={() => watch.mutate()}
+      >
         {watch.isPending ? "Loading ad…" : `Watch ad — ${reward.label}`}
       </Button>
-      <p className="text-[11px] text-muted-foreground">{AD_DISCLOSURE}</p>
+      <p className="break-words text-[10px] leading-relaxed text-muted-foreground sm:text-[11px]">{AD_DISCLOSURE}</p>
     </section>
   );
 }
