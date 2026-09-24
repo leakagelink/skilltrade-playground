@@ -13,7 +13,7 @@ export default defineConfig({
       alias: [
         // Firebase is used through the native Capacitor plugins only; the web
         // fallback of those plugins imports the optional `firebase` JS SDK.
-        { find: /^firebase\/(app|analytics|crashlytics)$/, replacement: "/src/lib/firebase-web-stub/index.ts" },
+        // { find: /^firebase\/(app|analytics|crashlytics)$/, replacement: "/src/lib/firebase-web-stub/index.ts" },
       ],
     },
   },
