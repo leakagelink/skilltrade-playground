@@ -8,6 +8,7 @@ import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
 export default defineConfig({
   vite: {
+    cacheDir: "/tmp/vite-cache",
     resolve: {
       alias: [
         // Firebase is used through the native Capacitor plugins only; the web
