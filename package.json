@@ -19,6 +19,7 @@
     "@capacitor-community/admob": "^8.1.0",
     "@capacitor-firebase/analytics": "^8.5.1",
     "@capacitor-firebase/crashlytics": "^8.5.1",
+    "@capacitor/app": "^8",
     "@capacitor/core": "^8.5.1",
     "@hookform/resolvers": "^5.2.2",
     "@lovable.dev/cloud-auth-js": "^1.0.0",

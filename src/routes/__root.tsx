@@ -150,6 +150,35 @@ function RootComponent() {
     });
   }, []);
 
+  // Android hardware back / back swipe: go to the previous screen instead of
+  // leaving the app. On the main screens, send the app to background.
+  useEffect(() => {
+    let remove: (() => void) | undefined;
+    let cancelled = false;
+    void (async () => {
+      const { Capacitor } = await import("@capacitor/core");
+      if (!Capacitor.isNativePlatform()) return;
+      const { App } = await import("@capacitor/app");
+      const handle = await App.addListener("backButton", () => {
+        const path = window.location.pathname;
+        const isRoot = path === "/" || path === "/home" || path === "/auth";
+        if (!isRoot && window.history.length > 1) {
+          router.history.back();
+        } else if (!isRoot) {
+          void router.navigate({ to: "/home" });
+        } else {
+          void App.minimizeApp();
+        }
+      });
+      if (cancelled) void handle.remove();
+      else remove = () => void handle.remove();
+    })();
+    return () => {
+      cancelled = true;
+      remove?.();
+    };
+  }, [router]);
+
   useEffect(() => {
     const { data } = supabase.auth.onAuthStateChange((event) => {
       if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return;
