@@ -3,7 +3,8 @@
  * disabled — no pricing and no payment functionality ships in v1.
  */
 export const FEATURE_FLAGS = {
-  bannerAds: false,
+  /** Small AdMob banner on calm browsing screens only (never over trading UI). */
+  bannerAds: true,
   /** Version 2.0: genuine Google AdMob interstitials at natural breaks only. */
   interstitialAds: true,
   nativeAds: false,

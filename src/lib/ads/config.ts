@@ -13,10 +13,12 @@
 export const ADMOB_APP_ID = "ca-app-pub-1475323931624357~4494827471";
 export const ADMOB_REWARDED_AD_UNIT_ID = "ca-app-pub-1475323931624357/7892970831";
 export const ADMOB_INTERSTITIAL_AD_UNIT_ID = "ca-app-pub-1475323931624357/2850573316";
+export const ADMOB_BANNER_AD_UNIT_ID = "ca-app-pub-1475323931624357/3185317484";
 
 /** Google's official sample units — used in every non-production build. */
 export const ADMOB_TEST_REWARDED_AD_UNIT_ID = "ca-app-pub-3940256099942544/5224354917";
 export const ADMOB_TEST_INTERSTITIAL_AD_UNIT_ID = "ca-app-pub-3940256099942544/1033173712";
+export const ADMOB_TEST_BANNER_AD_UNIT_ID = "ca-app-pub-3940256099942544/6300978111";
 
 /**
  * Test ads are used unless this is a production build. This makes it
@@ -33,12 +35,20 @@ export const INTERSTITIAL_AD_UNIT_ID = ADS_USE_TEST_ADS
   ? ADMOB_TEST_INTERSTITIAL_AD_UNIT_ID
   : ADMOB_INTERSTITIAL_AD_UNIT_ID;
 
+export const BANNER_AD_UNIT_ID = ADS_USE_TEST_ADS
+  ? ADMOB_TEST_BANNER_AD_UNIT_ID
+  : ADMOB_BANNER_AD_UNIT_ID;
+
 /** Formats can be disabled independently without deleting the ad system. */
 export const AD_FLAGS = {
   ADS_ENABLED: true,
   REWARDED_ADS_ENABLED: true,
   INTERSTITIAL_ADS_ENABLED: true,
-  /** Banner / app-open / rewarded-interstitial formats are intentionally absent. */
+  /**
+   * Small bottom banner, shown only on calm browsing screens (Home, Profile,
+   * Leaderboard, Goals) in reserved space that never covers content or buttons.
+   */
+  BANNER_ADS_ENABLED: true,
 } as const;
 
 /* ------------------------------------------------------------------ */
