@@ -8,9 +8,6 @@ import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
 export default defineConfig({
   vite: {
-    optimizeDeps: {
-      exclude: ["@capacitor/app"],
-    },
     resolve: {
       alias: [
         // Firebase is used through the native Capacitor plugins only; the web
