@@ -95,12 +95,16 @@ function ChartPage() {
   }, [livePrice]);
 
 
+  // Suggest SL/TP on the correct side whenever direction changes (or on first price).
+  const slTpDirection = useRef<string | null>(null);
   useEffect(() => {
-    if (quote && !sl && !tp) {
-      const p = quote.price;
-      setSl((direction === "BUY" ? p * 0.98 : p * 1.02).toFixed(2));
-      setTp((direction === "BUY" ? p * 1.04 : p * 0.96).toFixed(2));
-    }
+    if (!quote) return;
+    if (slTpDirection.current === direction && (sl || tp)) return;
+    slTpDirection.current = direction;
+    const p = quote.price;
+    const dp = p < 1 ? 6 : p < 10 ? 4 : 2;
+    setSl((direction === "BUY" ? p * 0.98 : p * 1.02).toFixed(dp));
+    setTp((direction === "BUY" ? p * 1.04 : p * 0.96).toFixed(dp));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [quote?.price, direction]);
 
