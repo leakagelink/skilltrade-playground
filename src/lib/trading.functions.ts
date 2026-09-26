@@ -126,14 +126,14 @@ async function fastQuote(symbol: string) {
     Promise.race([p, new Promise<never>((_, r) => setTimeout(() => r(new Error("timeout")), ms))]);
   if (provider.getLatestPrices) {
     try {
-      const qs = await timeout(provider.getLatestPrices([symbol]), 4000);
+      const qs = await timeout(provider.getLatestPrices([symbol]), 2500);
       const q = qs.find((x) => x.symbol === symbol && x.price > 0);
       if (q) return q;
     } catch {
       /* fall through */
     }
   }
-  return timeout(provider.getLatestPrice(symbol), 6000);
+  return timeout(provider.getLatestPrice(symbol), 3500);
 }
 
 export const openTrade = createServerFn({ method: "POST" })
@@ -213,15 +213,14 @@ export const openTrade = createServerFn({ method: "POST" })
       .single();
     if (error || !trade) fail("Unable to open this simulated trade. Please check your trading parameters.");
 
-    await admin
-      .from("profiles")
-      .update({ virtual_credits: Number(profile.virtual_credits) - 1 })
-      .eq("id", userId);
     await Promise.all([
+      admin.from("profiles").update({ virtual_credits: Number(profile.virtual_credits) - 1 }).eq("id", userId),
       adjustCredits(admin, userId, -1, "TRADE_COST"),
-      awardXp(admin, userId, XP_REWARDS.OPEN_TRADE, "OPEN_TRADE"),
     ]);
-    await recomputeProfile(admin, userId);
+    // Non-critical bookkeeping runs in the background so the order returns instantly.
+    void Promise.all([
+      awardXp(admin, userId, XP_REWARDS.OPEN_TRADE, "OPEN_TRADE"),
+    ]).then(() => recomputeProfile(admin, userId)).catch(() => {});
     void evaluateChallenges(admin, userId).catch(() => {});
 
     return { tradeId: trade.id as string, entryPrice: entry };
@@ -247,12 +246,10 @@ export const closeTrade = createServerFn({ method: "POST" })
     const { getMarketDataProvider } = await import("./market/provider.server");
     const { getTradeAnalysisService } = await import("./trade-review.server");
 
-    const { data: trade } = await admin
-      .from("trades")
-      .select("*")
-      .eq("id", data.tradeId)
-      .eq("user_id", userId)
-      .maybeSingle();
+    const [{ data: trade }, { data: profile }] = await Promise.all([
+      admin.from("trades").select("*").eq("id", data.tradeId).eq("user_id", userId).maybeSingle(),
+      admin.from("profiles").select("virtual_balance").eq("id", userId).single(),
+    ]);
     if (!trade) fail("Trade not found.");
     if (trade.status !== "OPEN") fail("This trade is already closed.");
 
@@ -281,11 +278,6 @@ export const closeTrade = createServerFn({ method: "POST" })
 
     const pnl = pnlFor(direction, entry, exit, size);
 
-    const { data: profile } = await admin
-      .from("profiles")
-      .select("virtual_balance")
-      .eq("id", userId)
-      .single();
     const newBalance = Math.round((Number(profile?.virtual_balance ?? 0) + pnl) * 100) / 100;
 
     const review = await getTradeAnalysisService().review({
@@ -299,7 +291,8 @@ export const closeTrade = createServerFn({ method: "POST" })
       virtualBalance: Number(profile?.virtual_balance ?? 100000),
     });
 
-    await admin
+    await Promise.all([
+      admin
       .from("trades")
       .update({
         exit_price: exit,
@@ -310,9 +303,12 @@ export const closeTrade = createServerFn({ method: "POST" })
         closed_at: new Date().toISOString(),
         review: review.join("\n"),
       })
-      .eq("id", trade.id);
+      .eq("id", trade.id),
+      admin.from("profiles").update({ virtual_balance: newBalance }).eq("id", userId),
+    ]);
 
-    await admin.from("profiles").update({ virtual_balance: newBalance }).eq("id", userId);
+    // Non-critical bookkeeping in the background so the close returns instantly.
+    void (async () => {
 
     await awardXp(admin, userId, XP_REWARDS.CLOSE_TRADE, "CLOSE_TRADE");
     if (sl != null && tp != null) {
@@ -329,6 +325,7 @@ export const closeTrade = createServerFn({ method: "POST" })
       "TRADE",
     );
     await recomputeProfile(admin, userId);
+    })().catch(() => {});
     void evaluateChallenges(admin, userId).catch(() => {});
 
     return { exitPrice: exit, pnl, status, review };
