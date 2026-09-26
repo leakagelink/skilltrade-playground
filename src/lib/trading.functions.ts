@@ -174,7 +174,23 @@ export const openTrade = createServerFn({ method: "POST" })
     const profile = profileRes.data;
     if (!profile) fail("Profile not found.");
     if (Number(profile.virtual_credits) < 1) fail("You need Trading Credits to open a new trade.");
-    const asset = assetRes.data;
+    let asset = assetRes.data;
+    if (!asset) {
+      // Every asset in the app catalog is tradable: register it on first trade.
+      const { catalogEntry } = await import("./market/catalog");
+      const c = catalogEntry(data.symbol);
+      if (c) {
+        const { data: created } = await admin
+          .from("assets")
+          .upsert(
+            { symbol: c.symbol, name: c.name, asset_type: c.assetType, display_symbol: c.symbol, is_active: true },
+            { onConflict: "symbol" },
+          )
+          .select("id, symbol, asset_type")
+          .single();
+        asset = created;
+      }
+    }
     if (!asset) fail("This asset is not available for simulated trading.");
     const exposure = (openRes.data ?? []).reduce((a, t) => a + Number(t.position_size), 0);
     if (exposure + data.positionSize > Number(profile.virtual_balance)) {
