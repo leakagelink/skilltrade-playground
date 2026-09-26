@@ -115,6 +115,11 @@ function InsightsPage() {
       <AppHeader title="AI Insights" subtitle="Educational analysis of your simulated trading" />
 
       <div className="space-y-6 p-5">
+        <RewardedAdOffer
+          placement="AI_COACH"
+          title="Need one more analysis today?"
+          onGranted={() => void insights.refetch()}
+        />
         {insights.isLoading || !dna || !d ? (
           <>
             <Skeleton className="h-56 w-full rounded-3xl" />
@@ -234,13 +239,6 @@ function InsightsPage() {
                     {d.usedToday} of {d.dailyLimit} educational AI reviews used in the last 24
                     hours.
                   </p>
-                </div>
-                <div className="mt-3">
-                  <RewardedAdOffer
-                    placement="AI_COACH"
-                    title="Need one more analysis today?"
-                    onGranted={() => void insights.refetch()}
-                  />
                 </div>
               </section>
             ) : null}
