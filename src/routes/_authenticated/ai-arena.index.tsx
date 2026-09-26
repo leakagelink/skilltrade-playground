@@ -151,6 +151,8 @@ function ArenaPage() {
           <SimulationBadge />
         </div>
 
+        <RewardedAdOffer placement="ARENA" title="Optional Arena bonus" onGranted={() => void refetch()} />
+
         {active && bot ? (
           <>
             <VersusPanel
@@ -305,7 +307,6 @@ function ArenaPage() {
           </>
         )}
 
-        <RewardedAdOffer placement="ARENA" title="Optional Arena bonus" onGranted={() => void refetch()} />
 
         {lastResult ? (
           <Button
