@@ -134,6 +134,9 @@ function SettingsPage() {
 
         <SocialPrivacyCard />
 
+        <NotificationsCard />
+
+
 
 
         <section className="surface-card divide-y divide-border overflow-hidden">

@@ -49,6 +49,7 @@ function AuthedLayout() {
 
   return (
     <div className="min-h-screen bg-background">
+      <PushSetup />
       <div
         className={`mx-auto max-w-lg ${hideNav ? "" : "pb-24"}`}
         style={bannerHeight > 0 && !hideNav ? { paddingBottom: `calc(6rem + ${bannerHeight}px)` } : undefined}
