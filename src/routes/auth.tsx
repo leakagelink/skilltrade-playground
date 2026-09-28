@@ -24,6 +24,7 @@ import { Loader2 } from "lucide-react";
 import { lovable } from "@/integrations/lovable";
 import { BrandLogo, BrandMark } from "@/components/BrandLogo";
 import { trackEvent } from "@/lib/analytics";
+import { nativeGoogleAvailable, signInWithGoogleNative } from "@/lib/native-google";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -84,6 +85,19 @@ function AuthPage() {
 
   async function handleGoogleSignIn() {
     setLoading(true);
+    // Inside the Android/iOS app: in-app Google account picker, no browser.
+    if (await nativeGoogleAvailable()) {
+      const r = await signInWithGoogleNative();
+      setLoading(false);
+      if (r.cancelled) return;
+      if (r.error) {
+        toast.error(r.error.message || "Google sign-in failed. Please try again.");
+        return;
+      }
+      void trackEvent("login_completed", { method: "google_native" });
+      navigate({ to: "/home", replace: true });
+      return;
+    }
     const result = await lovable.auth.signInWithOAuth("google", {
       redirect_uri: window.location.origin,
     });
