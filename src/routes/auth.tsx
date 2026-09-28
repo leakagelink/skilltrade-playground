@@ -187,8 +187,26 @@ function AuthPage() {
           </TabsContent>
         </Tabs>
 
+        <div className="mt-6 flex items-center gap-3">
+          <div className="h-px flex-1 bg-border" />
+          <span className="text-xs text-muted-foreground">or</span>
+          <div className="h-px flex-1 bg-border" />
+        </div>
 
-
+        <Button
+          type="button"
+          variant="outline"
+          onClick={handleGoogleSignIn}
+          disabled={loading}
+          className="mt-6 h-13 w-full rounded-2xl text-base font-semibold"
+        >
+          {loading ? (
+            <Loader2 className="size-4 animate-spin" />
+          ) : (
+            <GoogleIcon />
+          )}
+          <span className="ml-2">Continue with Google</span>
+        </Button>
 
         <p className="mt-8 text-center text-[11px] leading-relaxed text-muted-foreground">
           By continuing you agree that TradeVirt is a simulated paper trading application for
