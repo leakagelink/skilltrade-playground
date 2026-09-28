@@ -74,7 +74,7 @@ export async function askRelay(
   history: { role: "user" | "assistant"; content: string }[],
   question: string,
 ): Promise<string> {
-  const key = process.env["RELAY_API_KEY"];
+  const key = process.env["RELAYMODELS_API_KEY"];
   if (!key) throw new Error("AI Agent is not configured yet. Please try again later.");
   const messages = [
     { role: "system", content: SYSTEM_PROMPT },
