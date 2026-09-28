@@ -26,6 +26,9 @@ import { SocialPrivacyCard } from "@/components/SocialPrivacyCard";
 import { toast } from "sonner";
 import { ChevronRight, LogOut } from "lucide-react";
 import { resetAnalytics, trackEvent } from "@/lib/analytics";
+import { registerPushToken, unregisterPushTokens } from "@/lib/push.functions";
+import { disablePush, pushAvailable, setupPush } from "@/lib/push-client";
+import { OPT_OUT_KEY } from "@/components/PushSetup";
 
 export const Route = createFileRoute("/_authenticated/settings")({
   head: () => ({
@@ -198,5 +201,64 @@ function LegalLink({ to, label }: { to: InternalLegalPath; label: string }) {
       <span className="flex-1">{label}</span>
       <ChevronRight className="size-4 text-muted-foreground" />
     </Link>
+  );
+}
+
+function NotificationsCard() {
+  const register = useServerFn(registerPushToken);
+  const unregister = useServerFn(unregisterPushTokens);
+  const [available, setAvailable] = useState(false);
+  const [on, setOn] = useState(true);
+  const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    void pushAvailable().then(setAvailable);
+    setOn(localStorage.getItem(OPT_OUT_KEY) !== "1");
+  }, []);
+
+  async function toggle(v: boolean) {
+    setBusy(true);
+    try {
+      if (v) {
+        localStorage.removeItem(OPT_OUT_KEY);
+        const r = await setupPush({
+          prompt: true,
+          onToken: (token, platform) => void register({ data: { token, platform } }).catch(() => {}),
+          onOpen: () => {},
+        });
+        if (r.status === "denied") {
+          toast.error("Notifications are blocked. Allow them for TradeVirt in your phone settings.");
+          return;
+        }
+        setOn(true);
+        toast.success("Notifications turned on.");
+      } else {
+        localStorage.setItem(OPT_OUT_KEY, "1");
+        await unregister();
+        await disablePush();
+        setOn(false);
+        toast.success("Notifications turned off.");
+      }
+    } catch {
+      toast.error("Could not update notifications.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <section className="surface-card p-4">
+      <div className="flex items-center justify-between gap-4">
+        <div>
+          <p className="text-sm font-medium">Push notifications</p>
+          <p className="text-xs text-muted-foreground">
+            {available
+              ? "Trade closes, rewards, level-ups, challenges and competition results — even when the app is closed."
+              : "Available in the TradeVirt Android app."}
+          </p>
+        </div>
+        <Switch checked={available && on} disabled={!available || busy} onCheckedChange={toggle} />
+      </div>
+    </section>
   );
 }
