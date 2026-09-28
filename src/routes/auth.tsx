@@ -70,6 +70,23 @@ function AuthPage() {
     navigate({ to: "/home", replace: true });
   }
 
+  async function handleGoogleSignIn() {
+    setLoading(true);
+    const result = await lovable.auth.signInWithOAuth("google", {
+      redirect_uri: window.location.origin,
+    });
+    if (result.error) {
+      setLoading(false);
+      toast.error(result.error.message ?? "Google sign-in failed. Please try again.");
+      return;
+    }
+    // Full-page OAuth: the browser redirects to Google and control returns
+    // before the session is set — no further navigation here.
+    if (result.redirected) return;
+    void trackEvent("login_completed", { method: "google" });
+    navigate({ to: "/home", replace: true });
+  }
+
   async function handleSignUp(e: React.FormEvent) {
     e.preventDefault();
     const u = username.trim();
