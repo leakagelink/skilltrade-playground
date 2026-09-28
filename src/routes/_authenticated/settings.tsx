@@ -71,7 +71,9 @@ function SettingsPage() {
     }
   }
 
+  const dropPush = useServerFn(unregisterPushTokens);
   async function signOut() {
+    await dropPush().catch(() => {});
     await qc.cancelQueries();
     qc.clear();
     await supabase.auth.signOut();
