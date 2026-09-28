@@ -56,8 +56,8 @@ export const AD_FLAGS = {
 /* ------------------------------------------------------------------ */
 
 export const AD_LIMITS = {
-  TOTAL_PER_DAY: 8,
-  REWARDED_PER_DAY: 5,
+  TOTAL_PER_DAY: 11,
+  REWARDED_PER_DAY: 8,
   INTERSTITIAL_PER_DAY: 3,
   INTERSTITIAL_MIN_INTERVAL_MINUTES: 15,
   AI_COACH_REWARDED_PER_DAY: 3,
