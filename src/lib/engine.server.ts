@@ -27,6 +27,13 @@ export async function addNotification(
   kind: string,
 ) {
   await admin.from("notifications").insert({ user_id: userId, title, body, kind });
+  // Also deliver to the user's phone (works when the app is minimized or closed).
+  try {
+    const { sendPushToUser } = await import("./push.server");
+    await sendPushToUser(admin, userId, title, body, kind);
+  } catch (e) {
+    console.error("Push delivery failed", e);
+  }
 }
 
 export async function awardXp(admin: Admin, userId: string, amount: number, reason: string) {
