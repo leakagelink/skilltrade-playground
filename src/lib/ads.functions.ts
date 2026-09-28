@@ -269,8 +269,8 @@ export const completeRewardedAd = createServerFn({ method: "POST" })
     let message = "";
     if (String(grant["reward_type"]) === "AI_UNLOCK") {
       const { grantAgentUnlock } = await import("./ai-agent.server");
-      const until = await grantAgentUnlock(db, context.userId);
-      message = `AI Agent unlocked until ${new Date(until).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}.`;
+      const hours = await grantAgentUnlock(db, context.userId);
+      message = `AI Agent unlocked for ${hours} hours.`;
     } else if (String(grant["reward_type"]) === "CREDITS") {
       const { adjustCredits, addNotification } = await import("./engine.server");
       const amount = Number(grant["reward_amount"] ?? 0);
