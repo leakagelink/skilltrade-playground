@@ -13,7 +13,6 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AccountDeletionRouteImport } from './routes/account-deletion'
 import { Route as AuthRouteImport } from './routes/auth'
-import { Route as AuthenticatedAiAgentRouteImport } from './routes/_authenticated/ai-agent'
 import { Route as AuthenticatedChallengesRouteImport } from './routes/_authenticated/challenges'
 import { Route as AuthenticatedHomeRouteImport } from './routes/_authenticated/home'
 import { Route as AuthenticatedInsightsRouteImport } from './routes/_authenticated/insights'
@@ -32,7 +31,6 @@ import { Route as AuthenticatedCareerIndexRouteImport } from './routes/_authenti
 import { Route as AuthenticatedChartSymbolRouteImport } from './routes/_authenticated/chart.$symbol'
 import { Route as AuthenticatedCompeteIndexRouteImport } from './routes/_authenticated/compete.index'
 import { Route as AuthenticatedCompeteIdRouteImport } from './routes/_authenticated/compete.$id'
-import { Route as ApiPublicNotifyRemindersRouteImport } from './routes/api/public/notify-reminders'
 import { Route as AuthenticatedCareerMilestoneIdRouteImport } from './routes/_authenticated/career.milestone.$id'
 import { Route as AuthenticatedCompeteJoinCodeRouteImport } from './routes/_authenticated/compete.join.$code'
 
@@ -54,11 +52,6 @@ const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
   getParentRoute: () => rootRouteImport,
-} as any)
-const AuthenticatedAiAgentRoute = AuthenticatedAiAgentRouteImport.update({
-  id: '/ai-agent',
-  path: '/ai-agent',
-  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedChallengesRoute = AuthenticatedChallengesRouteImport.update({
   id: '/challenges',
@@ -156,12 +149,6 @@ const AuthenticatedCompeteIdRoute = AuthenticatedCompeteIdRouteImport.update({
   path: '/compete/$id',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const ApiPublicNotifyRemindersRoute =
-  ApiPublicNotifyRemindersRouteImport.update({
-    id: '/api/public/notify-reminders',
-    path: '/api/public/notify-reminders',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 const AuthenticatedCareerMilestoneIdRoute =
   AuthenticatedCareerMilestoneIdRouteImport.update({
     id: '/career/milestone/$id',
@@ -179,7 +166,6 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/account-deletion': typeof AccountDeletionRoute
   '/auth': typeof AuthRoute
-  '/ai-agent': typeof AuthenticatedAiAgentRoute
   '/challenges': typeof AuthenticatedChallengesRoute
   '/home': typeof AuthenticatedHomeRoute
   '/insights': typeof AuthenticatedInsightsRoute
@@ -195,7 +181,6 @@ export interface FileRoutesByFullPath {
   '/ai-arena/history': typeof AuthenticatedAiArenaHistoryRoute
   '/chart/$symbol': typeof AuthenticatedChartSymbolRoute
   '/compete/$id': typeof AuthenticatedCompeteIdRoute
-  '/api/public/notify-reminders': typeof ApiPublicNotifyRemindersRoute
   '/ai-arena/': typeof AuthenticatedAiArenaIndexRoute
   '/career/': typeof AuthenticatedCareerIndexRoute
   '/compete/': typeof AuthenticatedCompeteIndexRoute
@@ -206,7 +191,6 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/account-deletion': typeof AccountDeletionRoute
   '/auth': typeof AuthRoute
-  '/ai-agent': typeof AuthenticatedAiAgentRoute
   '/challenges': typeof AuthenticatedChallengesRoute
   '/home': typeof AuthenticatedHomeRoute
   '/insights': typeof AuthenticatedInsightsRoute
@@ -222,7 +206,6 @@ export interface FileRoutesByTo {
   '/ai-arena/history': typeof AuthenticatedAiArenaHistoryRoute
   '/chart/$symbol': typeof AuthenticatedChartSymbolRoute
   '/compete/$id': typeof AuthenticatedCompeteIdRoute
-  '/api/public/notify-reminders': typeof ApiPublicNotifyRemindersRoute
   '/ai-arena': typeof AuthenticatedAiArenaIndexRoute
   '/career': typeof AuthenticatedCareerIndexRoute
   '/compete': typeof AuthenticatedCompeteIndexRoute
@@ -235,7 +218,6 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/account-deletion': typeof AccountDeletionRoute
   '/auth': typeof AuthRoute
-  '/_authenticated/ai-agent': typeof AuthenticatedAiAgentRoute
   '/_authenticated/challenges': typeof AuthenticatedChallengesRoute
   '/_authenticated/home': typeof AuthenticatedHomeRoute
   '/_authenticated/insights': typeof AuthenticatedInsightsRoute
@@ -251,7 +233,6 @@ export interface FileRoutesById {
   '/_authenticated/ai-arena/history': typeof AuthenticatedAiArenaHistoryRoute
   '/_authenticated/chart/$symbol': typeof AuthenticatedChartSymbolRoute
   '/_authenticated/compete/$id': typeof AuthenticatedCompeteIdRoute
-  '/api/public/notify-reminders': typeof ApiPublicNotifyRemindersRoute
   '/_authenticated/ai-arena/': typeof AuthenticatedAiArenaIndexRoute
   '/_authenticated/career/': typeof AuthenticatedCareerIndexRoute
   '/_authenticated/compete/': typeof AuthenticatedCompeteIndexRoute
@@ -264,7 +245,6 @@ export interface FileRouteTypes {
     | '/'
     | '/account-deletion'
     | '/auth'
-    | '/ai-agent'
     | '/challenges'
     | '/home'
     | '/insights'
@@ -280,7 +260,6 @@ export interface FileRouteTypes {
     | '/ai-arena/history'
     | '/chart/$symbol'
     | '/compete/$id'
-    | '/api/public/notify-reminders'
     | '/ai-arena/'
     | '/career/'
     | '/compete/'
@@ -291,7 +270,6 @@ export interface FileRouteTypes {
     | '/'
     | '/account-deletion'
     | '/auth'
-    | '/ai-agent'
     | '/challenges'
     | '/home'
     | '/insights'
@@ -307,7 +285,6 @@ export interface FileRouteTypes {
     | '/ai-arena/history'
     | '/chart/$symbol'
     | '/compete/$id'
-    | '/api/public/notify-reminders'
     | '/ai-arena'
     | '/career'
     | '/compete'
@@ -319,7 +296,6 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/account-deletion'
     | '/auth'
-    | '/_authenticated/ai-agent'
     | '/_authenticated/challenges'
     | '/_authenticated/home'
     | '/_authenticated/insights'
@@ -335,7 +311,6 @@ export interface FileRouteTypes {
     | '/_authenticated/ai-arena/history'
     | '/_authenticated/chart/$symbol'
     | '/_authenticated/compete/$id'
-    | '/api/public/notify-reminders'
     | '/_authenticated/ai-arena/'
     | '/_authenticated/career/'
     | '/_authenticated/compete/'
@@ -352,7 +327,6 @@ export interface RootRouteChildren {
   LegalPrivacyRoute: typeof LegalPrivacyRoute
   LegalSupportRoute: typeof LegalSupportRoute
   LegalTermsRoute: typeof LegalTermsRoute
-  ApiPublicNotifyRemindersRoute: typeof ApiPublicNotifyRemindersRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -384,13 +358,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
-    }
-    '/_authenticated/ai-agent': {
-      id: '/_authenticated/ai-agent'
-      path: '/ai-agent'
-      fullPath: '/ai-agent'
-      preLoaderRoute: typeof AuthenticatedAiAgentRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/challenges': {
       id: '/_authenticated/challenges'
@@ -518,13 +485,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCompeteIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/api/public/notify-reminders': {
-      id: '/api/public/notify-reminders'
-      path: '/api/public/notify-reminders'
-      fullPath: '/api/public/notify-reminders'
-      preLoaderRoute: typeof ApiPublicNotifyRemindersRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/_authenticated/career/milestone/$id': {
       id: '/_authenticated/career/milestone/$id'
       path: '/career/milestone/$id'
@@ -543,7 +503,6 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
-  AuthenticatedAiAgentRoute: typeof AuthenticatedAiAgentRoute
   AuthenticatedChallengesRoute: typeof AuthenticatedChallengesRoute
   AuthenticatedHomeRoute: typeof AuthenticatedHomeRoute
   AuthenticatedInsightsRoute: typeof AuthenticatedInsightsRoute
@@ -563,7 +522,6 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
-  AuthenticatedAiAgentRoute: AuthenticatedAiAgentRoute,
   AuthenticatedChallengesRoute: AuthenticatedChallengesRoute,
   AuthenticatedHomeRoute: AuthenticatedHomeRoute,
   AuthenticatedInsightsRoute: AuthenticatedInsightsRoute,
@@ -594,7 +552,6 @@ const rootRouteChildren: RootRouteChildren = {
   LegalPrivacyRoute: LegalPrivacyRoute,
   LegalSupportRoute: LegalSupportRoute,
   LegalTermsRoute: LegalTermsRoute,
-  ApiPublicNotifyRemindersRoute: ApiPublicNotifyRemindersRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

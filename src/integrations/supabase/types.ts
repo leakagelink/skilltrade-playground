@@ -50,69 +50,6 @@ export type Database = {
         }
         Relationships: []
       }
-      ai_agent_reports: {
-        Row: {
-          answer: string
-          created_at: string
-          id: string
-          question: string
-          reason: string | null
-          user_id: string
-        }
-        Insert: {
-          answer: string
-          created_at?: string
-          id?: string
-          question: string
-          reason?: string | null
-          user_id: string
-        }
-        Update: {
-          answer?: string
-          created_at?: string
-          id?: string
-          question?: string
-          reason?: string | null
-          user_id?: string
-        }
-        Relationships: []
-      }
-      ai_agent_usage: {
-        Row: {
-          created_at: string
-          first_unlock_at: string | null
-          free_used: boolean
-          questions_asked: number
-          unlock_ads: number
-          unlocked_until: string | null
-          updated_at: string
-          usage_date: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          first_unlock_at?: string | null
-          free_used?: boolean
-          questions_asked?: number
-          unlock_ads?: number
-          unlocked_until?: string | null
-          updated_at?: string
-          usage_date?: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          first_unlock_at?: string | null
-          free_used?: boolean
-          questions_asked?: number
-          unlock_ads?: number
-          unlocked_until?: string | null
-          updated_at?: string
-          usage_date?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
       ai_arena_sessions: {
         Row: {
           ai_cash: number
@@ -851,33 +788,6 @@ export type Database = {
           virtual_balance?: number
           virtual_credits?: number
           xp?: number
-        }
-        Relationships: []
-      }
-      push_tokens: {
-        Row: {
-          created_at: string
-          id: string
-          platform: string
-          token: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          platform?: string
-          token: string
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          platform?: string
-          token?: string
-          updated_at?: string
-          user_id?: string
         }
         Relationships: []
       }

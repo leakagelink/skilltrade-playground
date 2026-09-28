@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -115,16 +115,6 @@ function InsightsPage() {
       <AppHeader title="AI Insights" subtitle="Educational analysis of your simulated trading" />
 
       <div className="space-y-6 p-5">
-        <Link
-          to="/ai-agent"
-          className="bento-tile flex items-center gap-3 p-4 transition-transform active:scale-[0.99]"
-        >
-          <Sparkles className="size-6 shrink-0 text-primary" />
-          <div className="min-w-0">
-            <p className="text-sm font-bold">Ask the AI Coach Agent</p>
-            <p className="text-xs text-muted-foreground">1 free question daily · unlock more with optional ads</p>
-          </div>
-        </Link>
         <RewardedAdOffer
           placement="AI_COACH"
           title="Need one more analysis today?"
