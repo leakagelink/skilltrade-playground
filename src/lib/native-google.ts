@@ -15,6 +15,16 @@ type SocialLoginPlugin = {
 
 let initialized = false;
 
+// Never let a native call hang the UI: race it against a timeout.
+function withTimeout<T>(p: Promise<T>, ms: number, label: string): Promise<T> {
+  return Promise.race([
+    p,
+    new Promise<T>((_, reject) =>
+      setTimeout(() => reject(new Error(`${label} timed out — please try again.`)), ms),
+    ),
+  ]);
+}
+
 async function getPlugin(): Promise<SocialLoginPlugin | null> {
   const { Capacitor, registerPlugin } = await import("@capacitor/core");
   if (!Capacitor.isNativePlatform() || !Capacitor.isPluginAvailable("SocialLogin")) return null;
@@ -30,16 +40,28 @@ export async function signInWithGoogleNative(): Promise<{ error: Error | null; c
   if (!plugin) return { error: new Error("Native Google sign-in unavailable") };
   try {
     if (!initialized) {
-      await plugin.initialize({ google: { webClientId: WEB_CLIENT_ID, mode: "online" } });
+      console.log("[google-native] initializing plugin");
+      await withTimeout(
+        plugin.initialize({ google: { webClientId: WEB_CLIENT_ID, mode: "online" } }),
+        15000,
+        "Google sign-in setup",
+      );
       initialized = true;
     }
-    const res = await plugin.login({ provider: "google", options: { scopes: ["email", "profile"] } });
+    console.log("[google-native] opening account picker");
+    const res = await withTimeout(
+      plugin.login({ provider: "google", options: { scopes: ["email", "profile"] } }),
+      60000,
+      "Google account picker",
+    );
+    console.log("[google-native] picker returned", JSON.stringify(res).slice(0, 200));
     const idToken = res?.result?.idToken;
     if (!idToken) return { error: new Error("Google did not return a sign-in token.") };
     const { error } = await supabase.auth.signInWithIdToken({ provider: "google", token: idToken });
     return { error: error ? new Error(error.message) : null };
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
+    console.error("[google-native] sign-in failed:", msg);
     if (/cancel/i.test(msg)) return { error: null, cancelled: true };
     return { error: new Error(msg) };
   }
