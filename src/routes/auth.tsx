@@ -85,32 +85,37 @@ function AuthPage() {
 
   async function handleGoogleSignIn() {
     setLoading(true);
-    // Inside the Android/iOS app: in-app Google account picker, no browser.
-    if (await nativeGoogleAvailable()) {
-      const r = await signInWithGoogleNative();
-      setLoading(false);
-      if (r.cancelled) return;
-      if (r.error) {
-        toast.error(r.error.message || "Google sign-in failed. Please try again.");
+    try {
+      // Inside the Android/iOS app: in-app Google account picker, no browser.
+      if (await nativeGoogleAvailable()) {
+        const r = await signInWithGoogleNative();
+        if (r.cancelled) return;
+        if (r.error) {
+          toast.error(r.error.message || "Google sign-in failed. Please try again.");
+          return;
+        }
+        void trackEvent("login_completed", { method: "google_native" });
+        navigate({ to: "/home", replace: true });
         return;
       }
-      void trackEvent("login_completed", { method: "google_native" });
+      const result = await lovable.auth.signInWithOAuth("google", {
+        redirect_uri: window.location.origin,
+      });
+      if (result.error) {
+        toast.error(result.error.message ?? "Google sign-in failed. Please try again.");
+        return;
+      }
+      // Full-page OAuth: the browser redirects to Google and control returns
+      // before the session is set — no further navigation here.
+      if (result.redirected) return;
+      void trackEvent("login_completed", { method: "google" });
       navigate({ to: "/home", replace: true });
-      return;
-    }
-    const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin,
-    });
-    if (result.error) {
+    } catch (e) {
+      console.error("[google-native] handler failed:", e);
+      toast.error(e instanceof Error ? e.message : "Google sign-in failed. Please try again.");
+    } finally {
       setLoading(false);
-      toast.error(result.error.message ?? "Google sign-in failed. Please try again.");
-      return;
     }
-    // Full-page OAuth: the browser redirects to Google and control returns
-    // before the session is set — no further navigation here.
-    if (result.redirected) return;
-    void trackEvent("login_completed", { method: "google" });
-    navigate({ to: "/home", replace: true });
   }
 
   async function handleSignUp(e: React.FormEvent) {
