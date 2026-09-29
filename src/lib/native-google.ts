@@ -60,7 +60,10 @@ export async function signInWithGoogleNative(): Promise<{ error: Error | null; c
       "Google account picker",
     );
     console.log("[google-native] picker returned", JSON.stringify(res).slice(0, 200));
-    const idToken = res?.result?.idToken;
+    if (res.result.responseType !== "online") {
+      return { error: new Error("Google returned an unsupported sign-in response.") };
+    }
+    const idToken = res.result.idToken;
     if (!idToken) return { error: new Error("Google did not return a sign-in token.") };
     const { error } = await supabase.auth.signInWithIdToken({ provider: "google", token: idToken });
     return { error: error ? new Error(error.message) : null };
