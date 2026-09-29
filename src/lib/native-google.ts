@@ -49,7 +49,10 @@ export async function signInWithGoogleNative(): Promise<{ error: Error | null; c
     }
     console.log("[google-native] opening account picker");
     const res = await withTimeout(
-      SocialLogin.login({ provider: "google", options: { scopes: ["email", "profile"] } }),
+      // Do not pass explicit scopes for authentication-only login. The Android
+      // plugin already requests openid/email/profile by default; passing the
+      // same values as custom scopes activates its modified-MainActivity guard.
+      SocialLogin.login({ provider: "google", options: {} }),
       60000,
       "Google account picker",
     );
