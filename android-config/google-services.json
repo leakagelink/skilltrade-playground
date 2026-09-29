@@ -14,6 +14,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "913550827647-accaeu59c4qi725877t2mvhst69jvo0n.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "online.tradevirt.app",
+            "certificate_hash": "170df16c2915fe2fab203f3d346846cf3196fbc3"
+          }
+        },
+        {
+          "client_id": "913550827647-dtkqv9u37ou8bnc0fqu9r5ujcc1u8o2n.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "online.tradevirt.app",
+            "certificate_hash": "c83e74bea52b7a00ace36d7f0ac45c4a0dcffa73"
+          }
+        },
+        {
           "client_id": "913550827647-7tcnongkvbv2ltqobq2la8a8rosom8fa.apps.googleusercontent.com",
           "client_type": 3
         }
