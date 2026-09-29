@@ -237,8 +237,8 @@ function JournalSheet({ tradeId, journals, onClose }: { tradeId: string | null; 
       await save({
         data: {
           tradeId,
-          thesis: form.thesis, strategy: form.strategy, entryReason: form.entry_reason,
-          exitReason: form.exit_reason, wentWell: form.went_well, improve: form.improve, notes: form.notes,
+          thesis: form["thesis"], strategy: form["strategy"], entryReason: form["entry_reason"],
+          exitReason: form["exit_reason"], wentWell: form["went_well"], improve: form["improve"], notes: form["notes"],
           emotion: emotion as (typeof EMOTIONS)[number] | null, confidence,
         },
       });
