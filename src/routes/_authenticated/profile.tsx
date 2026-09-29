@@ -10,7 +10,7 @@ import { EmptyState } from "@/components/EmptyState";
 import { OpenPositions } from "@/components/OpenPositions";
 import { DisclaimerNote } from "@/components/Disclaimer";
 import { dateTime, money, price, signedMoney } from "@/lib/format";
-import { ChevronRight, History, Compass } from "lucide-react";
+import { ChevronRight, History, Compass, BookOpen } from "lucide-react";
 import { getCareerStatus } from "@/lib/career.functions";
 
 export const Route = createFileRoute("/_authenticated/profile")({
@@ -77,6 +77,17 @@ function ProfilePage() {
         )}
 
         <CareerCard />
+
+        <Link to="/practice" className="bento-tile flex items-center gap-3 p-4" aria-label="Open Practice Center">
+          <div className="flex size-10 items-center justify-center rounded-2xl bg-secondary text-primary">
+            <BookOpen className="size-5" aria-hidden />
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="text-sm font-bold">Practice Center</p>
+            <p className="truncate text-xs text-muted-foreground">Journal, weekly summary, milestones & streak</p>
+          </div>
+          <ChevronRight className="size-4 shrink-0 text-muted-foreground" aria-hidden />
+        </Link>
 
 
 
