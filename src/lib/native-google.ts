@@ -61,6 +61,7 @@ export async function signInWithGoogleNative(): Promise<{ error: Error | null; c
     return { error: error ? new Error(error.message) : null };
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
+    console.error("[google-native] sign-in failed:", msg);
     if (/cancel/i.test(msg)) return { error: null, cancelled: true };
     return { error: new Error(msg) };
   }
