@@ -225,7 +225,7 @@ function HomePage() {
           />
         </div>
 
-        <p className="section-title mt-2.5">Performance</p>
+        <p className="section-title mt-2">Performance</p>
         <div className="bento-tile animate-rise mt-1 grid grid-cols-3 gap-x-2 gap-y-1 p-2">
           <Stat label="Total P&L" value={signedMoney(s.totalPnl)} tone={s.totalPnl >= 0 ? "bull" : "bear"} />
           <Stat label="Win rate" value={`${s.winRate}%`} />
