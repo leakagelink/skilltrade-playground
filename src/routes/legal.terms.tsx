@@ -14,7 +14,7 @@ export const Route = createFileRoute("/legal/terms")({
   component: () => (
     <LegalPage
       title="Terms of Service"
-      updated="Version 1.2"
+      updated="Version 1.4 — September 29, 2026"
       sections={[
         {
           heading: "0. Who operates TradeVirt",
@@ -22,7 +22,7 @@ export const Route = createFileRoute("/legal/terms")({
         },
         {
           heading: "1. Nature of the service",
-          body: "TradeVirt is a simulated paper trading and educational skill-development application. It is not a broker, exchange, investment adviser, or financial transaction service. No real-money trading is available.",
+          body: "TradeVirt is a simulated paper trading and educational skill-development application. It is not a broker, exchange, investment adviser, or financial transaction service. All trading is simulated. No real-money trading, deposits or withdrawals are available.",
         },
         {
           heading: "2. Virtual balance and credits",
@@ -38,7 +38,7 @@ export const Route = createFileRoute("/legal/terms")({
         },
         {
           heading: "5. Rewards",
-          body: "All Version 1.0 rewards are virtual: XP, levels, badges, virtual Trading Credits and leaderboard position. Trading Credits come from the new-account bonus, the 24-hour daily reward (which you may optionally double once a day by watching a rewarded ad) and challenges. TradeVirt shows optional Google AdMob rewarded ads, occasional interstitial ads and small banner ads on a few main browsing screens; watching a rewarded ad can unlock only an extra AI analysis, bonus XP or the optional daily-reward bonus, all virtual and limited per day. No cash, cryptocurrency, gift cards or other prizes of monetary value are offered.",
+          body: "All rewards in TradeVirt are virtual: XP, levels, badges, virtual Trading Credits and leaderboard position. Trading Credits come from the new-account bonus, the 24-hour daily reward (which you may optionally double once a day by watching a rewarded ad) and challenges. TradeVirt shows optional Google AdMob rewarded ads, occasional interstitial ads and small banner ads on a few main browsing screens; watching a rewarded ad can unlock only an extra AI analysis, bonus XP or the optional daily-reward bonus, all virtual and limited per day. No cash, cryptocurrency, gift cards or other prizes of monetary value are offered.",
         },
         {
           heading: "6. No warranty and market data",

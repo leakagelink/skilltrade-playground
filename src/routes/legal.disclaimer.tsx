@@ -14,7 +14,7 @@ export const Route = createFileRoute("/legal/disclaimer")({
   component: () => (
     <LegalPage
       title="Educational & Risk Disclaimer"
-      updated="Version 1.2"
+      updated="Version 1.4 — September 29, 2026"
       sections={[
         {
           heading: "Who operates TradeVirt",
@@ -46,7 +46,7 @@ export const Route = createFileRoute("/legal/disclaimer")({
         },
         {
           heading: "AI and automated insights",
-          body: "AI-generated insights and trade reviews are provided for educational and informational purposes only. They do not constitute financial or investment advice and do not guarantee trading performance or future market outcomes. Where an AI simulation is shown, its performance is generated on simulated data only.",
+          body: "AI-generated insights and trade reviews are provided for educational and informational purposes only. They do not constitute financial or investment advice and do not guarantee trading performance or future market outcomes. The AI Coach Agent gives short educational answers that may be inaccurate. AI Arena opponents are rule-based and trade only on simulated data; their results say nothing about real markets.",
         },
         {
           heading: "Trader DNA and Trading Personality",

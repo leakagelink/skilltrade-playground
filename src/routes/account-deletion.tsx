@@ -17,7 +17,7 @@ export const Route = createFileRoute("/account-deletion")({
   component: () => (
     <LegalPage
       title="TradeVirt Account Deletion"
-      updated="Version 1.2"
+      updated="Version 1.4 — September 29, 2026"
       sections={[
         {
           heading: "Who operates TradeVirt",
@@ -33,11 +33,11 @@ export const Route = createFileRoute("/account-deletion")({
         },
         {
           heading: "What is deleted",
-          body: "Your authentication record, profile, username, avatar, virtual balance, credits, XP, level, Trading Skill Score, simulated trades, challenge progress, badges, AI trade reviews, Trader DNA records, AI Arena sessions and Arena trades, Career Mode progress and milestones, social competition participation and competition trades, notifications and leaderboard entries are permanently removed.",
+          body: "Your authentication record, profile, username, avatar, virtual balance, credits, XP, level, Trading Skill Score, simulated trades, challenge progress, badges, AI trade reviews, Trader DNA records, AI Arena sessions and Arena trades, Career Mode progress and milestones, social competition participation and competition trades, AI Coach Agent usage counters, unlocks and reported answers, ad-reward records, push notification device tokens, notifications, public profile settings and leaderboard entries are permanently removed.",
         },
         {
           heading: "What is retained",
-          body: "TradeVirt keeps no payment or financial data because the app involves no real money. Backup copies may persist for a short period before being overwritten, and anonymised or legally required records may be retained.",
+          body: "Deletion from the live database happens immediately when you confirm. TradeVirt keeps no payment or financial data because the app involves no real money. Anonymous Firebase analytics and crash reports are not linked to your account and follow Google's retention settings. Backup copies may persist for a short period before being overwritten, and anonymised or legally required records may be retained.",
         },
         {
           heading: "After deletion",
