@@ -24,7 +24,9 @@ import { Loader2 } from "lucide-react";
 import { lovable } from "@/integrations/lovable";
 import { BrandLogo, BrandMark } from "@/components/BrandLogo";
 import { trackEvent } from "@/lib/analytics";
-import { nativeGoogleAvailable, signInWithGoogleNative } from "@/lib/native-google";
+import { isNativeTradeVirtApp, signInWithGoogleNative } from "@/lib/native-google";
+
+const TRADEVIRT_WEB_ORIGIN = "https://tradevirt.online";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -86,8 +88,10 @@ function AuthPage() {
   async function handleGoogleSignIn() {
     setLoading(true);
     try {
-      // Inside the Android/iOS app: in-app Google account picker, no browser.
-      if (await nativeGoogleAvailable()) {
+      // Native builds must never fall back to browser OAuth. If native Google
+      // setup fails, show the error so the signing/client configuration can be
+      // corrected instead of stranding the user in a browser session.
+      if (await isNativeTradeVirtApp()) {
         const r = await signInWithGoogleNative();
         if (r.cancelled) return;
         if (r.error) {
@@ -99,7 +103,7 @@ function AuthPage() {
         return;
       }
       const result = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: window.location.origin,
+        redirect_uri: `${TRADEVIRT_WEB_ORIGIN}/auth`,
       });
       if (result.error) {
         toast.error(result.error.message ?? "Google sign-in failed. Please try again.");

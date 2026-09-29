@@ -8,11 +8,6 @@ import { supabase } from "@/integrations/supabase/client";
 // Public OAuth "Web application" client ID (same one configured in auth settings).
 const WEB_CLIENT_ID = "913550827647-7tcnongkvbv2ltqobq2la8a8rosom8fa.apps.googleusercontent.com";
 
-type SocialLoginPlugin = {
-  initialize: (o: { google: { webClientId: string; mode?: string } }) => Promise<void>;
-  login: (o: { provider: "google"; options: { scopes?: string[] } }) => Promise<{ result: { idToken?: string | null } }>;
-};
-
 let initialized = false;
 
 // Never let a native call hang the UI: race it against a timeout.
@@ -25,31 +20,34 @@ function withTimeout<T>(p: Promise<T>, ms: number, label: string): Promise<T> {
   ]);
 }
 
-async function getPlugin(): Promise<SocialLoginPlugin | null> {
-  const { Capacitor, registerPlugin } = await import("@capacitor/core");
-  if (!Capacitor.isNativePlatform() || !Capacitor.isPluginAvailable("SocialLogin")) return null;
-  return registerPlugin<SocialLoginPlugin>("SocialLogin");
-}
-
-export async function nativeGoogleAvailable() {
+export async function isNativeTradeVirtApp() {
   try {
-    // If the Capacitor bridge import or plugin check hangs (remote-loaded
-    // page inside the app), don't block the UI — fall back to web OAuth.
-    return (await withTimeout(getPlugin(), 5000, "Native platform check")) !== null;
+    const { Capacitor } = await withTimeout(import("@capacitor/core"), 5000, "Native platform check");
+    return Capacitor.isNativePlatform();
   } catch (e) {
-    console.warn("[google-native] availability check failed:", e);
+    console.error("[google-native] platform check failed:", e);
     return false;
   }
 }
 
 export async function signInWithGoogleNative(): Promise<{ error: Error | null; cancelled?: boolean }> {
-  const plugin = await getPlugin();
-  if (!plugin) return { error: new Error("Native Google sign-in unavailable") };
   try {
+    const { Capacitor } = await import("@capacitor/core");
+    if (!Capacitor.isNativePlatform()) {
+      return { error: new Error("Native Google sign-in is only available in the TradeVirt app.") };
+    }
+
+    // Use the package's official client wrapper. Creating a second proxy with
+    // registerPlugin can miss the native implementation in remotely hosted apps.
+    const { SocialLogin } = await withTimeout(
+      import("@capgo/capacitor-social-login"),
+      10000,
+      "Google sign-in plugin",
+    );
     if (!initialized) {
       console.log("[google-native] initializing plugin");
       await withTimeout(
-        plugin.initialize({ google: { webClientId: WEB_CLIENT_ID, mode: "online" } }),
+        SocialLogin.initialize({ google: { webClientId: WEB_CLIENT_ID, mode: "online" } }),
         15000,
         "Google sign-in setup",
       );
@@ -57,7 +55,7 @@ export async function signInWithGoogleNative(): Promise<{ error: Error | null; c
     }
     console.log("[google-native] opening account picker");
     const res = await withTimeout(
-      plugin.login({ provider: "google", options: { scopes: ["email", "profile"] } }),
+      SocialLogin.login({ provider: "google", options: { scopes: ["email", "profile"] } }),
       60000,
       "Google account picker",
     );

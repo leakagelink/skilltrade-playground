@@ -9,6 +9,17 @@ const config: CapacitorConfig = {
     androidScheme: 'https',
     cleartext: false,
   },
+  plugins: {
+    SocialLogin: {
+      providers: {
+        google: true,
+        facebook: false,
+        apple: false,
+        twitter: false,
+      },
+      logLevel: 1,
+    },
+  },
 };
 
 export default config;
