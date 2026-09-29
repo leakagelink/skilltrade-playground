@@ -15,13 +15,6 @@
       "when": 1790615668600,
       "tag": "0001_ai_agent_usage",
       "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1790690512004,
-      "tag": "0002_trade_journals",
-      "breakpoints": true
     }
   ]
 }

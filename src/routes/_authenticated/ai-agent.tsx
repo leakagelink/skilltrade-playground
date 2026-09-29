@@ -36,9 +36,7 @@ function AgentPage() {
   const [input, setInput] = useState("");
   const endRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    endRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  useEffect(() => endRef.current?.scrollIntoView({ behavior: "smooth" }), [messages]);
 
   const s = status.data;
   const canAsk = !!s && (s.unlocked || s.freeAvailable);

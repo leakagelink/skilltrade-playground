@@ -22,8 +22,3 @@
 - Events: sign_up_completed, login_completed, logout_completed, trade_opened, trade_closed, daily_reward_claimed, ai_coach_used, trader_dna_viewed, ai_arena_started, career_mode_started, career_level_completed, leaderboard_viewed.
 - Crashlytics: automatic crash capture plus a non-fatal from the root error boundary (no PII, no tokens).
 - Firebase web SDK stubbed in vite config (native-only usage); production build verified.
-
-## V2 remaining features (complete)
-- Practice Center (Profile → Practice Center): Trade Journal, Weekly Practice Summary, Milestones, Practice Streak, Practice Insights, Decision Check toggle, Market Replay (marked unavailable — no verified historical data, no fake replay).
-- Optional "Check Your Trade Plan" before BUY/SELL (off by default, never blocks).
-- New private `trade_journals` table (owner-only RLS); journal text never sent to analytics.

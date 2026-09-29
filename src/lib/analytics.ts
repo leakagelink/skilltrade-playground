@@ -27,16 +27,7 @@ export type AnalyticsEvent =
   | "career_mode_started"
   | "career_level_completed"
   | "leaderboard_viewed"
-  | "daily_reward_claimed"
-  | "practice_center_opened"
-  | "trade_journal_created"
-  | "trade_journal_reviewed"
-  | "milestone_unlocked"
-  | "practice_summary_viewed"
-  | "practice_streak_updated"
-  | "decision_check_enabled"
-  | "decision_check_completed"
-  | "market_replay_opened";
+  | "daily_reward_claimed";
 
 /** The only parameter keys allowed to leave the device. */
 const ALLOWED_PARAMS = [
