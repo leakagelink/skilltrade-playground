@@ -1,3 +1,4 @@
+import { isDecisionCheckEnabled } from "@/lib/decision-check";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -51,6 +52,7 @@ function ChartPage() {
   const [tp, setTp] = useState("");
   const [notes, setNotes] = useState("");
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [checkOpen, setCheckOpen] = useState(false);
 
   const chart = useQuery({
     queryKey: ["candles", symbol, tf],
@@ -350,10 +352,44 @@ function ChartPage() {
               <Button
                 className="h-12 w-full rounded-xl text-base font-semibold"
                 disabled={openMutation.isPending}
-                onClick={() => openMutation.mutate()}
+                onClick={() => {
+                  if (isDecisionCheckEnabled()) setCheckOpen(true);
+                  else openMutation.mutate();
+                }}
               >
                 Confirm simulated {direction}
               </Button>
+              {checkOpen ? (
+                <div className="space-y-2 rounded-xl border border-border p-3">
+                  <p className="text-sm font-semibold">Check Your Trade Plan</p>
+                  {[
+                    "I understand this is a simulated trade",
+                    "I have reviewed my entry",
+                    "I have considered a stop loss",
+                    "I have considered a take profit",
+                    "I understand market prices may change",
+                  ].map((l) => (
+                    <label key={l} className="flex items-center gap-2 text-xs">
+                      <input type="checkbox" className="size-4" /> {l}
+                    </label>
+                  ))}
+                  <p className="text-[11px] text-muted-foreground">Optional reflection only — not advice. You can turn this off in Practice Center.</p>
+                  <div className="flex gap-2">
+                    <Button variant="outline" className="flex-1" onClick={() => setCheckOpen(false)}>Back</Button>
+                    <Button
+                      className="flex-1"
+                      disabled={openMutation.isPending}
+                      onClick={() => {
+                        setCheckOpen(false);
+                        trackEvent("decision_check_completed");
+                        openMutation.mutate();
+                      }}
+                    >
+                      Continue
+                    </Button>
+                  </div>
+                </div>
+              ) : null}
             </div>
           </SheetContent>
         </Sheet>
