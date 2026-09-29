@@ -237,7 +237,7 @@ function HomePage() {
       </section>
 
 
-      <section className="mt-2 space-y-2 px-4 sm:px-5">
+      <section className="mt-1.5 space-y-1.5 px-4 sm:px-5">
         <p className="section-title">Open positions</p>
         <OpenPositionsSection />
 
@@ -274,7 +274,7 @@ function OpenPositionsSection() {
   const open = (trades.data?.trades ?? []).filter((t) => t.status === "OPEN");
   if (trades.isLoading) return <Skeleton className="h-24 w-full rounded-2xl" />;
   return (
-    <div className="max-h-40 space-y-2 overflow-y-auto pr-0.5">
+    <div className="max-h-32 space-y-2 overflow-y-auto pr-0.5">
       <OpenPositions trades={open} emptyText="Open a simulated trade to see it here with live P&L." />
     </div>
   );
