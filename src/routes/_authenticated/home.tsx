@@ -117,7 +117,7 @@ function HomePage() {
 
 
   return (
-    <main className="pb-3">
+    <main className="pb-2">
       <section className="mesh-bg safe-top-section relative overflow-hidden px-4 pb-3 sm:px-5">
         <div className="animate-rise grid grid-cols-[minmax(0,1fr)_auto] items-start gap-2">
           <div className="min-w-0">
@@ -189,7 +189,7 @@ function HomePage() {
 
         {/* Bento grid */}
         <div className="mt-1.5 grid grid-cols-2 gap-1.5">
-          <Link to="/profile" className="bento-tile bento-tile-interactive animate-rise col-span-1 p-2.5">
+          <Link to="/profile" className="bento-tile bento-tile-interactive animate-rise col-span-1 p-2">
             <div className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
               <Trophy className="size-3.5" /> Skill score
             </div>
@@ -197,7 +197,7 @@ function HomePage() {
             <p className="text-[10px] text-muted-foreground">out of 1000</p>
           </Link>
 
-          <div className="bento-tile animate-rise col-span-1 p-2.5">
+          <div className="bento-tile animate-rise col-span-1 p-2">
             <div className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
               <Gift className="size-3.5" /> Daily reward
             </div>
