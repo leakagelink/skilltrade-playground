@@ -9,7 +9,8 @@ import { Capacitor } from "@capacitor/core";
 // Public OAuth "Web application" client ID (same one configured in auth settings).
 const WEB_CLIENT_ID = "913550827647-7tcnongkvbv2ltqobq2la8a8rosom8fa.apps.googleusercontent.com";
 
-let initialized = false;
+let initializationPromise: Promise<void> | null = null;
+let signInAttempt: Promise<{ error: Error | null; cancelled?: boolean }> | null = null;
 
 // Never let a native call hang the UI: race it against a timeout.
 function withTimeout<T>(p: Promise<T>, ms: number, label: string): Promise<T> {
@@ -25,7 +26,7 @@ export function isNativeTradeVirtApp() {
   return Capacitor.isNativePlatform();
 }
 
-export async function signInWithGoogleNative(): Promise<{ error: Error | null; cancelled?: boolean }> {
+async function runNativeGoogleSignIn(): Promise<{ error: Error | null; cancelled?: boolean }> {
   try {
     if (!Capacitor.isNativePlatform()) {
       return { error: new Error("Native Google sign-in is only available in the TradeVirt app.") };
@@ -38,21 +39,42 @@ export async function signInWithGoogleNative(): Promise<{ error: Error | null; c
       10000,
       "Google sign-in plugin",
     );
-    if (!initialized) {
+    if (!initializationPromise) {
       console.log("[google-native] initializing plugin");
-      await withTimeout(
+      initializationPromise = withTimeout(
         SocialLogin.initialize({ google: { webClientId: WEB_CLIENT_ID, mode: "online" } }),
         15000,
         "Google sign-in setup",
-      );
-      initialized = true;
+      ).catch((error) => {
+        initializationPromise = null;
+        throw error;
+      });
     }
+    await initializationPromise;
+
+    // Credential Manager can retain a failed re-authentication selection. Its
+    // automatic retry then shows the account picker twice and can finish with
+    // NoCredentialException. Clear only that native selection state first;
+    // this does not sign the user out of their Google account on the device.
+    try {
+      await withTimeout(SocialLogin.logout({ provider: "google" }), 10000, "Google account reset");
+    } catch (error) {
+      console.warn("[google-native] credential reset skipped:", error);
+    }
+
     console.log("[google-native] opening account picker");
     const res = await withTimeout(
       // Do not pass explicit scopes for authentication-only login. The Android
       // plugin already requests openid/email/profile by default; passing the
       // same values as custom scopes activates its modified-MainActivity guard.
-      SocialLogin.login({ provider: "google", options: {} }),
+      SocialLogin.login({
+        provider: "google",
+        options: {
+          style: "standard",
+          filterByAuthorizedAccounts: false,
+          autoSelectEnabled: false,
+        },
+      }),
       60000,
       "Google account picker",
     );
@@ -70,4 +92,14 @@ export async function signInWithGoogleNative(): Promise<{ error: Error | null; c
     if (/cancel/i.test(msg)) return { error: null, cancelled: true };
     return { error: new Error(msg) };
   }
+}
+
+export function signInWithGoogleNative(): Promise<{ error: Error | null; cancelled?: boolean }> {
+  // React state updates are asynchronous, so two fast taps can otherwise open
+  // two native Credential Manager requests before the button becomes disabled.
+  if (signInAttempt) return signInAttempt;
+  signInAttempt = runNativeGoogleSignIn().finally(() => {
+    signInAttempt = null;
+  });
+  return signInAttempt;
 }
