@@ -184,57 +184,6 @@ function RootComponent() {
     };
   }, [router]);
 
-  // Deep link: browser OAuth returns to https://tradevirt.online/~oauth/callback,
-  // which Android App Links opens inside the app. Parse the tokens from the URL
-  // and activate the session (native builds only — no-op on web).
-  useEffect(() => {
-    let remove: (() => void) | undefined;
-    let cancelled = false;
-    void (async () => {
-      const { Capacitor, registerPlugin } = await import("@capacitor/core");
-      if (!Capacitor.isNativePlatform()) return;
-      const App = registerPlugin<{
-        addListener: (
-          e: "appUrlOpen",
-          cb: (data: { url: string }) => void,
-        ) => Promise<{ remove: () => Promise<void> }>;
-      }>("App");
-      const handle = await App.addListener("appUrlOpen", async ({ url }) => {
-        try {
-          if (!url || !url.includes("oauth") && !url.includes("access_token") && !url.includes("code=")) return;
-          console.log("[deep-link] app opened with URL:", url.slice(0, 120));
-          const u = new URL(url);
-          // Tokens may arrive in the query string or the hash fragment.
-          const hashParams = new URLSearchParams(u.hash.replace(/^#/, ""));
-          const get = (k: string) => u.searchParams.get(k) ?? hashParams.get(k);
-          const accessToken = get("access_token");
-          const refreshToken = get("refresh_token");
-          const code = get("code");
-          if (accessToken && refreshToken) {
-            const { error } = await supabase.auth.setSession({
-              access_token: accessToken,
-              refresh_token: refreshToken,
-            });
-            if (error) console.error("[deep-link] setSession failed:", error.message);
-            else void router.navigate({ to: "/home", replace: true });
-          } else if (code) {
-            const { error } = await supabase.auth.exchangeCodeForSession(code);
-            if (error) console.error("[deep-link] code exchange failed:", error.message);
-            else void router.navigate({ to: "/home", replace: true });
-          }
-        } catch (e) {
-          console.error("[deep-link] handling failed:", e);
-        }
-      });
-      if (cancelled) void handle.remove();
-      else remove = () => void handle.remove();
-    })();
-    return () => {
-      cancelled = true;
-      remove?.();
-    };
-  }, [router]);
-
   useEffect(() => {
     const { data } = supabase.auth.onAuthStateChange((event) => {
       if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return;
