@@ -15,6 +15,16 @@ type SocialLoginPlugin = {
 
 let initialized = false;
 
+// Never let a native call hang the UI: race it against a timeout.
+function withTimeout<T>(p: Promise<T>, ms: number, label: string): Promise<T> {
+  return Promise.race([
+    p,
+    new Promise<T>((_, reject) =>
+      setTimeout(() => reject(new Error(`${label} timed out — please try again.`)), ms),
+    ),
+  ]);
+}
+
 async function getPlugin(): Promise<SocialLoginPlugin | null> {
   const { Capacitor, registerPlugin } = await import("@capacitor/core");
   if (!Capacitor.isNativePlatform() || !Capacitor.isPluginAvailable("SocialLogin")) return null;
