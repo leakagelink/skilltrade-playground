@@ -134,7 +134,7 @@ function HomePage() {
         </div>
 
         {/* Hero equity card */}
-        <div className="brand-gradient brand-shadow animate-rise relative mt-2 overflow-hidden rounded-[20px] p-3 sm:p-4">
+        <div className="brand-gradient brand-shadow animate-rise relative mt-2 overflow-hidden rounded-[20px] p-2.5 sm:p-4">
           <div className="pointer-events-none absolute -right-16 -top-20 size-56 rounded-full bg-primary-foreground/15 blur-2xl" />
           <div className="pointer-events-none absolute -bottom-24 -left-10 size-48 rounded-full bg-primary-foreground/10 blur-2xl" />
           <div className="relative">
@@ -153,9 +153,9 @@ function HomePage() {
               ) : null}
             </div>
 
-            <p className="num mt-1 text-[clamp(1.35rem,7vw,2rem)] font-bold leading-none tracking-tight">{money(equity)}</p>
+            <p className="num mt-1 text-[clamp(1.25rem,6.5vw,1.75rem)] font-bold leading-none tracking-tight">{money(equity)}</p>
 
-            <div className="mt-2 grid grid-cols-2 gap-1.5">
+            <div className="mt-1.5 grid grid-cols-2 gap-1.5">
               <div className="rounded-xl bg-primary-foreground/12 px-2.5 py-1.5 backdrop-blur-sm">
                 <p className="text-[10px] uppercase tracking-wider opacity-75">Cash</p>
                 <p className="num text-[13px] font-semibold">{money(p.virtualBalance)}</p>
@@ -168,7 +168,7 @@ function HomePage() {
               </div>
             </div>
 
-            <div className="mt-2">
+            <div className="mt-1.5">
               <div className="flex items-center justify-between text-[11px] font-semibold">
                 <span>
                   Level {p.level} · {p.levelTitle}
@@ -274,7 +274,7 @@ function OpenPositionsSection() {
   const open = (trades.data?.trades ?? []).filter((t) => t.status === "OPEN");
   if (trades.isLoading) return <Skeleton className="h-24 w-full rounded-2xl" />;
   return (
-    <div className="max-h-32 space-y-2 overflow-y-auto pr-0.5">
+    <div className="max-h-28 space-y-2 overflow-y-auto pr-0.5">
       <OpenPositions trades={open} emptyText="Open a simulated trade to see it here with live P&L." />
     </div>
   );
