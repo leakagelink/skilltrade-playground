@@ -10,4 +10,4 @@
 <!-- LOVABLE:END -->
 
 - Android/iOS Google authentication must use `@capgo/capacitor-social-login` ID-token login with no browser OAuth fallback; browser OAuth is website-only, so native users cannot be stranded outside the app.
-- Native Google sign-in must serialize attempts and clear stale Credential Manager state before showing the standard account picker, preventing duplicate pickers and re-authentication loops.
+- Native Google sign-in must serialize attempts, start with Credential Manager's bottom-sheet flow, and leave stale-state clearing/retry to the social-login plugin to avoid duplicate resets.

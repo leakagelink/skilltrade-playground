@@ -52,25 +52,18 @@ async function runNativeGoogleSignIn(): Promise<{ error: Error | null; cancelled
     }
     await initializationPromise;
 
-    // Credential Manager can retain a failed re-authentication selection. Its
-    // automatic retry then shows the account picker twice and can finish with
-    // NoCredentialException. Clear only that native selection state first;
-    // this does not sign the user out of their Google account on the device.
-    try {
-      await withTimeout(SocialLogin.logout({ provider: "google" }), 10000, "Google account reset");
-    } catch (error) {
-      console.warn("[google-native] credential reset skipped:", error);
-    }
-
     console.log("[google-native] opening account picker");
     const res = await withTimeout(
       // Do not pass explicit scopes for authentication-only login. The Android
       // plugin already requests openid/email/profile by default; passing the
       // same values as custom scopes activates its modified-MainActivity guard.
+      // Start with Credential Manager's recommended bottom-sheet flow. The
+      // plugin itself clears stale state and falls back to the standard picker
+      // only when Google reports that no usable credential is available.
       SocialLogin.login({
         provider: "google",
         options: {
-          style: "standard",
+          style: "bottom",
           filterByAuthorizedAccounts: false,
           autoSelectEnabled: false,
         },
@@ -90,6 +83,13 @@ async function runNativeGoogleSignIn(): Promise<{ error: Error | null; cancelled
     const msg = e instanceof Error ? e.message : String(e);
     console.error("[google-native] sign-in failed:", msg);
     if (/cancel/i.test(msg)) return { error: null, cancelled: true };
+    if (/Account reauth failed|No credentials available/i.test(msg)) {
+      return {
+        error: new Error(
+          "Google could not verify the selected account. Remove TradeVirt from your Google Account’s connected apps, then try again with a regular Google account.",
+        ),
+      };
+    }
     return { error: new Error(msg) };
   }
 }
