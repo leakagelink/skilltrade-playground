@@ -117,7 +117,7 @@ function HomePage() {
 
 
   return (
-    <main className="pb-3">
+    <main className="pb-2">
       <section className="mesh-bg safe-top-section relative overflow-hidden px-4 pb-3 sm:px-5">
         <div className="animate-rise grid grid-cols-[minmax(0,1fr)_auto] items-start gap-2">
           <div className="min-w-0">
@@ -134,7 +134,7 @@ function HomePage() {
         </div>
 
         {/* Hero equity card */}
-        <div className="brand-gradient brand-shadow animate-rise relative mt-2 overflow-hidden rounded-[20px] p-3 sm:p-4">
+        <div className="brand-gradient brand-shadow animate-rise relative mt-2 overflow-hidden rounded-[20px] p-2.5 sm:p-4">
           <div className="pointer-events-none absolute -right-16 -top-20 size-56 rounded-full bg-primary-foreground/15 blur-2xl" />
           <div className="pointer-events-none absolute -bottom-24 -left-10 size-48 rounded-full bg-primary-foreground/10 blur-2xl" />
           <div className="relative">
@@ -153,9 +153,9 @@ function HomePage() {
               ) : null}
             </div>
 
-            <p className="num mt-1 text-[clamp(1.35rem,7vw,2rem)] font-bold leading-none tracking-tight">{money(equity)}</p>
+            <p className="num mt-1 text-[clamp(1.25rem,6.5vw,1.75rem)] font-bold leading-none tracking-tight">{money(equity)}</p>
 
-            <div className="mt-2 grid grid-cols-2 gap-1.5">
+            <div className="mt-1.5 grid grid-cols-2 gap-1.5">
               <div className="rounded-xl bg-primary-foreground/12 px-2.5 py-1.5 backdrop-blur-sm">
                 <p className="text-[10px] uppercase tracking-wider opacity-75">Cash</p>
                 <p className="num text-[13px] font-semibold">{money(p.virtualBalance)}</p>
@@ -168,7 +168,7 @@ function HomePage() {
               </div>
             </div>
 
-            <div className="mt-2">
+            <div className="mt-1.5">
               <div className="flex items-center justify-between text-[11px] font-semibold">
                 <span>
                   Level {p.level} · {p.levelTitle}
@@ -188,8 +188,8 @@ function HomePage() {
         </div>
 
         {/* Bento grid */}
-        <div className="mt-2 grid grid-cols-2 gap-2">
-          <Link to="/profile" className="bento-tile bento-tile-interactive animate-rise col-span-1 p-2.5">
+        <div className="mt-1.5 grid grid-cols-2 gap-1.5">
+          <Link to="/profile" className="bento-tile bento-tile-interactive animate-rise col-span-1 p-2">
             <div className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
               <Trophy className="size-3.5" /> Skill score
             </div>
@@ -197,7 +197,7 @@ function HomePage() {
             <p className="text-[10px] text-muted-foreground">out of 1000</p>
           </Link>
 
-          <div className="bento-tile animate-rise col-span-1 p-2.5">
+          <div className="bento-tile animate-rise col-span-1 p-2">
             <div className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
               <Gift className="size-3.5" /> Daily reward
             </div>
@@ -225,8 +225,8 @@ function HomePage() {
           />
         </div>
 
-        <p className="section-title mt-3">Performance</p>
-        <div className="bento-tile animate-rise mt-1 grid grid-cols-3 gap-x-2 gap-y-1.5 p-2.5">
+        <p className="section-title mt-2">Performance</p>
+        <div className="bento-tile animate-rise mt-1 grid grid-cols-3 gap-x-2 gap-y-1 p-2">
           <Stat label="Total P&L" value={signedMoney(s.totalPnl)} tone={s.totalPnl >= 0 ? "bull" : "bear"} />
           <Stat label="Win rate" value={`${s.winRate}%`} />
           <Stat label="Trades" value={String(s.totalTrades)} />
@@ -237,7 +237,7 @@ function HomePage() {
       </section>
 
 
-      <section className="mt-2 space-y-2 px-4 sm:px-5">
+      <section className="mt-1.5 space-y-1.5 px-4 sm:px-5">
         <p className="section-title">Open positions</p>
         <OpenPositionsSection />
 
@@ -273,7 +273,11 @@ function OpenPositionsSection() {
   });
   const open = (trades.data?.trades ?? []).filter((t) => t.status === "OPEN");
   if (trades.isLoading) return <Skeleton className="h-24 w-full rounded-2xl" />;
-  return <OpenPositions trades={open} emptyText="Open a simulated trade to see it here with live P&L." />;
+  return (
+    <div className="max-h-28 space-y-2 overflow-y-auto pr-0.5">
+      <OpenPositions trades={open} emptyText="Open a simulated trade to see it here with live P&L." />
+    </div>
+  );
 }
 
 function Stat({ label, value, tone }: { label: string; value: string; tone?: "bull" | "bear" }) {
