@@ -4,6 +4,7 @@
  * Google ID token to our auth backend. Returns null on the website.
  */
 import { supabase } from "@/integrations/supabase/client";
+import { Capacitor } from "@capacitor/core";
 
 // Public OAuth "Web application" client ID (same one configured in auth settings).
 const WEB_CLIENT_ID = "913550827647-7tcnongkvbv2ltqobq2la8a8rosom8fa.apps.googleusercontent.com";
@@ -20,19 +21,12 @@ function withTimeout<T>(p: Promise<T>, ms: number, label: string): Promise<T> {
   ]);
 }
 
-export async function isNativeTradeVirtApp() {
-  try {
-    const { Capacitor } = await withTimeout(import("@capacitor/core"), 5000, "Native platform check");
-    return Capacitor.isNativePlatform();
-  } catch (e) {
-    console.error("[google-native] platform check failed:", e);
-    return false;
-  }
+export function isNativeTradeVirtApp() {
+  return Capacitor.isNativePlatform();
 }
 
 export async function signInWithGoogleNative(): Promise<{ error: Error | null; cancelled?: boolean }> {
   try {
-    const { Capacitor } = await import("@capacitor/core");
     if (!Capacitor.isNativePlatform()) {
       return { error: new Error("Native Google sign-in is only available in the TradeVirt app.") };
     }
@@ -59,7 +53,7 @@ export async function signInWithGoogleNative(): Promise<{ error: Error | null; c
       60000,
       "Google account picker",
     );
-    console.log("[google-native] picker returned", JSON.stringify(res).slice(0, 200));
+    console.log("[google-native] account picker completed");
     if (res.result.responseType !== "online") {
       return { error: new Error("Google returned an unsupported sign-in response.") };
     }
