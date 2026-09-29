@@ -40,10 +40,21 @@ export async function signInWithGoogleNative(): Promise<{ error: Error | null; c
   if (!plugin) return { error: new Error("Native Google sign-in unavailable") };
   try {
     if (!initialized) {
-      await plugin.initialize({ google: { webClientId: WEB_CLIENT_ID, mode: "online" } });
+      console.log("[google-native] initializing plugin");
+      await withTimeout(
+        plugin.initialize({ google: { webClientId: WEB_CLIENT_ID, mode: "online" } }),
+        15000,
+        "Google sign-in setup",
+      );
       initialized = true;
     }
-    const res = await plugin.login({ provider: "google", options: { scopes: ["email", "profile"] } });
+    console.log("[google-native] opening account picker");
+    const res = await withTimeout(
+      plugin.login({ provider: "google", options: { scopes: ["email", "profile"] } }),
+      60000,
+      "Google account picker",
+    );
+    console.log("[google-native] picker returned", JSON.stringify(res).slice(0, 200));
     const idToken = res?.result?.idToken;
     if (!idToken) return { error: new Error("Google did not return a sign-in token.") };
     const { error } = await supabase.auth.signInWithIdToken({ provider: "google", token: idToken });
