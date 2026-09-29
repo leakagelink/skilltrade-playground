@@ -14,7 +14,7 @@ export const Route = createFileRoute("/legal/privacy")({
   component: () => (
     <LegalPage
       title="Privacy Policy"
-      updated="Version 1.2"
+      updated="Version 1.4 — September 29, 2026"
       sections={[
         {
           heading: "Who operates TradeVirt",
@@ -22,7 +22,7 @@ export const Route = createFileRoute("/legal/privacy")({
         },
         {
           heading: "Data we store",
-          body: "Your email address (for authentication only), your chosen username, avatar, and your simulated trading activity: trades, XP, credits, challenge progress, badges and scores.",
+          body: "Your email address and account identifier (for authentication), your name and email from Google if you choose Continue with Google, your chosen username, avatar, optional country, and your simulated trading activity: trades, XP, credits, challenge progress, badges and scores.",
         },
         {
           heading: "What is never public",
@@ -42,7 +42,7 @@ export const Route = createFileRoute("/legal/privacy")({
         },
         {
           heading: "Advertising",
-          body: "TradeVirt shows advertisements supplied by Google AdMob (Google Mobile Ads SDK) in the Android app: optional rewarded video ads that you choose to watch, occasional full-screen interstitial ads at natural break points, and small banner ads in a reserved space at the bottom of a few main browsing screens (Home, Profile, Leaderboard and Goals). Banner ads never cover content, charts or buttons and are never shown during sign-in, onboarding, order placement, trading charts, settings, legal pages or account deletion. Google may collect and process device and advertising identifiers to serve and measure ads, as described in Google's Privacy Policy (policies.google.com/privacy) and Google's advertising policies. Where required, a Google-provided consent form (UMP) is displayed before personalised ads are served, and you can reset or delete your advertising ID in Android settings. Rewards from ads are virtual only (an extra AI analysis, bonus XP, or a once-a-day bonus of virtual Trading Credits that doubles the daily reward) and have no monetary value. Rewarded ads can also unlock the AI Coach Agent for a limited time. We limit ads to a maximum of 8 rewarded and 3 interstitial ads per day.",
+          body: "TradeVirt shows advertisements supplied by Google AdMob (Google Mobile Ads SDK) in the Android app: optional rewarded video ads that you choose to watch, occasional full-screen interstitial ads at natural break points, and small banner ads in a reserved space at the bottom of a few main browsing screens (Home, Profile, Leaderboard and Goals). Banner ads never cover content, charts or buttons and are never shown during sign-in, onboarding, order placement, trading charts, settings, legal pages or account deletion. Google may collect and process device and advertising identifiers to serve and measure ads, as described in Google's Privacy Policy (policies.google.com/privacy) and Google's advertising policies. Where required, a Google-provided consent form (UMP) is displayed before personalised ads are served, and you can reset or delete your advertising ID in Android settings. Rewards from ads are virtual only (an extra AI analysis, bonus XP, or a once-a-day bonus of virtual Trading Credits that doubles the daily reward) and have no monetary value. Rewarded ads can also unlock the AI Coach Agent for a limited time. We limit ads to a maximum of 8 rewarded and 3 interstitial ads per day. TradeVirt itself does not read or store your advertising ID and does not request device location permission or use GPS; any approximate location Google may infer (for example from IP address) is handled by the Google Mobile Ads SDK under Google's policies.",
         },
         {
           heading: "Analytics and crash reporting",
@@ -63,7 +63,7 @@ export const Route = createFileRoute("/legal/privacy")({
         },
         {
           heading: "AI Coach Agent",
-          body: "If you use the AI Coach Agent, the question you type and up to your last four chat messages are sent to our AI provider (RelayModels, which routes to Anthropic Claude models) to generate an educational answer. Your email, password, user identifier and account details are not sent. Please do not type personal or sensitive information. Chats are not stored on our servers; we only keep a daily usage counter and your unlock time. If you report an answer, that question and answer are stored for moderation. You get 1 free question per day; watching optional rewarded ads (maximum 3 per day) unlocks the agent for 5, 10 or 24 hours. Unlocks are virtual and have no monetary value. AI answers may be inaccurate and are not financial advice.",
+          body: "If you use the AI Coach Agent, the question you type and up to your last four chat messages are sent exactly as written (they are not anonymised) to our AI provider (RelayModels, which routes to Anthropic Claude models) to generate an educational answer. Your email, password, user identifier and account details are not sent. Please do not type personal or sensitive information. Chats are not stored on our servers; we only keep a daily usage counter and your unlock time. If you report an answer, that question and answer are stored for moderation. You get 1 free question per day; watching optional rewarded ads (maximum 3 per day) unlocks the agent for 5, 10 or 24 hours. Unlocks are virtual and have no monetary value. AI answers may be inaccurate and are not financial advice.",
         },
         {
           heading: "AI Arena",
