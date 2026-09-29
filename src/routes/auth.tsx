@@ -91,7 +91,7 @@ function AuthPage() {
       // Native builds must never fall back to browser OAuth. If native Google
       // setup fails, show the error so the signing/client configuration can be
       // corrected instead of stranding the user in a browser session.
-      if (await isNativeTradeVirtApp()) {
+      if (isNativeTradeVirtApp()) {
         const r = await signInWithGoogleNative();
         if (r.cancelled) return;
         if (r.error) {
