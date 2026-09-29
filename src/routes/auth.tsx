@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { getSessionSafe } from "@/lib/session";
 
@@ -50,6 +50,7 @@ function AuthPage() {
   // Hold the sign-in form back until we know whether a session already exists,
   // so a returning user never sees the sign-in screen before their home screen.
   const [checkingSession, setCheckingSession] = useState(true);
+  const googleSignInRunning = useRef(false);
 
   useEffect(() => {
     let active = true;
@@ -86,6 +87,8 @@ function AuthPage() {
   }
 
   async function handleGoogleSignIn() {
+    if (googleSignInRunning.current) return;
+    googleSignInRunning.current = true;
     setLoading(true);
     try {
       // Native builds must never fall back to browser OAuth. If native Google
@@ -118,6 +121,7 @@ function AuthPage() {
       console.error("[google-native] handler failed:", e);
       toast.error(e instanceof Error ? e.message : "Google sign-in failed. Please try again.");
     } finally {
+      googleSignInRunning.current = false;
       setLoading(false);
     }
   }
