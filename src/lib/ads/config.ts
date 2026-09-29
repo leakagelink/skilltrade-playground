@@ -56,17 +56,21 @@ export const AD_FLAGS = {
 /* ------------------------------------------------------------------ */
 
 export const AD_LIMITS = {
-  TOTAL_PER_DAY: 8,
-  REWARDED_PER_DAY: 5,
+  TOTAL_PER_DAY: 11,
+  REWARDED_PER_DAY: 8,
   INTERSTITIAL_PER_DAY: 3,
   INTERSTITIAL_MIN_INTERVAL_MINUTES: 15,
   AI_COACH_REWARDED_PER_DAY: 3,
   CAREER_REWARDED_PER_DAY: 1,
   ARENA_REWARDED_PER_DAY: 1,
   DAILY_DOUBLE_PER_DAY: 1,
+  AI_AGENT_REWARDED_PER_DAY: 3,
 } as const;
 
-export const REWARDED_PLACEMENTS = ["AI_COACH", "CAREER", "ARENA", "DAILY_DOUBLE"] as const;
+/** AI Agent unlock: 1 ad = 5h, 2 ads = 10h, 3 ads = 24h (counted from the first unlock of the day). */
+export const AI_AGENT_UNLOCK_HOURS = [5, 10, 24] as const;
+
+export const REWARDED_PLACEMENTS = ["AI_COACH", "CAREER", "ARENA", "DAILY_DOUBLE", "AI_AGENT"] as const;
 export type RewardedPlacement = (typeof REWARDED_PLACEMENTS)[number];
 
 export const INTERSTITIAL_PLACEMENTS = [
@@ -79,13 +83,14 @@ export type InterstitialPlacement = (typeof INTERSTITIAL_PLACEMENTS)[number];
 /** Every reward is virtual, non-transferable and has no monetary value. */
 export const REWARD_BY_PLACEMENT: Record<
   RewardedPlacement,
-  { type: "AI_ANALYSIS" | "XP" | "CREDITS"; amount: number; label: string }
+  { type: "AI_ANALYSIS" | "XP" | "CREDITS" | "AI_UNLOCK"; amount: number; label: string }
 > = {
   AI_COACH: { type: "AI_ANALYSIS", amount: 1, label: "1 extra AI analysis today" },
   CAREER: { type: "XP", amount: 25, label: "25 bonus XP" },
   ARENA: { type: "XP", amount: 25, label: "25 bonus XP" },
   /** Doubles today's daily reward (matches DAILY_REWARD_CREDITS on the server). */
   DAILY_DOUBLE: { type: "CREDITS", amount: 3, label: "+3 bonus Trading Credits (2x daily reward)" },
+  AI_AGENT: { type: "AI_UNLOCK", amount: 1, label: "more AI Agent time" },
 };
 
 export const AD_DISCLOSURE =

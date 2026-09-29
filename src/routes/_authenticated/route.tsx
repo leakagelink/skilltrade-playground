@@ -4,6 +4,7 @@ import { getSessionSafe } from "@/lib/session";
 import { BottomNav } from "@/components/BottomNav";
 import { showBannerAd, hideBannerAd, subscribeBannerHeight } from "@/lib/ads/admob-bridge";
 import { isEnabled } from "@/lib/feature-flags";
+import { PushSetup } from "@/components/PushSetup";
 
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
@@ -48,6 +49,7 @@ function AuthedLayout() {
 
   return (
     <div className="min-h-screen bg-background">
+      <PushSetup />
       <div
         className={`mx-auto max-w-lg ${hideNav ? "" : "pb-24"}`}
         style={bannerHeight > 0 && !hideNav ? { paddingBottom: `calc(6rem + ${bannerHeight}px)` } : undefined}

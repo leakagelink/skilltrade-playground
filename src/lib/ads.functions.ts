@@ -91,6 +91,7 @@ function placementCount(a: Activity, placement: RewardedPlacement): number {
   if (placement === "AI_COACH") return a.ai_coach_rewards;
   if (placement === "CAREER") return a.career_rewards;
   if (placement === "DAILY_DOUBLE") return 0; // checked via dailyDoubleEligible
+  if (placement === "AI_AGENT") return 0; // checked via aiAgentAdsToday
   return a.arena_rewards;
 }
 
@@ -98,6 +99,7 @@ function placementCap(placement: RewardedPlacement): number {
   if (placement === "AI_COACH") return AD_LIMITS.AI_COACH_REWARDED_PER_DAY;
   if (placement === "CAREER") return AD_LIMITS.CAREER_REWARDED_PER_DAY;
   if (placement === "DAILY_DOUBLE") return AD_LIMITS.DAILY_DOUBLE_PER_DAY;
+  if (placement === "AI_AGENT") return AD_LIMITS.AI_AGENT_REWARDED_PER_DAY;
   return AD_LIMITS.ARENA_REWARDED_PER_DAY;
 }
 
@@ -122,6 +124,20 @@ async function dailyDoubleEligible(db: Admin, userId: string): Promise<boolean> 
     .eq("status", "COMPLETED")
     .gte("completed_at", String(last["claimed_at"]));
   return (count ?? 0) === 0;
+}
+
+async function aiAgentAdsToday(db: Admin, userId: string): Promise<number> {
+  const { data } = await db
+    .from("ai_agent_usage")
+    .select("unlock_ads")
+    .eq("user_id", userId)
+    .eq("usage_date", utcDate())
+    .maybeSingle();
+  return Number(data?.unlock_ads ?? 0);
+}
+
+async function aiAgentEligible(db: Admin, userId: string): Promise<boolean> {
+  return (await aiAgentAdsToday(db, userId)) < AD_LIMITS.AI_AGENT_REWARDED_PER_DAY;
 }
 
 function rewardedAllowed(a: Activity, placement: RewardedPlacement): boolean {
@@ -154,6 +170,7 @@ export const getAdStatus = createServerFn({ method: "GET" })
         ARENA: rewardedAllowed(a, "ARENA"),
         DAILY_DOUBLE:
           rewardedAllowed(a, "DAILY_DOUBLE") && (await dailyDoubleEligible(db, context.userId)),
+        AI_AGENT: rewardedAllowed(a, "AI_AGENT") && (await aiAgentEligible(db, context.userId)),
       } as Record<RewardedPlacement, boolean>,
     };
   });
@@ -173,7 +190,8 @@ export const startRewardedAd = createServerFn({ method: "POST" })
     const a = await todayActivity(db, context.userId);
     if (
       !rewardedAllowed(a, data.placement) ||
-      (data.placement === "DAILY_DOUBLE" && !(await dailyDoubleEligible(db, context.userId)))
+      (data.placement === "DAILY_DOUBLE" && !(await dailyDoubleEligible(db, context.userId))) ||
+      (data.placement === "AI_AGENT" && !(await aiAgentEligible(db, context.userId)))
     ) {
       throw new AdError("Daily ad reward limit reached. Please try again tomorrow.");
     }
@@ -218,7 +236,10 @@ export const completeRewardedAd = createServerFn({ method: "POST" })
 
     const placement = String(grant["placement"]) as RewardedPlacement;
     const activity = await todayActivity(db, context.userId);
-    if (!rewardedAllowed(activity, placement)) {
+    if (
+      !rewardedAllowed(activity, placement) ||
+      (placement === "AI_AGENT" && !(await aiAgentEligible(db, context.userId)))
+    ) {
       throw new AdError("Daily ad reward limit reached. Please try again tomorrow.");
     }
 
@@ -246,7 +267,11 @@ export const completeRewardedAd = createServerFn({ method: "POST" })
     await saveActivity(db, context.userId, patch);
 
     let message = "";
-    if (String(grant["reward_type"]) === "CREDITS") {
+    if (String(grant["reward_type"]) === "AI_UNLOCK") {
+      const { grantAgentUnlock } = await import("./ai-agent.server");
+      const hours = await grantAgentUnlock(db, context.userId);
+      message = `AI Agent unlocked for ${hours} hours.`;
+    } else if (String(grant["reward_type"]) === "CREDITS") {
       const { adjustCredits, addNotification } = await import("./engine.server");
       const amount = Number(grant["reward_amount"] ?? 0);
       const { data: profile } = await db
