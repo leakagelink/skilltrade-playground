@@ -188,7 +188,7 @@ function HomePage() {
         </div>
 
         {/* Bento grid */}
-        <div className="mt-2 grid grid-cols-2 gap-2">
+        <div className="mt-1.5 grid grid-cols-2 gap-1.5">
           <Link to="/profile" className="bento-tile bento-tile-interactive animate-rise col-span-1 p-2.5">
             <div className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
               <Trophy className="size-3.5" /> Skill score
@@ -225,8 +225,8 @@ function HomePage() {
           />
         </div>
 
-        <p className="section-title mt-3">Performance</p>
-        <div className="bento-tile animate-rise mt-1 grid grid-cols-3 gap-x-2 gap-y-1.5 p-2.5">
+        <p className="section-title mt-2.5">Performance</p>
+        <div className="bento-tile animate-rise mt-1 grid grid-cols-3 gap-x-2 gap-y-1 p-2">
           <Stat label="Total P&L" value={signedMoney(s.totalPnl)} tone={s.totalPnl >= 0 ? "bull" : "bear"} />
           <Stat label="Win rate" value={`${s.winRate}%`} />
           <Stat label="Trades" value={String(s.totalTrades)} />
