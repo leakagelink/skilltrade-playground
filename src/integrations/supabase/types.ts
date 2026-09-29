@@ -881,6 +881,65 @@ export type Database = {
         }
         Relationships: []
       }
+      trade_journals: {
+        Row: {
+          confidence: number | null
+          created_at: string
+          emotion: string | null
+          entry_reason: string | null
+          exit_reason: string | null
+          id: string
+          improve: string | null
+          notes: string | null
+          strategy: string | null
+          thesis: string | null
+          trade_id: string
+          updated_at: string
+          user_id: string
+          went_well: string | null
+        }
+        Insert: {
+          confidence?: number | null
+          created_at?: string
+          emotion?: string | null
+          entry_reason?: string | null
+          exit_reason?: string | null
+          id?: string
+          improve?: string | null
+          notes?: string | null
+          strategy?: string | null
+          thesis?: string | null
+          trade_id: string
+          updated_at?: string
+          user_id: string
+          went_well?: string | null
+        }
+        Update: {
+          confidence?: number | null
+          created_at?: string
+          emotion?: string | null
+          entry_reason?: string | null
+          exit_reason?: string | null
+          id?: string
+          improve?: string | null
+          notes?: string | null
+          strategy?: string | null
+          thesis?: string | null
+          trade_id?: string
+          updated_at?: string
+          user_id?: string
+          went_well?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trade_journals_trade_id_fkey"
+            columns: ["trade_id"]
+            isOneToOne: false
+            referencedRelation: "trades"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       trader_dna_profiles: {
         Row: {
           activity_level: string
