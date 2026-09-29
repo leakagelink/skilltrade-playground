@@ -32,7 +32,14 @@ async function getPlugin(): Promise<SocialLoginPlugin | null> {
 }
 
 export async function nativeGoogleAvailable() {
-  return (await getPlugin()) !== null;
+  try {
+    // If the Capacitor bridge import or plugin check hangs (remote-loaded
+    // page inside the app), don't block the UI — fall back to web OAuth.
+    return (await withTimeout(getPlugin(), 5000, "Native platform check")) !== null;
+  } catch (e) {
+    console.warn("[google-native] availability check failed:", e);
+    return false;
+  }
 }
 
 export async function signInWithGoogleNative(): Promise<{ error: Error | null; cancelled?: boolean }> {
