@@ -1,11 +1,16 @@
 /** Native (Android/iOS) push registration. Does nothing on the website. */
 import type { PushNotificationsPlugin } from "@capacitor/push-notifications";
 
-async function getPlugin(): Promise<PushNotificationsPlugin | null> {
+type PushPluginHandle = { plugin: PushNotificationsPlugin };
+
+async function getPlugin(): Promise<PushPluginHandle | null> {
   const { Capacitor } = await import("@capacitor/core");
   if (!Capacitor.isNativePlatform() || !Capacitor.isPluginAvailable("PushNotifications")) return null;
   const { PushNotifications } = await import("@capacitor/push-notifications");
-  return PushNotifications;
+  // Capacitor plugin proxies expose every property, including `then`. Returning
+  // one directly from an async function makes Promise resolution treat it as a
+  // thenable and invoke a non-existent native PushNotifications.then() method.
+  return { plugin: PushNotifications };
 }
 
 export async function pushAvailable() {
@@ -13,8 +18,9 @@ export async function pushAvailable() {
 }
 
 export async function getPushPermissionState(): Promise<"unavailable" | "prompt" | "denied" | "granted"> {
-  const push = await getPlugin();
-  if (!push) return "unavailable";
+  const handle = await getPlugin();
+  if (!handle) return "unavailable";
+  const { plugin: push } = handle;
   const permission = await push.checkPermissions();
   if (permission.receive === "granted") return "granted";
   if (permission.receive === "prompt" || permission.receive === "prompt-with-rationale") return "prompt";
@@ -30,8 +36,9 @@ export async function setupPush(opts: {
   onToken: (token: string, platform: "android" | "ios") => void;
   onOpen: (path: string) => void;
 }): Promise<{ status: "unavailable" | "denied" | "registered"; cleanup?: () => void }> {
-  const push = await getPlugin();
-  if (!push) return { status: "unavailable" };
+  const handle = await getPlugin();
+  if (!handle) return { status: "unavailable" };
+  const { plugin: push } = handle;
   const { Capacitor } = await import("@capacitor/core");
 
   let perm = await push.checkPermissions();
@@ -66,6 +73,6 @@ export async function setupPush(opts: {
 }
 
 export async function disablePush() {
-  const push = await getPlugin();
-  if (push) await push.unregister().catch(() => {});
+  const handle = await getPlugin();
+  if (handle) await handle.plugin.unregister().catch(() => {});
 }
