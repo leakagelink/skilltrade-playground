@@ -1,7 +1,9 @@
 /** Native (Android/iOS) push registration. Does nothing on the website. */
 import type { PushNotificationsPlugin } from "@capacitor/push-notifications";
+import type { LocalNotificationsPlugin } from "@capacitor/local-notifications";
 
 type PushPluginHandle = { plugin: PushNotificationsPlugin };
+type LocalPluginHandle = { plugin: LocalNotificationsPlugin };
 
 async function getPlugin(): Promise<PushPluginHandle | null> {
   const { Capacitor } = await import("@capacitor/core");
@@ -11,6 +13,12 @@ async function getPlugin(): Promise<PushPluginHandle | null> {
   // one directly from an async function makes Promise resolution treat it as a
   // thenable and invoke a non-existent native PushNotifications.then() method.
   return { plugin: PushNotifications };
+}
+
+async function getLocalPlugin(): Promise<LocalPluginHandle> {
+  const { LocalNotifications } = await import("@capacitor/local-notifications");
+  // Capacitor plugin proxies are thenable, so keep the proxy inside an object.
+  return { plugin: LocalNotifications };
 }
 
 export async function pushAvailable() {
@@ -74,11 +82,42 @@ export async function setupPush(opts: {
     /* iOS has no channels */
   }
 
+  const { plugin: local } = await getLocalPlugin();
+  try {
+    await local.createChannel({
+      id: "tradevirt_default",
+      name: "TradeVirt alerts",
+      description: "Trades, rewards, challenges and competitions",
+      importance: 5,
+      visibility: 1,
+    });
+  } catch {
+    /* iOS has no channels */
+  }
+
   const listeners = await Promise.all([
     push.addListener("registration", (t) => opts.onToken(t.value, Capacitor.getPlatform() === "ios" ? "ios" : "android")),
     push.addListener("registrationError", (e) => console.error("Push registration error", e)),
+    push.addListener("pushNotificationReceived", (notification) => {
+      const path = (notification.data as { path?: string } | undefined)?.path;
+      void local.schedule({
+        notifications: [
+          {
+            id: Math.floor(Date.now() % 2_000_000_000),
+            title: notification.title ?? "TradeVirt",
+            body: notification.body ?? "You have a new update.",
+            channelId: "tradevirt_default",
+            extra: path ? { path } : undefined,
+          },
+        ],
+      }).catch((error) => console.error("Foreground notification display error", error));
+    }),
     push.addListener("pushNotificationActionPerformed", (a) => {
       const path = (a.notification?.data as { path?: string } | undefined)?.path;
+      if (path && path.startsWith("/")) opts.onOpen(path);
+    }),
+    local.addListener("localNotificationActionPerformed", (a) => {
+      const path = (a.notification.extra as { path?: string } | undefined)?.path;
       if (path && path.startsWith("/")) opts.onOpen(path);
     }),
   ]);
