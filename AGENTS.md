@@ -13,3 +13,5 @@
 - Native Google sign-in must serialize attempts, start with Credential Manager's bottom-sheet flow, and leave stale-state clearing/retry to the social-login plugin to avoid duplicate resets.
 - Keep `@capacitor/core` and `@capacitor/android` on the same exact version so native plugin bridges remain compatible.
 - Display FCM messages received while the native app is open through Capacitor Local Notifications; Android displays background messages itself.
+- Push notifications are sent via direct FCM HTTP v1 using the FIREBASE_SERVICE_ACCOUNT_JSON secret with an RS256 JWT (Web Crypto) — never via the Lovable connector gateway or firebase-admin; stale/UNREGISTERED tokens are deleted after a failed send.
+- Admin-only actions (e.g. push broadcasts) check the server-side has_role(auth.uid(), 'admin') security-definer function against the user_roles table; never trust client flags.

@@ -22,6 +22,13 @@
       "when": 1790690512004,
       "tag": "0002_trade_journals",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1790753209737,
+      "tag": "0003_admin_roles_for_notifications",
+      "breakpoints": true
     }
   ]
 }
