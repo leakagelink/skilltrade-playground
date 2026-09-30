@@ -141,6 +141,24 @@ function RootComponent() {
     void trackEvent("app_open");
   }, []);
 
+  // Android can only show this permission after the app is opened, not during
+  // installation. Ask once on the first native launch; PushSetup registers the
+  // device token after the user signs in.
+  useEffect(() => {
+    const permissionPromptedKey = "tv_push_permission_prompted";
+    if (localStorage.getItem(permissionPromptedKey) === "1") return;
+    void import("@/lib/push-client")
+      .then(async ({ getPushPermissionState, requestPushPermission }) => {
+        const state = await getPushPermissionState();
+        if (state !== "prompt" || localStorage.getItem(permissionPromptedKey) === "1") return;
+        localStorage.setItem(permissionPromptedKey, "1");
+        await requestPushPermission();
+      })
+      .catch(() => {
+        // The website and unsupported native builds continue without push.
+      });
+  }, []);
+
   // Initialise Google Mobile Ads (native builds only) and warm the ad cache.
   useEffect(() => {
     void import("@/lib/ads/admob-bridge").then(async (ads) => {
