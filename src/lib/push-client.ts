@@ -12,6 +12,15 @@ export async function pushAvailable() {
   return (await getPlugin()) !== null;
 }
 
+export async function getPushPermissionState(): Promise<"unavailable" | "prompt" | "denied" | "granted"> {
+  const push = await getPlugin();
+  if (!push) return "unavailable";
+  const permission = await push.checkPermissions();
+  if (permission.receive === "granted") return "granted";
+  if (permission.receive === "prompt" || permission.receive === "prompt-with-rationale") return "prompt";
+  return "denied";
+}
+
 /**
  * Asks for permission (if needed), registers with FCM and hands the device
  * token to `onToken`. Returns false when permission is denied.

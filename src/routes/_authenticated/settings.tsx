@@ -27,7 +27,7 @@ import { toast } from "sonner";
 import { ChevronRight, LogOut } from "lucide-react";
 import { resetAnalytics, trackEvent } from "@/lib/analytics";
 import { registerPushToken, unregisterPushTokens } from "@/lib/push.functions";
-import { disablePush, pushAvailable, setupPush } from "@/lib/push-client";
+import { disablePush, getPushPermissionState, setupPush } from "@/lib/push-client";
 import { OPT_OUT_KEY } from "@/components/PushSetup";
 
 export const Route = createFileRoute("/_authenticated/settings")({
@@ -208,12 +208,19 @@ function NotificationsCard() {
   const register = useServerFn(registerPushToken);
   const unregister = useServerFn(unregisterPushTokens);
   const [available, setAvailable] = useState(false);
-  const [on, setOn] = useState(true);
+  const [on, setOn] = useState(false);
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    void pushAvailable().then(setAvailable);
-    setOn(localStorage.getItem(OPT_OUT_KEY) !== "1");
+    let active = true;
+    void getPushPermissionState().then((permission) => {
+      if (!active) return;
+      setAvailable(permission !== "unavailable");
+      setOn(permission === "granted" && localStorage.getItem(OPT_OUT_KEY) !== "1");
+    });
+    return () => {
+      active = false;
+    };
   }, []);
 
   async function toggle(v: boolean) {
@@ -227,7 +234,14 @@ function NotificationsCard() {
           onOpen: () => {},
         });
         if (r.status === "denied") {
+          setOn(false);
           toast.error("Notifications are blocked. Allow them for TradeVirt in your phone settings.");
+          return;
+        }
+        if (r.status === "unavailable") {
+          setAvailable(false);
+          setOn(false);
+          toast.error("Notifications are unavailable in this app build.");
           return;
         }
         setOn(true);
