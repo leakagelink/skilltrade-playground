@@ -2,11 +2,6 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
-async function assertAdmin(supabase: Awaited<ReturnType<typeof requireSupabaseAuth>> extends never ? never : Parameters<Parameters<typeof requireSupabaseAuth>[0]>[0] extends never ? never : any, _userId: string) {
-  void supabase;
-  void _userId;
-}
-
 export const getAdminStatus = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
