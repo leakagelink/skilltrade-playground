@@ -21,7 +21,7 @@
     "@capacitor-firebase/crashlytics": "^8.5.1",
     "@capacitor/android": "8.5.1",
     "@capacitor/app": "^8",
-    "@capacitor/core": "^8.5.1",
+    "@capacitor/core": "8.5.1",
     "@capacitor/push-notifications": "^8",
     "@capgo/capacitor-social-login": "^8.5.11",
     "@hookform/resolvers": "^5.2.2",
