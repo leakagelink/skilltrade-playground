@@ -27,6 +27,20 @@ export async function getPushPermissionState(): Promise<"unavailable" | "prompt"
   return "denied";
 }
 
+/** Requests the operating-system permission without registering a user token. */
+export async function requestPushPermission(): Promise<"unavailable" | "prompt" | "denied" | "granted"> {
+  const handle = await getPlugin();
+  if (!handle) return "unavailable";
+  const { plugin: push } = handle;
+  let permission = await push.checkPermissions();
+  if (permission.receive === "prompt" || permission.receive === "prompt-with-rationale") {
+    permission = await push.requestPermissions();
+  }
+  if (permission.receive === "granted") return "granted";
+  if (permission.receive === "prompt" || permission.receive === "prompt-with-rationale") return "prompt";
+  return "denied";
+}
+
 /**
  * Asks for permission (if needed), registers with FCM and hands the device
  * token to `onToken`. Returns false when permission is denied.
