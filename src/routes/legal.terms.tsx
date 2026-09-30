@@ -14,7 +14,7 @@ export const Route = createFileRoute("/legal/terms")({
   component: () => (
     <LegalPage
       title="Terms of Service"
-      updated="Version 1.4 — September 29, 2026"
+      updated="Version 1.5 — September 30, 2026"
       sections={[
         {
           heading: "0. Who operates TradeVirt",
@@ -46,7 +46,7 @@ export const Route = createFileRoute("/legal/terms")({
         },
         {
           heading: "7. AI insights, Trader DNA and Trading Personality",
-          body: "AI-generated insights are based on simulated trading activity and are provided for educational and informational purposes only. They do not constitute financial, investment, trading or legal advice and do not guarantee trading performance or future market outcomes. Trader DNA and Trading Personality are educational, gamified summaries of simulated activity and are not financial assessments, investment recommendations or psychological evaluations. The AI Coach Agent includes one free question per day; additional access is unlocked by watching optional rewarded ads (5, 10 or 24 hours of access per unlock, maximum 3 rewarded ads per day). These unlocks are virtual, have no monetary value and may be subject to fair-use limits.",
+          body: "AI-generated insights are based on simulated trading activity and are provided for educational and informational purposes only. They do not constitute financial, investment, trading or legal advice and do not guarantee trading performance or future market outcomes. Trader DNA and Trading Personality are educational, gamified summaries of simulated activity and are not financial assessments, investment recommendations or psychological evaluations. The AI Coach Agent includes one free question per day; additional access is unlocked by watching optional rewarded ads (5, 10 or 24 hours of access per unlock, maximum 3 rewarded ads per day). These unlocks are virtual, have no monetary value and may be subject to fair-use limits. The Practice Center Trade Journal is a private educational notebook: your entries, weekly summaries, milestones and streaks are visible only to you. The optional \"Check Your Trade Plan\" reflection checklist is educational only, is off by default and never blocks, alters or places a trade.",
         },
         {
           heading: "8. Changes",

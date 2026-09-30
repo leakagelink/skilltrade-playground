@@ -14,7 +14,7 @@ export const Route = createFileRoute("/legal/privacy")({
   component: () => (
     <LegalPage
       title="Privacy Policy"
-      updated="Version 1.4 — September 29, 2026"
+      updated="Version 1.5 — September 30, 2026"
       sections={[
         {
           heading: "Who operates TradeVirt",
@@ -22,7 +22,7 @@ export const Route = createFileRoute("/legal/privacy")({
         },
         {
           heading: "Data we store",
-          body: "Your email address and account identifier (for authentication), your name and email from Google if you choose Continue with Google, your chosen username, avatar, optional country, and your simulated trading activity: trades, XP, credits, challenge progress, badges and scores.",
+          body: "Your email address and account identifier (for authentication), your name and email from Google if you choose Continue with Google, your chosen username, avatar, optional country, and your simulated trading activity: trades, XP, credits, challenge progress, badges and scores. If you use the Practice Center, we also store your Trade Journal entries (thesis, strategy, entry and exit reasons, what went well or what to improve, notes, selected emotion and confidence rating) and your practice milestones, streak and insights.",
         },
         {
           heading: "What is never public",
@@ -74,12 +74,16 @@ export const Route = createFileRoute("/legal/privacy")({
           body: "Career Mode records your simulation progress: your current career stage, the cosmetic career title you have reached, completed career milestones and the educational learning path you select. This progress is calculated on our servers from activity you already carry out in the app (simulated trades, challenges, AI reviews and AI Arena sessions) and is visible only to you. Career rewards are virtual XP, titles and badges with no monetary value.",
         },
         {
+          heading: "Practice Center and Trade Journal",
+          body: "The Practice Center lets you keep a private Trade Journal: your written thesis, strategy, entry and exit reasons, what went well or what to improve, notes, your selected emotion and confidence rating. Journal entries are stored server-side, are visible only to you, and are used only to show your journal, weekly summaries, milestones, streaks and neutral, rule-based practice insights. The optional \"Check Your Trade Plan\" feature is a short reflection checklist shown on your device before a simulated trade; it is educational only, is off by default, and never blocks, alters or places a trade. Journal text is never shared, sold or sent to any third-party AI service.",
+        },
+        {
           heading: "Social competitions and public profiles",
           body: "If you take part in friend challenges, open challenges or weekly tournaments, we store your participation, the simulated trades you place inside that competition, your virtual balance for it and the resulting Simulation Competition Score and ranking. Competition results are visible to the other participants of the same competition. You may optionally select a country and turn on a public trader profile; when enabled, other users can see only your username, avatar, level, Trading Skill Score, badges and (if you allow it) your country. We never display your email address, phone number, account identifiers, precise location or your private trades. TradeVirt does not request device location, and every competition uses virtual funds only with no entry fee, wager, cash prize or transferable reward.",
         },
         {
           heading: "How we use your data",
-          body: "Your data is used only to authenticate you, manage your account, provide paper trading functionality, maintain your simulated portfolio and trade history, calculate your Trading Skill Score, calculate Trader DNA and educational AI insights, run challenges, AI Arena competitions, social competitions and tournaments, Career Mode progression and leaderboards, and improve reliability. We do not sell your data.",
+          body: "Your data is used only to authenticate you, manage your account, provide paper trading functionality, maintain your simulated portfolio and trade history, calculate your Trading Skill Score, calculate Trader DNA and educational AI insights, run challenges, AI Arena competitions, social competitions and tournaments, Career Mode progression and leaderboards, maintain your Practice Center Trade Journal, weekly summaries, milestones and streaks, and improve reliability. We do not sell your data.",
         },
         {
           heading: "Security",
@@ -95,7 +99,7 @@ export const Route = createFileRoute("/legal/privacy")({
         },
         {
           heading: "Deleting your data and retention",
-          body: `You can delete your account from Settings inside the app, which removes your account immediately, or email ${APP_INFO.supportEmail} from your registered address. Deletion removes your profile, simulated trades, credit history, XP, challenge progress, AI reviews, Trader DNA records, AI Arena sessions and Arena trades, Career Mode progress and milestones, your competition participation and competition trades, and your ad-reward records. Anonymous analytics and crash reports held by Google Firebase are not linked to your account and are retained and deleted according to Google's own retention settings. Backup copies may persist for a short period before being overwritten, and anonymised or legally required records may be retained.`,
+          body: `You can delete your account from Settings inside the app, which removes your account immediately, or email ${APP_INFO.supportEmail} from your registered address. Deletion removes your profile, simulated trades, credit history, XP, challenge progress, AI reviews, Trader DNA records, AI Arena sessions and Arena trades, Career Mode progress and milestones, your Practice Center Trade Journal entries, practice milestones, streak and insights, your competition participation and competition trades, and your ad-reward records. Anonymous analytics and crash reports held by Google Firebase are not linked to your account and are retained and deleted according to Google's own retention settings. Backup copies may persist for a short period before being overwritten, and anonymised or legally required records may be retained.`,
         },
       ]}
     />
