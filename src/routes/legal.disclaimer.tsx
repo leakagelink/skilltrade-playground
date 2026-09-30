@@ -14,7 +14,7 @@ export const Route = createFileRoute("/legal/disclaimer")({
   component: () => (
     <LegalPage
       title="Educational & Risk Disclaimer"
-      updated="Version 1.4 — September 29, 2026"
+      updated="Version 1.5 — September 30, 2026"
       sections={[
         {
           heading: "Who operates TradeVirt",
@@ -51,6 +51,10 @@ export const Route = createFileRoute("/legal/disclaimer")({
         {
           heading: "Trader DNA and Trading Personality",
           body: "Trader DNA and Trading Personality features are educational and gamified summaries based on your simulated trading activity. They are not financial assessments, investment recommendations or psychological evaluations, and they do not predict real-world trading ability or outcomes.",
+        },
+        {
+          heading: "Practice Center and Trade Journal",
+          body: "The Practice Center and its Trade Journal, weekly summaries, milestones, streaks and practice insights are educational and reflective tools based on your simulated trading activity. They are not financial advice, performance coaching or an assessment of your ability to trade real money. The optional \"Check Your Trade Plan\" checklist is a personal reflection aid only and never places, alters or blocks a simulated trade.",
         },
       ]}
     />
