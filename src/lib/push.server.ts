@@ -124,7 +124,7 @@ async function sendToFcm(
   return { ok: false, status: res.status, unregistered: res.status === 404 || text.includes("UNREGISTERED"), error: text };
 }
 
-export type PushResult = { sent: number; removed: number; configured: boolean; error?: string };
+export type PushResult = { sent: number; removed: number; configured: boolean; error?: string | undefined };
 
 export async function sendPushToUser(
   admin: Admin,
