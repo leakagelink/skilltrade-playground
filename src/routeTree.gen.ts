@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AccountDeletionRouteImport } from './routes/account-deletion'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAiAgentRouteImport } from './routes/_authenticated/ai-agent'
 import { Route as AuthenticatedChallengesRouteImport } from './routes/_authenticated/challenges'
 import { Route as AuthenticatedHomeRouteImport } from './routes/_authenticated/home'
@@ -55,6 +56,11 @@ const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedAiAgentRoute = AuthenticatedAiAgentRouteImport.update({
   id: '/ai-agent',
@@ -185,6 +191,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/account-deletion': typeof AccountDeletionRoute
   '/auth': typeof AuthRoute
+  '/admin': typeof AuthenticatedAdminRoute
   '/ai-agent': typeof AuthenticatedAiAgentRoute
   '/challenges': typeof AuthenticatedChallengesRoute
   '/home': typeof AuthenticatedHomeRoute
@@ -213,6 +220,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/account-deletion': typeof AccountDeletionRoute
   '/auth': typeof AuthRoute
+  '/admin': typeof AuthenticatedAdminRoute
   '/ai-agent': typeof AuthenticatedAiAgentRoute
   '/challenges': typeof AuthenticatedChallengesRoute
   '/home': typeof AuthenticatedHomeRoute
@@ -243,6 +251,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/account-deletion': typeof AccountDeletionRoute
   '/auth': typeof AuthRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/ai-agent': typeof AuthenticatedAiAgentRoute
   '/_authenticated/challenges': typeof AuthenticatedChallengesRoute
   '/_authenticated/home': typeof AuthenticatedHomeRoute
@@ -273,6 +282,7 @@ export interface FileRouteTypes {
     | '/'
     | '/account-deletion'
     | '/auth'
+    | '/admin'
     | '/ai-agent'
     | '/challenges'
     | '/home'
@@ -301,6 +311,7 @@ export interface FileRouteTypes {
     | '/'
     | '/account-deletion'
     | '/auth'
+    | '/admin'
     | '/ai-agent'
     | '/challenges'
     | '/home'
@@ -330,6 +341,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/account-deletion'
     | '/auth'
+    | '/_authenticated/admin'
     | '/_authenticated/ai-agent'
     | '/_authenticated/challenges'
     | '/_authenticated/home'
@@ -396,6 +408,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/ai-agent': {
       id: '/_authenticated/ai-agent'
@@ -562,6 +581,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedAiAgentRoute: typeof AuthenticatedAiAgentRoute
   AuthenticatedChallengesRoute: typeof AuthenticatedChallengesRoute
   AuthenticatedHomeRoute: typeof AuthenticatedHomeRoute
@@ -583,6 +603,7 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
   AuthenticatedAiAgentRoute: AuthenticatedAiAgentRoute,
   AuthenticatedChallengesRoute: AuthenticatedChallengesRoute,
   AuthenticatedHomeRoute: AuthenticatedHomeRoute,
