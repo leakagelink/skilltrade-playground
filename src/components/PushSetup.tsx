@@ -16,7 +16,9 @@ export function PushSetup() {
     let cleanup: (() => void) | undefined;
     let cancelled = false;
     void setupPush({
-      prompt: true,
+      // Never consume Android's one-time permission prompt in the background.
+      // The user explicitly requests it with the Settings toggle.
+      prompt: false,
       onToken: (token, platform) => void register({ data: { token, platform } }).catch(() => {}),
       onOpen: (path) => void navigate({ to: path }),
     }).then((r) => {

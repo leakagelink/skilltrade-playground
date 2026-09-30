@@ -8,6 +8,7 @@
         "@capacitor-community/admob": "^8.1.0",
         "@capacitor-firebase/analytics": "^8.5.1",
         "@capacitor-firebase/crashlytics": "^8.5.1",
+        "@capacitor/android": "8.5.1",
         "@capacitor/app": "^8",
         "@capacitor/core": "^8.5.1",
         "@capacitor/push-notifications": "^8",
@@ -141,6 +142,8 @@
     "@capacitor-firebase/analytics": ["@capacitor-firebase/analytics@8.5.1", "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@capacitor-firebase/analytics/-/analytics-8.5.1.tgz", { "peerDependencies": { "@capacitor/core": ">=8.0.0", "firebase": "^12.6.0" }, "optionalPeers": ["firebase"] }, "sha512-pOaxD993vEx3q0L27juLxlf8SxuufpOYFXegaM2MEt8MjZGV6/xviBQ1/4ry7NPnoWvh8R6RXkonIQrA/bd6gQ=="],
 
     "@capacitor-firebase/crashlytics": ["@capacitor-firebase/crashlytics@8.5.1", "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@capacitor-firebase/crashlytics/-/crashlytics-8.5.1.tgz", { "peerDependencies": { "@capacitor/core": ">=8.0.0" } }, "sha512-hpy8lB31YVmhhh6+UacH7BxL9pAuiGq85/0wa6sM0NSnn1HUjgfCxjDdP66Dfj5XVVZ8qhKbwEfncDcGAe9I/g=="],
+
+    "@capacitor/android": ["@capacitor/android@8.5.1", "https://europe-west4-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@capacitor/android/-/android-8.5.1.tgz", { "peerDependencies": { "@capacitor/core": "^8.5.0" } }, "sha512-o8fUIPDSEASeXHHrDz26WU7OlyiRb+QqtI9KFdnLS1jUL77o5iGrvegibaZX8rWpiCyDJ6jlUhhhHlfeq3ou9A=="],
 
     "@capacitor/app": ["@capacitor/app@8.1.1", "https://europe-west4-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@capacitor/app/-/app-8.1.1.tgz", { "peerDependencies": { "@capacitor/core": ">=8.0.0" } }, "sha512-xM2ZTX5jK60tFtmjsmJv+Cdj1Qsb6NcavkqmdEnCPQBeya9oKhamZJxYOnQNj1ZvcJM7sWfG6BEtSLx42pisbA=="],
 
