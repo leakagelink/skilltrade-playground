@@ -27,21 +27,6 @@ export const unregisterPushTokens = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
-export const sendTestPush = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { sendPushToUser } = await import("./push.server");
-    await sendPushToUser(
-      supabaseAdmin,
-      context.userId,
-      "TradeVirt Test",
-      "Push notifications kaam kar rahi hain! 🎉",
-      "TEST",
-    );
-    return { ok: true };
-  });
-
 export const getPushStatus = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
