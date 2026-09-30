@@ -95,6 +95,7 @@ patch("android/app/src/main/AndroidManifest.xml", (s) => {
   for (const perm of [
     "android.permission.INTERNET",
     "com.google.android.gms.permission.AD_ID",
+    "android.permission.POST_NOTIFICATIONS",
   ]) {
     if (!out.includes(perm)) {
       out = out.replace(
