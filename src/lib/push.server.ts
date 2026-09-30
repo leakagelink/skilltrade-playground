@@ -24,7 +24,9 @@ function getServiceAccount(): ServiceAccount | null {
 function base64url(input: ArrayBuffer | string): string {
   const bytes = typeof input === "string" ? new TextEncoder().encode(input) : new Uint8Array(input);
   let binary = "";
-  for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+  bytes.forEach((b) => {
+    binary += String.fromCharCode(b);
+  });
   return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 }
 
