@@ -1,18 +1,11 @@
 /** Native (Android/iOS) push registration. Does nothing on the website. */
-type Listener = { remove: () => Promise<void> };
-type PushPlugin = {
-  checkPermissions: () => Promise<{ receive: string }>;
-  requestPermissions: () => Promise<{ receive: string }>;
-  register: () => Promise<void>;
-  unregister: () => Promise<void>;
-  createChannel: (c: { id: string; name: string; description?: string; importance?: number; visibility?: number }) => Promise<void>;
-  addListener: (event: string, cb: (payload: any) => void) => Promise<Listener>;
-};
+import type { PushNotificationsPlugin } from "@capacitor/push-notifications";
 
-async function getPlugin(): Promise<PushPlugin | null> {
-  const { Capacitor, registerPlugin } = await import("@capacitor/core");
+async function getPlugin(): Promise<PushNotificationsPlugin | null> {
+  const { Capacitor } = await import("@capacitor/core");
   if (!Capacitor.isNativePlatform() || !Capacitor.isPluginAvailable("PushNotifications")) return null;
-  return registerPlugin<PushPlugin>("PushNotifications");
+  const { PushNotifications } = await import("@capacitor/push-notifications");
+  return PushNotifications;
 }
 
 export async function pushAvailable() {
@@ -52,12 +45,10 @@ export async function setupPush(opts: {
   }
 
   const listeners = await Promise.all([
-    push.addListener("registration", (t: { value: string }) =>
-      opts.onToken(t.value, Capacitor.getPlatform() === "ios" ? "ios" : "android"),
-    ),
-    push.addListener("registrationError", (e: unknown) => console.error("Push registration error", e)),
-    push.addListener("pushNotificationActionPerformed", (a: { notification?: { data?: { path?: string } } }) => {
-      const path = a.notification?.data?.path;
+    push.addListener("registration", (t) => opts.onToken(t.value, Capacitor.getPlatform() === "ios" ? "ios" : "android")),
+    push.addListener("registrationError", (e) => console.error("Push registration error", e)),
+    push.addListener("pushNotificationActionPerformed", (a) => {
+      const path = (a.notification?.data as { path?: string } | undefined)?.path;
       if (path && path.startsWith("/")) opts.onOpen(path);
     }),
   ]);
