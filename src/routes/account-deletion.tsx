@@ -17,7 +17,7 @@ export const Route = createFileRoute("/account-deletion")({
   component: () => (
     <LegalPage
       title="TradeVirt Account Deletion"
-      updated="Version 1.5 — September 30, 2026"
+      updated="Version 1.6 — October 5, 2026"
       sections={[
         {
           heading: "Who operates TradeVirt",
@@ -33,7 +33,7 @@ export const Route = createFileRoute("/account-deletion")({
         },
         {
           heading: "What is deleted",
-          body: "Your authentication record, profile, username, avatar, virtual balance, credits, XP, level, Trading Skill Score, simulated trades, challenge progress, badges, AI trade reviews, Trader DNA records, AI Arena sessions and Arena trades, Career Mode progress and milestones, your Practice Center Trade Journal entries, practice milestones, streak and insights, social competition participation and competition trades, AI Coach Agent usage counters, unlocks and reported answers, ad-reward records, push notification device tokens, notifications, public profile settings and leaderboard entries are permanently removed.",
+          body: "Your authentication record, profile, username, full name, mobile number and its private login lookup, avatar, virtual balance, credits, XP, level, Trading Skill Score, simulated trades, challenge progress, badges, AI trade reviews, Trader DNA records, AI Arena sessions and Arena trades, Career Mode progress and milestones, your Practice Center Trade Journal entries, practice milestones, streak and insights, social competition participation and competition trades, AI Coach Agent usage counters, unlocks and reported answers, ad-reward records, push notification device tokens, notifications, public profile settings and leaderboard entries are permanently removed.",
         },
         {
           heading: "What is retained",
