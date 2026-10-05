@@ -24,7 +24,8 @@ import {
 import { DisclaimerNote } from "@/components/Disclaimer";
 import { SocialPrivacyCard } from "@/components/SocialPrivacyCard";
 import { toast } from "sonner";
-import { ChevronRight, LogOut } from "lucide-react";
+import { ChevronRight, LogOut, ShieldCheck } from "lucide-react";
+import { getAdminStatus } from "@/lib/admin-notifications.functions";
 import { resetAnalytics, trackEvent } from "@/lib/analytics";
 import { registerPushToken, unregisterPushTokens } from "@/lib/push.functions";
 import { disablePush, getPushPermissionState, setupPush } from "@/lib/push-client";

@@ -56,14 +56,12 @@ export const broadcastPushAll = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { broadcastPushToAll } = await import("./push.server");
     const result = await broadcastPushToAll(supabaseAdmin, data.title, data.body, "ADMIN_BROADCAST");
-    // In-app copy for every user, regardless of whether they have a registered device.
-    if (result.sent > 0) {
-      const { data: profiles } = await supabaseAdmin.from("profiles").select("id");
-      if (profiles?.length) {
-        await supabaseAdmin.from("notifications").insert(
-          profiles.map((p) => ({ user_id: p.id, title: data.title, body: data.body, kind: "ADMIN_BROADCAST" })),
-        );
-      }
+    // In-app copy for every user, regardless of whether any push delivery succeeded.
+    const { data: profiles } = await supabaseAdmin.from("profiles").select("id");
+    if (profiles?.length) {
+      await supabaseAdmin.from("notifications").insert(
+        profiles.map((p) => ({ user_id: p.id, title: data.title, body: data.body, kind: "ADMIN_BROADCAST" })),
+      );
     }
     return result;
   });
