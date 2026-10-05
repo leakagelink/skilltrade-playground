@@ -1,16 +1,22 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getLeaderboard } from "@/lib/trading.functions";
 import { getSocialLeaderboard } from "@/lib/compete.functions";
+import {
+  followUser,
+  getMySocialSummary,
+  getSeasonLeaderboard,
+  unfollowUser,
+} from "@/lib/social.functions";
 import { COUNTRIES } from "@/lib/compete/config";
 import { Button } from "@/components/ui/button";
 import { AppHeader } from "@/components/AppHeader";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/EmptyState";
-import { Trophy, Users } from "lucide-react";
+import { Trophy, UserCheck, UserPlus, Users } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { trackEvent } from "@/lib/analytics";
 
@@ -57,6 +63,9 @@ function LeaderboardPage() {
         </Link>
 
         <GlobalRanks />
+
+        <SeasonBoard />
+
 
         <Tabs value={period} onValueChange={(v) => setPeriod(v as Period)}>
           <TabsList className="grid w-full grid-cols-3">
@@ -115,7 +124,18 @@ function LeaderboardPage() {
 /** Version 1.4 global / country ranking of traders who opted into a public profile. */
 function GlobalRanks() {
   const load = useServerFn(getSocialLeaderboard);
+  const loadSummary = useServerFn(getMySocialSummary);
+  const doFollow = useServerFn(followUser);
+  const doUnfollow = useServerFn(unfollowUser);
+  const queryClient = useQueryClient();
   const [country, setCountry] = useState<string>("");
+  const [busy, setBusy] = useState<string | null>(null);
+  const { data: summary } = useQuery({
+    queryKey: ["social-summary"],
+    queryFn: () => loadSummary(),
+    staleTime: 30_000,
+  });
+  const followingSet = new Set(summary?.followingUsernames ?? []);
   const { data, isLoading } = useQuery({
     queryKey: ["social-leaderboard", country],
     queryFn: () => load({ data: { country: country || null, page: 0 } }),
@@ -146,21 +166,113 @@ function GlobalRanks() {
         </p>
       ) : (
         <ul className="space-y-1.5">
-          {data.rows.map((r) => (
-            <li key={r.user_id} className="flex items-center gap-3 border-t border-border/60 pt-1.5 text-xs">
-              <span className="num w-5 text-muted-foreground">{r.rank}</span>
-              <span className="min-w-0 flex-1 truncate font-semibold">
+          {data.rows.map((r) => {
+            const isFollowing = followingSet.has(String(r.username));
+            return (
+              <li key={r.user_id} className="flex items-center gap-2 border-t border-border/60 pt-1.5 text-xs">
+                <span className="num w-5 shrink-0 text-muted-foreground">{r.rank}</span>
+                <Link
+                  to="/trader/$username"
+                  params={{ username: String(r.username) }}
+                  className="min-w-0 flex-1 truncate font-semibold underline-offset-2 hover:underline"
+                >
+                  {r.username}
+                  {r.country ? <span className="ml-1 text-muted-foreground">· {r.country}</span> : null}
+                </Link>
+                <span className="shrink-0 text-muted-foreground">Lv {r.level}</span>
+                <span className="num shrink-0 font-semibold text-primary">{r.trading_skill_score}</span>
+                {r.user_id === data.me ? null : (
+                  <button
+                    type="button"
+                    disabled={busy === r.username}
+                    onClick={async () => {
+                      setBusy(String(r.username));
+                      try {
+                        if (isFollowing) {
+                          await doUnfollow({ data: { username: String(r.username) } });
+                        } else {
+                          await doFollow({ data: { username: String(r.username) } });
+                        }
+                        await queryClient.invalidateQueries({ queryKey: ["social-summary"] });
+                      } catch {
+                        // Private profile or network issue — nothing to do here.
+                      } finally {
+                        setBusy(null);
+                      }
+                    }}
+                    className={`flex shrink-0 items-center gap-1 rounded-full px-2 py-1 text-[10px] font-bold ${
+                      isFollowing ? "bg-secondary text-muted-foreground" : "bg-primary text-primary-foreground"
+                    }`}
+                  >
+                    {isFollowing ? <UserCheck className="size-3" /> : <UserPlus className="size-3" />}
+                    {isFollowing ? "Following" : "Follow"}
+                  </button>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      )}
+      <p className="text-[11px] text-muted-foreground">
+        Only traders who chose a public profile appear here. Emails and private trades are never shown.
+      </p>
+    </section>
+  );
+}
+
+/** Version 3 seasonal leaderboard — season points come from XP and challenges, never from simulated profit. */
+type SeasonRow = {
+  rank: number;
+  user_id: string;
+  username: string;
+  level: number;
+  xp_in_season: number;
+  challenges_completed: number;
+  season_points: number;
+};
+
+function SeasonBoard() {
+  const load = useServerFn(getSeasonLeaderboard);
+  const { data, isLoading } = useQuery({
+    queryKey: ["season-leaderboard"],
+    queryFn: () => load(),
+    staleTime: 60_000,
+  });
+
+  return (
+    <section className="surface-card space-y-3 p-4">
+      <p className="flex items-center gap-1.5 text-sm font-semibold">
+        <Trophy className="size-4 text-primary" /> Season — {data?.seasonLabel ?? "this month"}
+      </p>
+
+      {isLoading ? (
+        <Skeleton className="h-20 w-full rounded-xl" />
+      ) : !data?.rows.length ? (
+        <p className="text-xs text-muted-foreground">
+          Season ranks are still empty. Earn XP and complete challenges this month to appear.
+        </p>
+      ) : (
+        <ul className="space-y-1.5">
+          {(data.rows as SeasonRow[]).map((r) => (
+            <li key={r.user_id} className="flex items-center gap-2 border-t border-border/60 pt-1.5 text-xs">
+              <span className="num w-5 shrink-0 text-muted-foreground">{String(r.rank)}</span>
+              <Link
+                to="/trader/$username"
+                params={{ username: r.username }}
+                className="min-w-0 flex-1 truncate font-semibold underline-offset-2 hover:underline"
+              >
                 {r.username}
-                {r.country ? <span className="ml-1 text-muted-foreground">· {r.country}</span> : null}
-              </span>
-              <span className="text-muted-foreground">Lv {r.level}</span>
-              <span className="num font-semibold text-primary">{r.trading_skill_score}</span>
+                {r.user_id === data.me ? <span className="ml-1 text-primary">(you)</span> : null}
+              </Link>
+              <span className="shrink-0 text-muted-foreground">{String(r.xp_in_season)} XP</span>
+              <span className="num shrink-0 font-semibold text-primary">{String(r.season_points)} pts</span>
             </li>
           ))}
         </ul>
       )}
       <p className="text-[11px] text-muted-foreground">
-        Only traders who chose a public profile appear here. Emails and private trades are never shown.
+        Season points come from XP earned and challenges completed this month — never from simulated
+        profit. Public profiles only.
       </p>
     </section>
   );
