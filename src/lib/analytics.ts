@@ -93,6 +93,7 @@ async function ensureInit(): Promise<boolean> {
 
 /** Track a product event. Call only after the underlying action truly succeeded. */
 export async function trackEvent(name: AnalyticsEvent, params?: AnalyticsParams): Promise<void> {
+  void mirrorToMeta(name, params);
   try {
     if (!(await ensureInit())) return;
     const { FirebaseAnalytics } = await import("@capacitor-firebase/analytics");
