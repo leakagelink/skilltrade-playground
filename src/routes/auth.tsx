@@ -78,13 +78,35 @@ function AuthPage() {
   async function handleSignIn(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    setLoading(false);
-    if (error) {
-      toast.error(error.message);
-      return;
+    const id = loginId.trim();
+    if (id.includes("@")) {
+      const { error } = await supabase.auth.signInWithPassword({ email: id, password });
+      setLoading(false);
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+    } else {
+      try {
+        const r = await mobileLogin({ data: { mobile: id, password } });
+        if (!r.ok) {
+          setLoading(false);
+          toast.error(r.error);
+          return;
+        }
+        const { error } = await supabase.auth.setSession({ access_token: r.access_token, refresh_token: r.refresh_token });
+        setLoading(false);
+        if (error) {
+          toast.error(error.message);
+          return;
+        }
+      } catch {
+        setLoading(false);
+        toast.error("Invalid mobile number or password.");
+        return;
+      }
     }
-    void trackEvent("login_completed", { method: "password" });
+    void trackEvent("login_completed", { method: id.includes("@") ? "password" : "mobile_password" });
     navigate({ to: "/home", replace: true });
   }
 
