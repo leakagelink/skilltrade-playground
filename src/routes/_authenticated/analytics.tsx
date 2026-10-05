@@ -22,7 +22,7 @@ export const Route = createFileRoute("/_authenticated/analytics")({
 });
 
 const TYPE_LABEL: Record<string, string> = { STOCK: "US stocks", IN_STOCK: "Indian stocks", COMMODITY: "Commodities", CRYPTO: "Crypto" };
-const tone = (v: number) => (v > 0 ? "text-success" : v < 0 ? "text-destructive" : "");
+const tone = (v: number) => (v > 0 ? "text-bull" : v < 0 ? "text-destructive" : "");
 
 function Stat({ label, value, cls = "" }: { label: string; value: string; cls?: string }) {
   return (
@@ -41,7 +41,7 @@ function Bars({ rows }: { rows: { key: string; pnl: number; trades: number }[] }
         <div key={r.key} className="flex items-center gap-2 text-xs">
           <span className="w-20 shrink-0 truncate">{TYPE_LABEL[r.key] ?? r.key}</span>
           <div className="h-2 flex-1 rounded bg-secondary">
-            <div className={`h-2 rounded ${r.pnl >= 0 ? "bg-success" : "bg-destructive"}`} style={{ width: `${(Math.abs(r.pnl) / max) * 100}%` }} />
+            <div className={`h-2 rounded ${r.pnl >= 0 ? "bg-bull" : "bg-destructive"}`} style={{ width: `${(Math.abs(r.pnl) / max) * 100}%` }} />
           </div>
           <span className={`w-20 text-right ${tone(r.pnl)}`}>{signedMoney(r.pnl)}</span>
         </div>
@@ -87,7 +87,7 @@ function AnalyticsPage() {
               <Stat label="Win rate" value={`${data.winRate.toFixed(1)}%`} />
               <Stat label="Net result" value={signedMoney(data.netPnl)} cls={tone(data.netPnl)} />
               <Stat label="Profit factor" value={data.profitFactor == null ? "∞" : data.profitFactor.toFixed(2)} />
-              <Stat label="Average win" value={money(data.avgWin)} cls="text-success" />
+              <Stat label="Average win" value={money(data.avgWin)} cls="text-bull" />
               <Stat label="Average loss" value={money(data.avgLoss)} cls="text-destructive" />
               <Stat label="Max drawdown" value={money(data.maxDrawdown)} />
               <Stat label="Avg hold time" value={data.avgHoldHours < 24 ? `${data.avgHoldHours.toFixed(1)}h` : `${(data.avgHoldHours / 24).toFixed(1)}d`} />
