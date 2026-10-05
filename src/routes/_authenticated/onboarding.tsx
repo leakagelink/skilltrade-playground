@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { updateProfileSettings } from "@/lib/trading.functions";
 import { Button } from "@/components/ui/button";
@@ -75,6 +75,23 @@ function Onboarding() {
   const [capital, setCapital] = useState<CapitalRange | null>(null);
   const saveProfile = useServerFn(updateProfileSettings);
   const savePers = useSavePersonalization();
+
+  // Prefill details the user already typed on the sign-up form and clear the
+  // handoff so they are only saved once, here.
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem("tv-signup-personal");
+      if (raw) {
+        const saved = JSON.parse(raw) as { full_name?: string | null; mobile?: string | null };
+        if (saved.full_name) setFullName(saved.full_name);
+        if (saved.mobile) setMobile(saved.mobile);
+        sessionStorage.removeItem("tv-signup-personal");
+      }
+    } catch {
+      // Storage unavailable — the onboarding fields simply stay empty.
+    }
+  }, []);
+
   const key = steps[i]!;
   const isLast = i === steps.length - 1;
 

@@ -46,6 +46,8 @@ function AuthPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
+  const [fullName, setFullName] = useState("");
+  const [mobile, setMobile] = useState("");
   const [sent, setSent] = useState(false);
   // Hold the sign-in form back until we know whether a session already exists,
   // so a returning user never sees the sign-in screen before their home screen.
@@ -137,6 +139,22 @@ function AuthPage() {
       toast.error("Username can only contain letters, numbers and underscores.");
       return;
     }
+    const m = mobile.trim();
+    if (m && !/^\+?[0-9 ]{6,20}$/.test(m)) {
+      toast.error("Enter a valid mobile number, or leave it empty.");
+      return;
+    }
+    // Onboarding owns the user_personalization row (it only exists once the
+    // account session does), so hand the optional details over through
+    // sessionStorage and let onboarding prefill and save them.
+    try {
+      sessionStorage.setItem(
+        "tv-signup-personal",
+        JSON.stringify({ full_name: fullName.trim() || null, mobile: m || null }),
+      );
+    } catch {
+      // Storage unavailable — onboarding still asks for the details itself.
+    }
     setLoading(true);
     const { data, error } = await supabase.auth.signUp({
       email,
@@ -194,6 +212,15 @@ function AuthPage() {
               <div className="space-y-2">
                 <Label htmlFor="su-username">Username</Label>
                 <Input id="su-username" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="tradevirt" required minLength={3} maxLength={20} className="h-12 rounded-xl bg-elevated/40" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="su-name">Full name (optional)</Label>
+                <Input id="su-name" value={fullName} maxLength={80} onChange={(e) => setFullName(e.target.value)} className="h-12 rounded-xl bg-elevated/40" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="su-mobile">Mobile number (optional)</Label>
+                <Input id="su-mobile" type="tel" inputMode="tel" value={mobile} maxLength={20} placeholder="+91 98765 43210" onChange={(e) => setMobile(e.target.value)} className="h-12 rounded-xl bg-elevated/40" />
+                <p className="text-[11px] text-muted-foreground">Kept private — never shown to other users.</p>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="su-email">Email</Label>
