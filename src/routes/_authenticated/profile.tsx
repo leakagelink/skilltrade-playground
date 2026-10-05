@@ -100,6 +100,17 @@ function ProfilePage() {
           <ChevronRight className="size-4 shrink-0 text-muted-foreground" aria-hidden />
         </Link>
 
+        <Link to="/analytics" className="bento-tile flex items-center gap-3 p-4" aria-label="Open Advanced Analytics">
+          <div className="flex size-10 items-center justify-center rounded-2xl bg-secondary text-primary">
+            <FlaskConical className="size-5" aria-hidden />
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="text-sm font-bold">Advanced Analytics</p>
+            <p className="truncate text-xs text-muted-foreground">Win rate, drawdown, risk habits & best assets</p>
+          </div>
+          <ChevronRight className="size-4 shrink-0 text-muted-foreground" aria-hidden />
+        </Link>
+
 
 
         <Tabs defaultValue="closed">
