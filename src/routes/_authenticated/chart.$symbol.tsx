@@ -155,6 +155,7 @@ function ChartPage() {
       />
 
       <div className="space-y-4 p-5">
+        <ModeTip screen="chart" />
         {quote ? (
           <div className="surface-card flex items-center justify-between p-4">
             <div className="flex items-center gap-3">

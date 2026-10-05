@@ -5,6 +5,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { getAiInsights, requestTradeReview } from "@/lib/ai.functions";
 import { getTrades } from "@/lib/trading.functions";
 import { AppHeader } from "@/components/AppHeader";
+import { ModeTip } from "@/components/ModeTip";
 import { RewardedAdOffer } from "@/components/ads/RewardedAdOffer";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -115,6 +116,7 @@ function InsightsPage() {
       <AppHeader title="AI Insights" subtitle="Educational analysis of your simulated trading" />
 
       <div className="space-y-6 p-5">
+        <ModeTip screen="insights" />
         <Link
           to="/ai-agent"
           className="bento-tile flex items-center gap-3 p-4 transition-transform active:scale-[0.99]"
