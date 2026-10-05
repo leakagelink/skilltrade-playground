@@ -1246,6 +1246,24 @@ export type Database = {
           },
         ]
       }
+      user_mobiles: {
+        Row: {
+          created_at: string
+          mobile: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          mobile: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          mobile?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_personalization: {
         Row: {
           active_learning_mode: string
@@ -1378,6 +1396,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      normalize_mobile: { Args: { _m: string }; Returns: string }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
