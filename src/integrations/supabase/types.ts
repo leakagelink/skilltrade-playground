@@ -881,6 +881,66 @@ export type Database = {
         }
         Relationships: []
       }
+      strategies: {
+        Row: {
+          created_at: string
+          entry_conditions: string | null
+          exit_conditions: string | null
+          id: string
+          market: string
+          max_position_pct: number | null
+          name: string
+          notes: string | null
+          position_sizing_rule: string | null
+          requires_stop_loss: boolean
+          requires_take_profit: boolean
+          risk_rule: string | null
+          stop_loss_rule: string | null
+          take_profit_rule: string | null
+          timeframe: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          entry_conditions?: string | null
+          exit_conditions?: string | null
+          id?: string
+          market?: string
+          max_position_pct?: number | null
+          name: string
+          notes?: string | null
+          position_sizing_rule?: string | null
+          requires_stop_loss?: boolean
+          requires_take_profit?: boolean
+          risk_rule?: string | null
+          stop_loss_rule?: string | null
+          take_profit_rule?: string | null
+          timeframe?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          entry_conditions?: string | null
+          exit_conditions?: string | null
+          id?: string
+          market?: string
+          max_position_pct?: number | null
+          name?: string
+          notes?: string | null
+          position_sizing_rule?: string | null
+          requires_stop_loss?: boolean
+          requires_take_profit?: boolean
+          risk_rule?: string | null
+          stop_loss_rule?: string | null
+          take_profit_rule?: string | null
+          timeframe?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       trade_journals: {
         Row: {
           confidence: number | null

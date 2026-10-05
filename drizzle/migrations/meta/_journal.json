@@ -43,6 +43,13 @@
       "when": 1791167707662,
       "tag": "0005_allow_indian_stocks_commodities",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1791167825877,
+      "tag": "0006_create_strategies",
+      "breakpoints": true
     }
   ]
 }
