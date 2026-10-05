@@ -107,5 +107,61 @@ patch("android/app/src/main/AndroidManifest.xml", (s) => {
   return out;
 });
 
-console.log("\nAndroid Firebase + AdMob configuration complete.");
+// 4. Meta App Events (App Events only — no Audience Network) -------------------
+const META_APP_ID = "1761151981672641";
+const META_CLIENT_TOKEN = "de15663f6b80113a83cf36a817f3a20e"; // client token, safe in app (NOT the App Secret)
+const META_SDK = "com.facebook.android:facebook-core:18.0.0";
+
+patch("android/app/build.gradle", (s) => {
+  if (s.includes("com.facebook.android:facebook-core")) return s;
+  return s.replace(/dependencies\s*\{/, (m) => `${m}\n    implementation '${META_SDK}'`);
+});
+
+patch("android/app/src/main/res/values/strings.xml", (s) => {
+  let out = s;
+  if (!out.includes('name="facebook_app_id"'))
+    out = out.replace("</resources>", `    <string name="facebook_app_id">${META_APP_ID}</string>\n</resources>`);
+  if (!out.includes('name="facebook_client_token"'))
+    out = out.replace("</resources>", `    <string name="facebook_client_token">${META_CLIENT_TOKEN}</string>\n</resources>`);
+  return out;
+});
+
+patch("android/app/src/main/AndroidManifest.xml", (s) => {
+  let out = s;
+  const metas = [
+    ["com.facebook.sdk.ApplicationId", "@string/facebook_app_id"],
+    ["com.facebook.sdk.ClientToken", "@string/facebook_client_token"],
+    ["com.facebook.sdk.AutoLogAppEventsEnabled", "false"],
+    ["com.facebook.sdk.AdvertiserIDCollectionEnabled", "true"],
+  ];
+  for (const [n, v] of metas) {
+    if (!out.includes(n)) {
+      out = out.replace(/(<application[^>]*>)/, `$1\n        <meta-data android:name="${n}" android:value="${v}"/>`);
+    }
+  }
+  return out;
+});
+
+const javaDir = "android/app/src/main/java/online/tradevirt/app";
+if (existsSync(p(javaDir))) {
+  copyFileSync(p("android-config/meta/MetaEventsPlugin.java"), p(javaDir, "MetaEventsPlugin.java"));
+  log("copied MetaEventsPlugin.java");
+  patch(`${javaDir}/MainActivity.java`, (s) => {
+    if (s.includes("MetaEventsPlugin")) return s;
+    let out = s;
+    if (!out.includes("import android.os.Bundle;"))
+      out = out.replace(/(package [^;]+;\n)/, "$1\nimport android.os.Bundle;\n");
+    if (/onCreate\s*\(/.test(out)) {
+      out = out.replace(/(void onCreate\s*\([^)]*\)\s*\{)/, "$1\n        registerPlugin(MetaEventsPlugin.class);");
+      // registerPlugin must run before super.onCreate — move if needed
+      out = out.replace(/(\s*super\.onCreate\([^)]*\);)(\s*registerPlugin\(MetaEventsPlugin\.class\);)/, "$2$1");
+    } else {
+      out = out.replace(/(extends BridgeActivity\s*\{)/,
+        "$1\n    @Override\n    public void onCreate(Bundle savedInstanceState) {\n        registerPlugin(MetaEventsPlugin.class);\n        super.onCreate(savedInstanceState);\n    }\n");
+    }
+    return out;
+  });
+} else log(`SKIP (missing): ${javaDir}`);
+
+console.log("\nAndroid Firebase + AdMob + Meta App Events configuration complete.");
 console.log("Next: npx cap open android  ->  Build > Generate Signed Bundle / APK\n");

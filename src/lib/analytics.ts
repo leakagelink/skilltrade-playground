@@ -93,6 +93,7 @@ async function ensureInit(): Promise<boolean> {
 
 /** Track a product event. Call only after the underlying action truly succeeded. */
 export async function trackEvent(name: AnalyticsEvent, params?: AnalyticsParams): Promise<void> {
+  void mirrorToMeta(name, params);
   try {
     if (!(await ensureInit())) return;
     const { FirebaseAnalytics } = await import("@capacitor-firebase/analytics");
@@ -135,6 +136,34 @@ export async function reportNonFatal(context: string, error: unknown): Promise<v
     const { FirebaseCrashlytics } = await import("@capacitor-firebase/crashlytics");
     const type = error instanceof Error ? error.name : typeof error;
     await FirebaseCrashlytics.recordException({ message: `${context}: ${type}` });
+  } catch {
+    /* ignore */
+  }
+}
+
+/** Explicit allow-list of events mirrored to Meta App Events. Nothing else is sent. */
+async function mirrorToMeta(name: AnalyticsEvent, params?: AnalyticsParams): Promise<void> {
+  try {
+    if (!isNative()) return;
+    const m = await import("./metaAnalytics");
+    const str = (v: unknown) => (typeof v === "string" ? v : undefined);
+    const market = str(params?.asset_type)?.toLowerCase();
+    switch (name) {
+      case "app_open": return m.logAppOpen();
+      case "sign_up_completed": return m.logCompleteRegistration();
+      case "login_completed": return m.logLogin();
+      case "trade_opened": return m.logTradeOpened(market);
+      case "trade_closed": return m.logTradeClosed(market);
+      case "challenge_completed": return m.logChallengeCompleted(str(params?.challenge_type));
+      case "strategy_created": return m.logStrategyCreated();
+      case "ai_coach_used": return m.logAITradeReview();
+      case "learning_mode_changed": return m.logModeChanged(str(params?.outcome));
+      case "career_level_completed": return m.logCareerProgressed();
+      case "leaderboard_viewed": return m.logViewContent("leaderboard");
+      case "trader_dna_viewed": return m.logViewContent("trader_dna");
+      case "practice_center_opened": return m.logViewContent("practice_center");
+      default: return;
+    }
   } catch {
     /* ignore */
   }
