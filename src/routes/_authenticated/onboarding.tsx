@@ -23,7 +23,7 @@ import { trackEvent } from "@/lib/analytics";
 
 export const Route = createFileRoute("/_authenticated/onboarding")({
   validateSearch: (s: Record<string, unknown>): { personalize?: boolean } =>
-    s.personalize === true || s.personalize === "true" ? { personalize: true } : {},
+    s["personalize"] === true || s["personalize"] === "true" ? { personalize: true } : {},
   head: () => ({
     meta: [
       { title: "Welcome — TradeVirt" },
