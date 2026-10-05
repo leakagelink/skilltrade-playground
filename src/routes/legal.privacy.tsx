@@ -22,7 +22,7 @@ export const Route = createFileRoute("/legal/privacy")({
         },
         {
           heading: "Data we store",
-          body: "Your email address and account identifier (for authentication), your name and email from Google if you choose Continue with Google, your chosen username, an optional full name and an optional mobile number that you may provide when creating your account (kept private and never shown to other users), avatar, optional country, and your simulated trading activity: trades, XP, credits, challenge progress, badges and scores. If you use the Practice Center, we also store your Trade Journal entries (thesis, strategy, entry and exit reasons, what went well or what to improve, notes, selected emotion and confidence rating) and your practice milestones, streak and insights.",
+          body: "Your email address and account identifier (for authentication), your name and email from Google if you choose Continue with Google, your chosen username, an optional full name and a mobile number that you provide when creating your account, used only as an alternative login identifier with your password (kept private, never shown to other users, never used for marketing and never shared or sold), avatar, optional country, and your simulated trading activity: trades, XP, credits, challenge progress, badges and scores. If you use the Practice Center, we also store your Trade Journal entries (thesis, strategy, entry and exit reasons, what went well or what to improve, notes, selected emotion and confidence rating) and your practice milestones, streak and insights.",
         },
         {
           heading: "What is never public",
