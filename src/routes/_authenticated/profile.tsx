@@ -10,7 +10,7 @@ import { EmptyState } from "@/components/EmptyState";
 import { OpenPositions } from "@/components/OpenPositions";
 import { DisclaimerNote } from "@/components/Disclaimer";
 import { dateTime, money, price, signedMoney } from "@/lib/format";
-import { ChevronRight, History, Compass, BookOpen } from "lucide-react";
+import { ChevronRight, History, Compass, BookOpen, FlaskConical } from "lucide-react";
 import { getCareerStatus } from "@/lib/career.functions";
 
 export const Route = createFileRoute("/_authenticated/profile")({
