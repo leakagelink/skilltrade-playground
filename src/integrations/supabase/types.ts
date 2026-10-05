@@ -1165,6 +1165,48 @@ export type Database = {
           },
         ]
       }
+      user_personalization: {
+        Row: {
+          active_learning_mode: string
+          created_at: string
+          experience_level: string
+          full_name: string | null
+          hypothetical_starting_capital_range: string | null
+          learning_goal: string | null
+          mobile: string | null
+          personalization_completed: boolean
+          preferred_markets: string[]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          active_learning_mode?: string
+          created_at?: string
+          experience_level?: string
+          full_name?: string | null
+          hypothetical_starting_capital_range?: string | null
+          learning_goal?: string | null
+          mobile?: string | null
+          personalization_completed?: boolean
+          preferred_markets?: string[]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          active_learning_mode?: string
+          created_at?: string
+          experience_level?: string
+          full_name?: string | null
+          hypothetical_starting_capital_range?: string | null
+          learning_goal?: string | null
+          mobile?: string | null
+          personalization_completed?: boolean
+          preferred_markets?: string[]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string
