@@ -35,7 +35,7 @@ export const getAdvancedAnalytics = createServerFn({ method: "GET" })
       holdMs += Math.max(0, closed.getTime() - new Date(t.opened_at).getTime());
       size += Number(t.position_size ?? 0);
       add(bySymbol, t.symbol, pnl); add(byType, t.asset_type, pnl); add(byDir, t.direction, pnl);
-      add(byDay, DAYS[closed.getUTCDay()], pnl);
+      add(byDay, DAYS[closed.getUTCDay()] ?? "", pnl);
       const wk = new Date(closed); wk.setUTCDate(wk.getUTCDate() - ((wk.getUTCDay() + 6) % 7));
       add(byWeek, wk.toISOString().slice(0, 10), pnl);
     }
