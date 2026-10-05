@@ -7,6 +7,7 @@ import { getCandles, getQuote } from "@/lib/market.functions";
 import { closeTrade, getTrades, openTrade } from "@/lib/trading.functions";
 import { ProChart } from "@/components/chart/ProChart";
 import { AppHeader } from "@/components/AppHeader";
+import { ModeTip } from "@/components/ModeTip";
 import { AssetLogo } from "@/components/AssetLogo";
 
 import { Button } from "@/components/ui/button";
@@ -155,6 +156,7 @@ function ChartPage() {
       />
 
       <div className="space-y-4 p-5">
+        <ModeTip screen="chart" />
         {quote ? (
           <div className="surface-card flex items-center justify-between p-4">
             <div className="flex items-center gap-3">

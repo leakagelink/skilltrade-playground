@@ -6,6 +6,7 @@ import { RewardedAdOffer } from "@/components/ads/RewardedAdOffer";
 import { claimDailyReward, getDashboard, getTrades, syncOpenTrades } from "@/lib/trading.functions";
 import { OpenPositions } from "@/components/OpenPositions";
 import { PracticeJourneyCard } from "@/components/PracticeJourneyCard";
+import { ModeTip } from "@/components/ModeTip";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -239,6 +240,7 @@ function HomePage() {
 
 
       <section className="mt-1.5 space-y-1.5 px-4 sm:px-5">
+        <ModeTip screen="home" />
         <PracticeJourneyCard />
         <p className="section-title">Open positions</p>
         <OpenPositionsSection />

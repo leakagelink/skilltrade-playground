@@ -6,6 +6,7 @@ import { getQuotes } from "@/lib/market.functions";
 import { CATALOG, catalogEntry } from "@/lib/market/catalog";
 import type { Quote } from "@/lib/market/types";
 import { AppHeader } from "@/components/AppHeader";
+import { ModeTip } from "@/components/ModeTip";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { EmptyState } from "@/components/EmptyState";
@@ -101,6 +102,7 @@ function TradePage() {
       <AppHeader title="Markets" subtitle="Latest available prices · simulated trading only" showSettings />
 
       <div className="space-y-4 p-5">
+        <ModeTip screen="markets" />
         <div className="relative">
           <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input

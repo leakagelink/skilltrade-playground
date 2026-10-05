@@ -41,7 +41,14 @@ export const askAgent = createServerFn({ method: "POST" })
     const unlocked = s.isUnlocked(u);
     if (u.questions_asked >= s.DAILY_HARD_CAP) throw new Error("Daily AI Agent limit reached. Please come back tomorrow.");
     if (!unlocked && u.free_used) throw new Error("LOCKED");
-    const answer = await s.askRelay(data.history, data.question);
+    const { data: pers } = await db
+      .from("user_personalization")
+      .select("active_learning_mode")
+      .eq("user_id", context.userId)
+      .maybeSingle();
+    const m = pers?.active_learning_mode;
+    const mode = m === "intermediate" || m === "expert" ? m : "beginner";
+    const answer = await s.askRelay(data.history, data.question, mode);
     // Only count a question after a successful answer, so failures never cost the free question.
     await s.recordQuestion(db, context.userId, !unlocked);
     return { answer };
