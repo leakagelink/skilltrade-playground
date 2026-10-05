@@ -881,6 +881,27 @@ export type Database = {
         }
         Relationships: []
       }
+      social_follows: {
+        Row: {
+          created_at: string
+          follower_id: string
+          following_id: string
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          follower_id: string
+          following_id: string
+          id?: string
+        }
+        Update: {
+          created_at?: string
+          follower_id?: string
+          following_id?: string
+          id?: string
+        }
+        Relationships: []
+      }
       strategies: {
         Row: {
           created_at: string
@@ -1323,6 +1344,19 @@ export type Database = {
           trading_skill_score: number
           user_id: string
           username: string
+        }[]
+      }
+      get_season_leaderboard: {
+        Args: { _limit?: number; _season_end: string; _season_start: string }
+        Returns: {
+          avatar_url: string
+          challenges_completed: number
+          level: number
+          rank: number
+          season_points: number
+          user_id: string
+          username: string
+          xp_in_season: number
         }[]
       }
       get_social_leaderboard: {
