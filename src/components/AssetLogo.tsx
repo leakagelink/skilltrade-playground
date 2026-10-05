@@ -17,7 +17,7 @@ export function AssetLogo({ symbol, assetType, name, className = "", size = 44 }
   useEffect(() => setFailed(false), [symbol]);
 
   const path = assetType === "CRYPTO" ? `crypto/${symbol}` : `ticker/${symbol}`;
-  const src = TOKEN
+  const src = TOKEN && (assetType === "CRYPTO" || assetType === "STOCK")
     ? `https://img.logo.dev/${path}?token=${TOKEN}&size=${size * 2}&format=png&retina=true`
     : undefined;
 
