@@ -16,8 +16,10 @@ export function AssetLogo({ symbol, assetType, name, className = "", size = 44 }
   const [failed, setFailed] = useState(false);
   useEffect(() => setFailed(false), [symbol]);
 
-  const path = assetType === "CRYPTO" ? `crypto/${symbol}` : `ticker/${symbol}`;
-  const src = TOKEN && (assetType === "CRYPTO" || assetType === "STOCK")
+  // logo.dev tickers are plain symbols — strip exchange suffixes like ".NS" (NSE India).
+  const logoSymbol = symbol.replace(/\.[A-Z]+$/, "");
+  const path = assetType === "CRYPTO" ? `crypto/${logoSymbol}` : `ticker/${logoSymbol}`;
+  const src = TOKEN
     ? `https://img.logo.dev/${path}?token=${TOKEN}&size=${size * 2}&format=png&retina=true`
     : undefined;
 
