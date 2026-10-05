@@ -166,9 +166,9 @@ function StrategySheet({ form, setForm }: { form: Form | null; setForm: (f: Form
 
   async function submit() {
     if (!form) return;
-    if (!form.name.trim()) return toast.error("Please give the strategy a name.");
+    if (!form.name.trim()) { toast.error("Please give the strategy a name."); return; }
     const pctNum = form.maxPositionPct ? Number(form.maxPositionPct) : null;
-    if (pctNum != null && (!(pctNum > 0) || pctNum > 100)) return toast.error("Max position must be between 0 and 100%.");
+    if (pctNum != null && (!(pctNum > 0) || pctNum > 100)) { toast.error("Max position must be between 0 and 100%."); return; }
     setBusy(true);
     try {
       const res = await save({
