@@ -108,7 +108,7 @@ function Onboarding() {
         personalization_completed: true,
       });
       if (!personalize) await saveProfile({ data: { onboardingCompleted: true } });
-      void trackEvent("onboarding_personalized", { experience, mode: mode ?? experience });
+      void trackEvent("onboarding_personalized", { outcome: mode ?? experience });
       navigate({ to: "/home", replace: true });
     } catch {
       toast.error("Something went wrong. Please try again.");

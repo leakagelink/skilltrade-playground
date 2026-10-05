@@ -15,7 +15,7 @@ export function LearningModeCard() {
       {
         onSuccess: () => {
           toast.success(`${MODES.find((m) => m.value === mode)?.label} Mode on`);
-          void trackEvent("learning_mode_changed", { mode });
+          void trackEvent("learning_mode_changed", { outcome: mode });
         },
         onError: () => toast.error("Could not change mode. Please try again."),
       },
