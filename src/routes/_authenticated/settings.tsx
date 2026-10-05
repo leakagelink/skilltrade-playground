@@ -50,7 +50,9 @@ function SettingsPage() {
   const save = useServerFn(updateProfileSettings);
   const removeAccount = useServerFn(deleteMyAccount);
 
+  const loadAdminStatus = useServerFn(getAdminStatus);
   const { data } = useQuery({ queryKey: ["dashboard"], queryFn: () => loadDash() });
+  const adminStatus = useQuery({ queryKey: ["admin-status"], queryFn: () => loadAdminStatus(), staleTime: 60_000 });
   const [username, setUsername] = useState("");
   const [visible, setVisible] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -152,6 +154,17 @@ function SettingsPage() {
           <LegalLink to="/legal/support" label="Support & Contact" />
           <LegalLink to="/account-deletion" label="Account Deletion Policy" />
         </section>
+
+        {adminStatus.data?.admin ? (
+          <Link to="/admin" className="surface-card flex items-center gap-3 p-4 active:bg-elevated">
+            <ShieldCheck className="size-5 text-primary" />
+            <div className="flex-1">
+              <p className="text-sm font-medium">Admin Notifications</p>
+              <p className="text-xs text-muted-foreground">Send test and broadcast notifications to users.</p>
+            </div>
+            <ChevronRight className="size-4 text-muted-foreground" />
+          </Link>
+        ) : null}
 
         <DisclaimerNote />
 
