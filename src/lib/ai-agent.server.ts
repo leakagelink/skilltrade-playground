@@ -18,6 +18,12 @@ const SYSTEM_PROMPT =
   "Never give personal financial advice, buy/sell signals, price predictions or guarantees. " +
   "Refuse unrelated, harmful or illegal requests briefly. Reply in the user's language, under 150 words.";
 
+const MODE_STYLE = {
+  beginner: "User is a beginner: use very simple words, define any term, give a tiny example.",
+  intermediate: "User is intermediate: be concise, mention risk/reward and position sizing where relevant.",
+  expert: "User is advanced: be brief and technical, skip basic definitions.",
+} as const;
+
 type Db = Awaited<typeof import("@/integrations/supabase/client.server")>["supabaseAdmin"];
 
 export function utcDate() {
@@ -73,11 +79,12 @@ export async function recordQuestion(db: Db, userId: string, usedFree: boolean) 
 export async function askRelay(
   history: { role: "user" | "assistant"; content: string }[],
   question: string,
+  mode: "beginner" | "intermediate" | "expert" = "beginner",
 ): Promise<string> {
   const key = process.env["RELAYMODELS_API_KEY"];
   if (!key) throw new Error("AI Agent is not configured yet. Please try again later.");
   const messages = [
-    { role: "system", content: SYSTEM_PROMPT },
+    { role: "system", content: SYSTEM_PROMPT + " " + MODE_STYLE[mode] },
     ...history.slice(-MAX_HISTORY_MESSAGES).map((m) => ({ role: m.role, content: m.content.slice(0, 600) })),
     { role: "user", content: question.slice(0, MAX_QUESTION_CHARS) },
   ];
