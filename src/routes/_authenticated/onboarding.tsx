@@ -233,7 +233,7 @@ function Onboarding() {
       ) : null}
 
       <Button size="lg" className="h-12 w-full rounded-xl text-base font-semibold" disabled={saving} onClick={next}>
-        {isLast ? (personalize ? "Save" : "Start Trading") : key === "capital" || key === "about" || key === "goal" ? "Continue" : "Continue"}
+        {isLast ? (personalize ? "Save" : "Start Trading") : "Continue"}
       </Button>
       {!intro && !isLast ? (
         <Button variant="ghost" className="mt-2 w-full" onClick={skipPersonalization}>

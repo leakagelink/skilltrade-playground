@@ -23,6 +23,8 @@ import {
 } from "@/components/ui/alert-dialog";
 import { DisclaimerNote } from "@/components/Disclaimer";
 import { SocialPrivacyCard } from "@/components/SocialPrivacyCard";
+import { LearningModeCard } from "@/components/LearningModeCard";
+import { PersonalDetailsCard } from "@/components/PersonalDetailsCard";
 import { toast } from "sonner";
 import { ChevronRight, LogOut, ShieldCheck } from "lucide-react";
 import { getAdminStatus } from "@/lib/admin-notifications.functions";
@@ -139,6 +141,10 @@ function SettingsPage() {
             />
           </div>
         </section>
+
+        <LearningModeCard />
+
+        <PersonalDetailsCard />
 
         <SocialPrivacyCard />
 

@@ -4,6 +4,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getPracticeOverview, saveJournal } from "@/lib/practice.functions";
 import { AppHeader } from "@/components/AppHeader";
+import { LearningModeCard } from "@/components/LearningModeCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -74,6 +75,7 @@ function PracticePage() {
     <main>
       <AppHeader title="Practice Center" subtitle="Simulation only. No real-money trading." />
       <div className="space-y-4 p-5">
+        <LearningModeCard />
         {!d ? (
           <Skeleton className="h-64 w-full rounded-3xl" />
         ) : (
