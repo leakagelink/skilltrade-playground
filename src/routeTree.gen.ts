@@ -30,6 +30,7 @@ import { Route as LegalDisclaimerRouteImport } from './routes/legal.disclaimer'
 import { Route as LegalPrivacyRouteImport } from './routes/legal.privacy'
 import { Route as LegalSupportRouteImport } from './routes/legal.support'
 import { Route as LegalTermsRouteImport } from './routes/legal.terms'
+import { Route as TraderUsernameRouteImport } from './routes/trader.$username'
 import { Route as AuthenticatedAiArenaIndexRouteImport } from './routes/_authenticated/ai-arena.index'
 import { Route as AuthenticatedAiArenaHistoryRouteImport } from './routes/_authenticated/ai-arena.history'
 import { Route as AuthenticatedCareerIndexRouteImport } from './routes/_authenticated/career.index'
@@ -146,6 +147,11 @@ const LegalTermsRoute = LegalTermsRouteImport.update({
   path: '/legal/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TraderUsernameRoute = TraderUsernameRouteImport.update({
+  id: '/trader/$username',
+  path: '/trader/$username',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedAiArenaIndexRoute =
   AuthenticatedAiArenaIndexRouteImport.update({
     id: '/ai-arena/',
@@ -221,6 +227,7 @@ export interface FileRoutesByFullPath {
   '/legal/privacy': typeof LegalPrivacyRoute
   '/legal/support': typeof LegalSupportRoute
   '/legal/terms': typeof LegalTermsRoute
+  '/trader/$username': typeof TraderUsernameRoute
   '/ai-arena/history': typeof AuthenticatedAiArenaHistoryRoute
   '/chart/$symbol': typeof AuthenticatedChartSymbolRoute
   '/compete/$id': typeof AuthenticatedCompeteIdRoute
@@ -252,6 +259,7 @@ export interface FileRoutesByTo {
   '/legal/privacy': typeof LegalPrivacyRoute
   '/legal/support': typeof LegalSupportRoute
   '/legal/terms': typeof LegalTermsRoute
+  '/trader/$username': typeof TraderUsernameRoute
   '/ai-arena/history': typeof AuthenticatedAiArenaHistoryRoute
   '/chart/$symbol': typeof AuthenticatedChartSymbolRoute
   '/compete/$id': typeof AuthenticatedCompeteIdRoute
@@ -285,6 +293,7 @@ export interface FileRoutesById {
   '/legal/privacy': typeof LegalPrivacyRoute
   '/legal/support': typeof LegalSupportRoute
   '/legal/terms': typeof LegalTermsRoute
+  '/trader/$username': typeof TraderUsernameRoute
   '/_authenticated/ai-arena/history': typeof AuthenticatedAiArenaHistoryRoute
   '/_authenticated/chart/$symbol': typeof AuthenticatedChartSymbolRoute
   '/_authenticated/compete/$id': typeof AuthenticatedCompeteIdRoute
@@ -318,6 +327,7 @@ export interface FileRouteTypes {
     | '/legal/privacy'
     | '/legal/support'
     | '/legal/terms'
+    | '/trader/$username'
     | '/ai-arena/history'
     | '/chart/$symbol'
     | '/compete/$id'
@@ -349,6 +359,7 @@ export interface FileRouteTypes {
     | '/legal/privacy'
     | '/legal/support'
     | '/legal/terms'
+    | '/trader/$username'
     | '/ai-arena/history'
     | '/chart/$symbol'
     | '/compete/$id'
@@ -381,6 +392,7 @@ export interface FileRouteTypes {
     | '/legal/privacy'
     | '/legal/support'
     | '/legal/terms'
+    | '/trader/$username'
     | '/_authenticated/ai-arena/history'
     | '/_authenticated/chart/$symbol'
     | '/_authenticated/compete/$id'
@@ -401,6 +413,7 @@ export interface RootRouteChildren {
   LegalPrivacyRoute: typeof LegalPrivacyRoute
   LegalSupportRoute: typeof LegalSupportRoute
   LegalTermsRoute: typeof LegalTermsRoute
+  TraderUsernameRoute: typeof TraderUsernameRoute
   ApiPublicNotifyRemindersRoute: typeof ApiPublicNotifyRemindersRoute
 }
 
@@ -553,6 +566,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LegalTermsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/trader/$username': {
+      id: '/trader/$username'
+      path: '/trader/$username'
+      fullPath: '/trader/$username'
+      preLoaderRoute: typeof TraderUsernameRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/ai-arena/': {
       id: '/_authenticated/ai-arena/'
       path: '/ai-arena'
@@ -679,6 +699,7 @@ const rootRouteChildren: RootRouteChildren = {
   LegalPrivacyRoute: LegalPrivacyRoute,
   LegalSupportRoute: LegalSupportRoute,
   LegalTermsRoute: LegalTermsRoute,
+  TraderUsernameRoute: TraderUsernameRoute,
   ApiPublicNotifyRemindersRoute: ApiPublicNotifyRemindersRoute,
 }
 export const routeTree = rootRouteImport

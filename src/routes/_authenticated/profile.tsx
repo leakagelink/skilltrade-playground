@@ -10,8 +10,11 @@ import { EmptyState } from "@/components/EmptyState";
 import { OpenPositions } from "@/components/OpenPositions";
 import { DisclaimerNote } from "@/components/Disclaimer";
 import { dateTime, money, price, signedMoney } from "@/lib/format";
-import { ChevronRight, History, Compass, BookOpen, FlaskConical } from "lucide-react";
+import { ChevronRight, History, Compass, BookOpen, FlaskConical, Users } from "lucide-react";
 import { getCareerStatus } from "@/lib/career.functions";
+import { getMySocialSummary } from "@/lib/social.functions";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/profile")({
   head: () => ({
@@ -77,6 +80,9 @@ function ProfilePage() {
         )}
 
         <CareerCard />
+
+        <TraderCardCard />
+
 
         <Link to="/practice" className="bento-tile flex items-center gap-3 p-4" aria-label="Open Practice Center">
           <div className="flex size-10 items-center justify-center rounded-2xl bg-secondary text-primary">
@@ -224,5 +230,72 @@ function CareerCard() {
       </div>
       <ChevronRight className="size-4 shrink-0 text-muted-foreground" aria-hidden />
     </Link>
+  );
+}
+
+/**
+ * Version 3 shareable Trader Card entry point. The public card shows only
+ * opt-in simulated data (level, XP, Skill Score, badges, challenge and trade
+ * counts) — never email, mobile number, journal notes or starting capital.
+ */
+function TraderCardCard() {
+  const loadDash = useServerFn(getDashboard);
+  const loadSummary = useServerFn(getMySocialSummary);
+  const dash = useQuery({ queryKey: ["dashboard"], queryFn: () => loadDash() });
+  const summary = useQuery({
+    queryKey: ["social-summary"],
+    queryFn: () => loadSummary(),
+    staleTime: 30_000,
+  });
+  const p = dash.data?.profile;
+  if (!p) return null;
+
+  const share = async () => {
+    const url = `${window.location.origin}/trader/${p.username}`;
+    const text = `My TradeVirt simulated practice — Level ${p.level}, Trading Skill Score ${p.skillScore}.`;
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: "My TradeVirt Trader Card", text, url });
+      } else {
+        await navigator.clipboard.writeText(`${text} ${url}`);
+        toast.success("Trader Card link copied");
+      }
+    } catch {
+      // User closed the share sheet — nothing to do.
+    }
+  };
+
+  return (
+    <section className="bento-tile space-y-3 p-4">
+      <div className="flex items-center gap-3">
+        <div className="flex size-10 shrink-0 items-center justify-center rounded-2xl bg-secondary text-primary">
+          <Users className="size-5" aria-hidden />
+        </div>
+        <div className="min-w-0 flex-1">
+          <p className="text-sm font-bold">Trader Card</p>
+          <p className="truncate text-xs text-muted-foreground">
+            {summary.data
+              ? `${summary.data.followers} followers · ${summary.data.following} following`
+              : "Your shareable simulated-performance card"}
+          </p>
+        </div>
+        <Button size="sm" variant="secondary" onClick={share}>
+          Share
+        </Button>
+      </div>
+      <div className="flex items-center justify-between gap-3 rounded-xl bg-secondary/60 p-3">
+        <p className="min-w-0 flex-1 text-[11px] leading-relaxed text-muted-foreground">
+          Shows level, Skill Score, badges and simulated stats — never email, phone number or
+          private trades. Others can see it only if your public profile is on in Settings.
+        </p>
+        <Link
+          to="/trader/$username"
+          params={{ username: p.username }}
+          className="shrink-0 text-xs font-bold text-primary underline-offset-4 hover:underline"
+        >
+          Preview
+        </Link>
+      </div>
+    </section>
   );
 }
