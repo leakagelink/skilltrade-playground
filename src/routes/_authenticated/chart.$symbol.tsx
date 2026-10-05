@@ -232,7 +232,11 @@ function ChartPage() {
               ? "Demo market data — the market feed is temporarily unavailable."
               : quote.marketState === "CLOSED"
                 ? "Market closed — showing the latest available price. Market data may be delayed."
-                : catalogEntry(symbol)?.assetType === "CRYPTO"
+                : catalogEntry(symbol)?.assetType === "IN_STOCK"
+                  ? "Latest available NSE price, converted from INR to USD. Market data may be delayed. Trades are simulated only."
+                  : catalogEntry(symbol)?.assetType === "COMMODITY"
+                  ? "Latest available commodity futures price in USD. Market data may be delayed. Trades are simulated only."
+                  : catalogEntry(symbol)?.assetType === "CRYPTO"
                   ? "Current market price from a public crypto data source. Data may be delayed or incomplete. Trades are simulated only."
                   : "Latest available stock price from a public market data source. Market data may be delayed. Trades are simulated only."}
           </p>

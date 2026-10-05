@@ -22,7 +22,7 @@ export const Route = createFileRoute("/_authenticated/trade")({
       { title: "Markets — TradeVirt Paper Trading" },
       { name: "description", content: "Browse and search supported stocks and crypto assets for simulated paper trading." },
       { property: "og:title", content: "Markets — TradeVirt" },
-      { property: "og:description", content: "Browse supported stocks and crypto for simulated trading." },
+      { property: "og:description", content: "Browse US and Indian stocks, commodities and crypto for simulated trading." },
     ],
   }),
   component: TradePage,
@@ -36,7 +36,7 @@ function TradePage() {
     [symbols],
   );
   const stockSymbols = useMemo(
-    () => symbols.filter((s) => catalogEntry(s)?.assetType === "STOCK"),
+    () => symbols.filter((s) => catalogEntry(s)?.assetType !== "CRYPTO"),
     [symbols],
   );
 
@@ -68,7 +68,7 @@ function TradePage() {
     return map;
   }, [cryptoQuotes.data, stockQuotes.data]);
   const [q, setQ] = useState("");
-  const [tab, setTab] = useState<"ALL" | "STOCK" | "CRYPTO">("ALL");
+  const [tab, setTab] = useState<"ALL" | "STOCK" | "IN_STOCK" | "COMMODITY" | "CRYPTO">("ALL");
   const previousPrices = useRef(new Map<string, number>());
   const [tickMoves, setTickMoves] = useState(new Map<string, number>());
 
@@ -108,16 +108,18 @@ function TradePage() {
           <Input
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder="Search Bitcoin, BTC, Apple, AAPL…"
+            placeholder="Search Apple, Reliance, Gold, BTC…"
             className="h-12 rounded-2xl border-border bg-surface pl-9 shadow-[0_10px_24px_-22px_oklch(0.4_0.08_258/60%)]"
           />
         </div>
 
         <Tabs value={tab} onValueChange={(v) => setTab(v as typeof tab)}>
-          <TabsList className="grid h-11 w-full grid-cols-3 rounded-2xl bg-secondary p-1">
-            <TabsTrigger value="ALL">All</TabsTrigger>
-            <TabsTrigger value="STOCK">Stocks</TabsTrigger>
-            <TabsTrigger value="CRYPTO">Crypto</TabsTrigger>
+          <TabsList className="grid h-11 w-full grid-cols-5 rounded-2xl bg-secondary p-1 text-xs">
+            <TabsTrigger value="ALL" className="px-1 text-xs">All</TabsTrigger>
+            <TabsTrigger value="STOCK" className="px-1 text-xs">US</TabsTrigger>
+            <TabsTrigger value="IN_STOCK" className="px-1 text-xs">India</TabsTrigger>
+            <TabsTrigger value="COMMODITY" className="px-1 text-xs">Comm.</TabsTrigger>
+            <TabsTrigger value="CRYPTO" className="px-1 text-xs">Crypto</TabsTrigger>
           </TabsList>
         </Tabs>
 
@@ -136,7 +138,10 @@ function TradePage() {
 
                   <div className="min-w-0 flex-1">
                     <p className="num truncate text-sm font-bold text-foreground">{a.symbol}</p>
-                    <p className="truncate text-xs text-muted-foreground">{a.name}</p>
+                    <p className="truncate text-xs text-muted-foreground">
+                      {a.name}
+                      {a.assetType === "IN_STOCK" ? " · NSE (in USD)" : a.assetType === "COMMODITY" ? " · Commodity" : ""}
+                    </p>
                   </div>
                   {quoteBy.get(a.symbol) ? (
                     (() => {
@@ -147,7 +152,7 @@ function TradePage() {
                       return (
                          <div className="min-w-[4.75rem] shrink-0 text-right">
                            <p className="num whitespace-nowrap text-sm font-semibold">{price(qd.price)}</p>
-                           {a.assetType === "STOCK" && qd.marketState === "CLOSED" ? (
+                           {a.assetType !== "CRYPTO" && qd.marketState === "CLOSED" ? (
                               <span className="block whitespace-nowrap text-[9px] font-medium text-muted-foreground sm:text-[10px]">Market closed</span>
                            ) : null}
                           <span

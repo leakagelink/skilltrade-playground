@@ -52,6 +52,41 @@ const CRYPTOS: [string, string][] = [
   ["BCH", "Bitcoin Cash"],
 ];
 
+/** Indian NSE shares (Yahoo ".NS" symbols). Prices are converted INR → USD. */
+const IN_STOCKS: [string, string][] = [
+  ["RELIANCE", "Reliance Industries"],
+  ["TCS", "Tata Consultancy Services"],
+  ["HDFCBANK", "HDFC Bank"],
+  ["INFY", "Infosys"],
+  ["ICICIBANK", "ICICI Bank"],
+  ["SBIN", "State Bank of India"],
+  ["BHARTIARTL", "Bharti Airtel"],
+  ["ITC", "ITC Ltd"],
+  ["LT", "Larsen & Toubro"],
+  ["HINDUNILVR", "Hindustan Unilever"],
+  ["KOTAKBANK", "Kotak Mahindra Bank"],
+  ["AXISBANK", "Axis Bank"],
+  ["MARUTI", "Maruti Suzuki"],
+  ["TATAMOTORS", "Tata Motors"],
+  ["SUNPHARMA", "Sun Pharma"],
+  ["WIPRO", "Wipro"],
+  ["ASIANPAINT", "Asian Paints"],
+  ["BAJFINANCE", "Bajaj Finance"],
+  ["ADANIENT", "Adani Enterprises"],
+  ["TITAN", "Titan Company"],
+];
+
+/** Commodity futures (Yahoo "=F" symbols), quoted in USD. */
+const COMMODITIES: [string, string, string][] = [
+  ["GOLD", "Gold", "GC=F"],
+  ["SILVER", "Silver", "SI=F"],
+  ["CRUDEOIL", "Crude Oil (WTI)", "CL=F"],
+  ["BRENT", "Brent Crude Oil", "BZ=F"],
+  ["NATGAS", "Natural Gas", "NG=F"],
+  ["COPPER", "Copper", "HG=F"],
+  ["PLATINUM", "Platinum", "PL=F"],
+];
+
 export const CATALOG: CatalogEntry[] = [
   ...STOCKS.map(([symbol, name]) => ({
     symbol,
@@ -67,7 +102,28 @@ export const CATALOG: CatalogEntry[] = [
     displaySymbol: `${symbol}/USD`,
     providerSymbol: `${symbol}-USD`,
   })),
+  ...IN_STOCKS.map(([symbol, name]) => ({
+    symbol,
+    name,
+    assetType: "IN_STOCK" as const,
+    displaySymbol: `${symbol} · NSE`,
+    providerSymbol: `${symbol}.NS`,
+  })),
+  ...COMMODITIES.map(([symbol, name, providerSymbol]) => ({
+    symbol,
+    name,
+    assetType: "COMMODITY" as const,
+    displaySymbol: `${symbol}/USD`,
+    providerSymbol,
+  })),
 ];
+
+export const ASSET_TYPE_LABEL: Record<AssetType, string> = {
+  STOCK: "US Stock",
+  CRYPTO: "Crypto",
+  IN_STOCK: "Indian Stock (NSE)",
+  COMMODITY: "Commodity",
+};
 
 
 export function catalogEntry(symbol: string): CatalogEntry | undefined {

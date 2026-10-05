@@ -1,4 +1,5 @@
-export type AssetType = "STOCK" | "CRYPTO";
+/** IN_STOCK = Indian (NSE) shares, COMMODITY = global futures. All simulated values are shown in USD. */
+export type AssetType = "STOCK" | "CRYPTO" | "IN_STOCK" | "COMMODITY";
 
 export type Timeframe = "1m" | "5m" | "15m" | "1h" | "4h" | "1d";
 

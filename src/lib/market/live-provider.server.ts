@@ -163,6 +163,18 @@ function yahooToCandles(payload: YahooChart): Candle[] {
   return candles;
 }
 
+/** USD per 1 INR, from Yahoo's USD/INR rate. Cached for a minute. */
+async function usdPerInr(): Promise<number> {
+  const payload = await yahooChart("INR=X", "1d");
+  const rate = payload.chart?.result?.[0]?.meta?.regularMarketPrice;
+  if (!rate || rate <= 0) throw new Error("No USD/INR rate");
+  return 1 / rate;
+}
+
+async function fxFactor(assetType: string): Promise<number> {
+  return assetType === "IN_STOCK" ? usdPerInr() : 1;
+}
+
 /* ------------------------------- crypto -------------------------------- */
 
 const COINBASE_GRANULARITY: Record<Timeframe, number> = {
@@ -291,8 +303,8 @@ export const liveMarketDataProvider: MarketDataProvider = {
       }
       throw new Error(`No live crypto quote for ${symbol}`);
     }
-    // Preferred stock source: Twelve Data with automatic key rotation.
-    if (hasTwelveDataKeys()) {
+    // Preferred US stock source: Twelve Data with automatic key rotation.
+    if (entry.assetType === "STOCK" && hasTwelveDataKeys()) {
       try {
         const td = await cached(`td:${entry.symbol}`, 3_000, () => twelveDataQuote(entry.symbol));
         return {
@@ -317,9 +329,10 @@ export const liveMarketDataProvider: MarketDataProvider = {
     const price = meta?.regularMarketPrice ?? latestClose;
     const previousClose = meta?.previousClose ?? meta?.chartPreviousClose;
     if (price == null) throw new Error(`No quote for ${symbol}`);
+    const fx = await fxFactor(entry.assetType);
     return {
       symbol: entry.symbol,
-      price,
+      price: price * fx,
       changePercent:
         meta?.regularMarketChangePercent ??
         (previousClose && previousClose > 0 ? ((price - previousClose) / previousClose) * 100 : 0),
@@ -423,7 +436,7 @@ export const liveMarketDataProvider: MarketDataProvider = {
     if (entry.assetType === "CRYPTO") {
       candles = await coinbaseCandles(entry.providerSymbol, timeframe);
     } else {
-      if (hasTwelveDataKeys()) {
+      if (entry.assetType === "STOCK" && hasTwelveDataKeys()) {
         try {
           candles = await cached(`tdc:${entry.symbol}:${timeframe}`, 30_000, () =>
             twelveDataCandles(entry.symbol, timeframe, Math.max(limit, 200)),
@@ -436,6 +449,10 @@ export const liveMarketDataProvider: MarketDataProvider = {
         const payload = await yahooChart(entry.providerSymbol, timeframe);
         candles = yahooToCandles(payload);
         if (timeframe === "4h") candles = aggregate(candles, bucketSeconds("4h"));
+        const fx = await fxFactor(entry.assetType);
+        if (fx !== 1) {
+          candles = candles.map((c) => ({ ...c, open: c.open * fx, high: c.high * fx, low: c.low * fx, close: c.close * fx }));
+        }
       }
     }
     if (candles.length === 0) throw new Error(`No candles for ${symbol}`);
