@@ -16,7 +16,7 @@ type MetaParamKey =
   | "career_stage"
   | "content_type";
 
-export type MetaParams = Partial<Record<MetaParamKey, string>>;
+export type MetaParams = Partial<Record<MetaParamKey, string | undefined>>;
 
 const ALLOWED_PARAMS: MetaParamKey[] = [
   "experience_level",
@@ -75,7 +75,7 @@ function getPlugin(): Promise<MetaPlugin | null> {
       if (!Capacitor.isPluginAvailable("MetaEvents")) return null;
       // Return in a wrapper object: never return a plugin proxy from an async fn.
       const p = registerPlugin<MetaPlugin>("MetaEvents");
-      return { logEvent: (o) => p.logEvent(o) };
+      return { logEvent: (o: { name: string; params: Record<string, string> }) => p.logEvent(o) };
     })().catch(() => null);
   }
   return pluginPromise;
