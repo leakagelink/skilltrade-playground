@@ -2,6 +2,8 @@ import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { getSessionSafe } from "@/lib/session";
+import { useServerFn } from "@tanstack/react-start";
+import { signInWithMobile } from "@/lib/mobile-login.functions";
 
 function GoogleIcon() {
   return (
@@ -48,6 +50,8 @@ function AuthPage() {
   const [username, setUsername] = useState("");
   const [fullName, setFullName] = useState("");
   const [mobile, setMobile] = useState("");
+  const [loginId, setLoginId] = useState("");
+  const mobileLogin = useServerFn(signInWithMobile);
   const [sent, setSent] = useState(false);
   // Hold the sign-in form back until we know whether a session already exists,
   // so a returning user never sees the sign-in screen before their home screen.
@@ -78,13 +82,35 @@ function AuthPage() {
   async function handleSignIn(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    setLoading(false);
-    if (error) {
-      toast.error(error.message);
-      return;
+    const id = loginId.trim();
+    if (id.includes("@")) {
+      const { error } = await supabase.auth.signInWithPassword({ email: id, password });
+      setLoading(false);
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+    } else {
+      try {
+        const r = await mobileLogin({ data: { mobile: id, password } });
+        if (!r.ok) {
+          setLoading(false);
+          toast.error(r.error);
+          return;
+        }
+        const { error } = await supabase.auth.setSession({ access_token: r.access_token, refresh_token: r.refresh_token });
+        setLoading(false);
+        if (error) {
+          toast.error(error.message);
+          return;
+        }
+      } catch {
+        setLoading(false);
+        toast.error("Invalid mobile number or password.");
+        return;
+      }
     }
-    void trackEvent("login_completed", { method: "password" });
+    void trackEvent("login_completed", { method: id.includes("@") ? "password" : "mobile_password" });
     navigate({ to: "/home", replace: true });
   }
 
@@ -140,8 +166,8 @@ function AuthPage() {
       return;
     }
     const m = mobile.trim();
-    if (m && !/^\+?[0-9 ]{6,20}$/.test(m)) {
-      toast.error("Enter a valid mobile number, or leave it empty.");
+    if (!/^\+?[0-9 ]{10,20}$/.test(m)) {
+      toast.error("Enter a valid mobile number with country code, e.g. +91 98765 43210.");
       return;
     }
     // Onboarding owns the user_personalization row (it only exists once the
@@ -159,11 +185,11 @@ function AuthPage() {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
-      options: { emailRedirectTo: window.location.origin, data: { username: u } },
+      options: { emailRedirectTo: window.location.origin, data: { username: u, mobile: m } },
     });
     setLoading(false);
     if (error) {
-      toast.error(error.message);
+      toast.error(/database error/i.test(error.message) ? "This mobile number is already linked to another account." : error.message);
       return;
     }
     if (data.session) {
@@ -218,9 +244,9 @@ function AuthPage() {
                 <Input id="su-name" value={fullName} maxLength={80} onChange={(e) => setFullName(e.target.value)} className="h-12 rounded-xl bg-elevated/40" />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="su-mobile">Mobile number (optional)</Label>
-                <Input id="su-mobile" type="tel" inputMode="tel" value={mobile} maxLength={20} placeholder="+91 98765 43210" onChange={(e) => setMobile(e.target.value)} className="h-12 rounded-xl bg-elevated/40" />
-                <p className="text-[11px] text-muted-foreground">Kept private — never shown to other users.</p>
+                <Label htmlFor="su-mobile">Mobile number</Label>
+                <Input id="su-mobile" type="tel" inputMode="tel" value={mobile} maxLength={20} placeholder="+91 98765 43210" required onChange={(e) => setMobile(e.target.value)} className="h-12 rounded-xl bg-elevated/40" />
+                <p className="text-[11px] text-muted-foreground">Used only so you can log in with your mobile number. Kept private — never shown to other users or used for marketing. Not verified by SMS.</p>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="su-email">Email</Label>
@@ -239,8 +265,8 @@ function AuthPage() {
           <TabsContent value="signin">
             <form onSubmit={handleSignIn} className="mt-6 space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="si-email">Email</Label>
-                <Input id="si-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="h-12 rounded-xl bg-elevated/40" />
+                <Label htmlFor="si-email">Email or mobile number</Label>
+                <Input id="si-email" type="text" autoComplete="username" value={loginId} onChange={(e) => setLoginId(e.target.value)} required className="h-12 rounded-xl bg-elevated/40" />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="si-password">Password</Label>

@@ -50,6 +50,13 @@
       "when": 1791167825877,
       "tag": "0006_create_strategies",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1791169085649,
+      "tag": "0007_mobile_login_lookup",
+      "breakpoints": true
     }
   ]
 }
