@@ -12,6 +12,8 @@
 
 export type AnalyticsEvent =
   | "learning_mode_changed"
+  | "strategy_created"
+  | "strategy_reviewed"
   | "onboarding_personalized"
   | "app_open"
   | "sign_up_completed"
