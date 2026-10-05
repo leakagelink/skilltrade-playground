@@ -29,6 +29,13 @@
       "when": 1790753209737,
       "tag": "0003_admin_roles_for_notifications",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1791167229413,
+      "tag": "0004_user_personalization",
+      "breakpoints": true
     }
   ]
 }
