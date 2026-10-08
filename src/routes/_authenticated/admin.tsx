@@ -46,6 +46,10 @@ function AdminNotificationsPage() {
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [userSearch, setUserSearch] = useState("");
+  const [levelFilter, setLevelFilter] = useState("all");
+  const [capitalFilter, setCapitalFilter] = useState("all");
+  const [marketFilter, setMarketFilter] = useState("all");
 
   const status = useQuery({ queryKey: ["admin-status"], queryFn: () => loadStatus(), staleTime: 60_000 });
   const stats = useQuery({
