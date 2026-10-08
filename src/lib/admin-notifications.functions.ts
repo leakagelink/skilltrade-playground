@@ -22,6 +22,58 @@ export const getBroadcastStats = createServerFn({ method: "GET" })
     return { devices: deviceCount ?? 0, users: userCount ?? 0 };
   });
 
+export type AdminUserRow = {
+  user_id: string;
+  email: string | null;
+  username: string;
+  full_name: string | null;
+  mobile: string | null;
+  experience_level: string | null;
+  learning_goal: string | null;
+  preferred_markets: string[] | null;
+  capital_range: string | null;
+  level: number;
+  xp: number;
+  created_at: string | null;
+};
+
+export const getAdminUsers = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }): Promise<AdminUserRow[]> => {
+    const { data: isAdmin, error } = await context.supabase.rpc("has_role", { _user_id: context.userId, _role: "admin" });
+    if (error || isAdmin !== true) throw new Error("Forbidden");
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    const [{ data: profiles }, { data: pers }, { data: mobiles }, { data: authList }] = await Promise.all([
+      supabaseAdmin.from("profiles").select("id, username, level, xp, created_at").order("created_at", { ascending: false }),
+      supabaseAdmin.from("user_personalization").select("user_id, full_name, mobile, experience_level, learning_goal, preferred_markets, hypothetical_starting_capital_range"),
+      supabaseAdmin.from("user_mobiles").select("user_id, mobile"),
+      supabaseAdmin.auth.admin.listUsers({ perPage: 1000 }),
+    ]);
+
+    const emailById = new Map((authList?.users ?? []).map((u) => [u.id, u.email ?? null]));
+    const persById = new Map((pers ?? []).map((p) => [p.user_id, p]));
+    const mobileById = new Map((mobiles ?? []).map((m) => [m.user_id, m.mobile]));
+
+    return (profiles ?? []).map((p) => {
+      const pe = persById.get(p.id);
+      return {
+        user_id: p.id,
+        email: emailById.get(p.id) ?? null,
+        username: p.username,
+        full_name: pe?.full_name ?? null,
+        mobile: mobileById.get(p.id) ?? pe?.mobile ?? null,
+        experience_level: pe?.experience_level ?? null,
+        learning_goal: pe?.learning_goal ?? null,
+        preferred_markets: pe?.preferred_markets ?? null,
+        capital_range: pe?.hypothetical_starting_capital_range ?? null,
+        level: p.level,
+        xp: p.xp,
+        created_at: p.created_at,
+      };
+    });
+  });
+
 const messageSchema = z.object({
   title: z.string().min(1).max(100),
   body: z.string().min(1).max(500),
