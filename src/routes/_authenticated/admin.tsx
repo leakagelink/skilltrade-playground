@@ -54,6 +54,13 @@ function AdminNotificationsPage() {
     staleTime: 60_000,
     enabled: status.data?.admin === true,
   });
+  const loadUsers = useServerFn(getAdminUsers);
+  const users = useQuery({
+    queryKey: ["admin-users"],
+    queryFn: () => loadUsers(),
+    staleTime: 30_000,
+    enabled: status.data?.admin === true,
+  });
 
   const testMutation = useMutation({
     mutationFn: (input: { title: string; body: string }) => sendTest({ data: input }),
