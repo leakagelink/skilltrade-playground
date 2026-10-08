@@ -144,6 +144,35 @@ function AdminNotificationsPage() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
+              <Users className="h-4 w-4" /> Registered users
+            </CardTitle>
+            <CardDescription>Har user ki signup details — sirf admin dekh sakta hai.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {users.isLoading && <Skeleton className="h-24 w-full" />}
+            {users.data?.length === 0 && <p className="text-sm text-muted-foreground">Abhi koi user nahi mila.</p>}
+            {users.data?.map((u) => (
+              <div key={u.user_id} className="rounded-xl border p-3 text-sm space-y-1">
+                <div className="flex items-center justify-between gap-2">
+                  <p className="font-medium">{u.full_name || u.username}</p>
+                  <span className="text-xs text-muted-foreground">
+                    {u.created_at ? new Date(u.created_at).toLocaleDateString("en-IN") : ""}
+                  </span>
+                </div>
+                <p className="text-xs text-muted-foreground">@{u.username}{u.email ? ` · ${u.email}` : ""}</p>
+                <p className="text-xs">Mobile: {u.mobile || "—"}</p>
+                <p className="text-xs">Level: {u.experience_level || "—"}{u.learning_goal ? ` · Goal: ${u.learning_goal}` : ""}</p>
+                <p className="text-xs">Markets: {u.preferred_markets?.length ? u.preferred_markets.join(", ") : "—"}</p>
+                <p className="text-xs">Starting capital: {u.capital_range || "—"}</p>
+                <p className="text-xs text-muted-foreground">App level {u.level} · {u.xp} XP</p>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-base">
               <BellRing className="h-4 w-4" /> New notification
             </CardTitle>
             <CardDescription>Sent via Firebase directly. No AI credits are used.</CardDescription>
