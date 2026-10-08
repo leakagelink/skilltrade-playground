@@ -94,6 +94,41 @@ function AdminNotificationsPage() {
 
   const canSend = title.trim().length > 0 && body.trim().length > 0;
 
+  const filteredUsers = (users.data ?? []).filter((u) => {
+    const q = userSearch.trim().toLowerCase();
+    if (q && ![u.full_name, u.username, u.email, u.mobile].some((v) => v?.toLowerCase().includes(q))) return false;
+    if (levelFilter !== "all" && u.experience_level !== levelFilter) return false;
+    if (capitalFilter !== "all" && u.capital_range !== capitalFilter) return false;
+    if (marketFilter !== "all" && !u.preferred_markets?.includes(marketFilter)) return false;
+    return true;
+  });
+
+  function exportUsersCsv() {
+    const rows = filteredUsers;
+    if (!rows.length) {
+      toast.error("Export ke liye koi user nahi mila.");
+      return;
+    }
+    const esc = (v: string | number | null | undefined) => `"${String(v ?? "").replace(/"/g, '""')}"`;
+    const header = ["Full Name", "Username", "Email", "Mobile", "Experience Level", "Learning Goal", "Preferred Markets", "Capital Range", "App Level", "XP", "Signup Date"];
+    const lines = rows.map((u) =>
+      [
+        esc(u.full_name), esc(u.username), esc(u.email), esc(u.mobile), esc(u.experience_level),
+        esc(u.learning_goal), esc(u.preferred_markets?.join(", ")), esc(u.capital_range),
+        esc(u.level), esc(u.xp), esc(u.created_at ? new Date(u.created_at).toLocaleString("en-IN") : ""),
+      ].join(","),
+    );
+    const csv = [header.map(esc).join(","), ...lines].join("\n");
+    const blob = new Blob(["﻿" + csv], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `tradevirt-users-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast.success(`${rows.length} user(s) export ho gaye.`);
+  }
+
   if (status.isLoading) {
     return (
       <div className="min-h-dvh">
