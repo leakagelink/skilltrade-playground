@@ -188,9 +188,44 @@ function AdminNotificationsPage() {
             <CardDescription>Har user ki signup details — sirf admin dekh sakta hai.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
+            <div className="space-y-2">
+              <Input
+                value={userSearch}
+                onChange={(e) => setUserSearch(e.target.value)}
+                placeholder="Naam, email, username ya mobile se khojein…"
+              />
+              <div className="grid grid-cols-3 gap-2">
+                <select value={levelFilter} onChange={(e) => setLevelFilter(e.target.value)} className="h-9 rounded-md border bg-background px-2 text-xs">
+                  <option value="all">Sab levels</option>
+                  <option value="beginner">Beginner</option>
+                  <option value="intermediate">Intermediate</option>
+                  <option value="expert">Expert</option>
+                </select>
+                <select value={capitalFilter} onChange={(e) => setCapitalFilter(e.target.value)} className="h-9 rounded-md border bg-background px-2 text-xs">
+                  <option value="all">Sab capital</option>
+                  <option value="unknown">Don't know</option>
+                  <option value="1k_10k">₹1k–₹10k</option>
+                  <option value="10k_50k">₹10k–₹50k</option>
+                  <option value="50k_1l">₹50k–₹1L</option>
+                  <option value="1l_5l">₹1L–₹5L</option>
+                  <option value="5l_plus">₹5L+</option>
+                  <option value="prefer_not">Prefer not</option>
+                </select>
+                <select value={marketFilter} onChange={(e) => setMarketFilter(e.target.value)} className="h-9 rounded-md border bg-background px-2 text-xs">
+                  <option value="all">Sab markets</option>
+                  <option value="us_stocks">US Stocks</option>
+                  <option value="indian_stocks">Indian Stocks</option>
+                  <option value="crypto">Crypto</option>
+                  <option value="commodities">Commodities</option>
+                </select>
+              </div>
+              <Button variant="outline" size="sm" className="w-full" onClick={exportUsersCsv} disabled={!filteredUsers.length}>
+                <Download className="mr-2 h-4 w-4" /> Export {filteredUsers.length} user(s) as CSV
+              </Button>
+            </div>
             {users.isLoading && <Skeleton className="h-24 w-full" />}
-            {users.data?.length === 0 && <p className="text-sm text-muted-foreground">Abhi koi user nahi mila.</p>}
-            {users.data?.map((u) => (
+            {!users.isLoading && filteredUsers.length === 0 && <p className="text-sm text-muted-foreground">Is filter se koi user nahi mila.</p>}
+            {filteredUsers.map((u) => (
               <div key={u.user_id} className="rounded-xl border p-3 text-sm space-y-1">
                 <div className="flex items-center justify-between gap-2">
                   <p className="font-medium">{u.full_name || u.username}</p>
