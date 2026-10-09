@@ -20,7 +20,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { BellRing, Download, Send, ShieldAlert, Users } from "lucide-react";
+import { BellRing, Download, Search, Send, ShieldAlert, Users } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/admin")({
@@ -159,49 +159,52 @@ function AdminNotificationsPage() {
 
   return (
     <div className="min-h-dvh">
-      <AppHeader title="Admin Notifications" />
-      <div className="mx-auto max-w-md space-y-4 p-4 pb-24">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-base">
-              <Users className="h-4 w-4" /> Reach
-            </CardTitle>
-            <CardDescription>Registered devices and app users right now.</CardDescription>
-          </CardHeader>
-          <CardContent className="flex gap-6">
-            <div>
-              <p className="text-2xl font-semibold">{stats.data?.devices ?? "—"}</p>
-              <p className="text-xs text-muted-foreground">Devices with push on</p>
-            </div>
-            <div>
-              <p className="text-2xl font-semibold">{stats.data?.users ?? "—"}</p>
-              <p className="text-xs text-muted-foreground">App users</p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
+      <AppHeader title="TradeVirt Admin" back="/home" showSettings />
+      <div className="mx-auto grid w-full max-w-[1600px] grid-cols-1 gap-6 p-4 pb-8 sm:p-6 lg:grid-cols-[minmax(0,1fr)_340px] lg:p-8 xl:grid-cols-[minmax(0,1fr)_380px]">
+        <div className="min-w-0 lg:col-span-2">
+          <h2 className="text-2xl font-semibold">Admin panel</h2>
+          <p className="mt-1 text-sm text-muted-foreground">Users & notifications</p>
+        </div>
+        <section className="grid grid-cols-2 gap-4 border-y py-5 lg:col-span-2" aria-label="Overview">
+          <div className="flex min-w-0 items-center gap-3">
+            <Users className="size-6 shrink-0 text-primary" />
+            <div className="min-w-0"><p className="text-3xl font-semibold tabular-nums">{stats.data?.users ?? "—"}</p><p className="text-sm text-muted-foreground">Registered users</p></div>
+          </div>
+          <div className="flex min-w-0 items-center gap-3">
+            <BellRing className="size-6 shrink-0 text-bull" />
+            <div className="min-w-0"><p className="text-3xl font-semibold tabular-nums">{stats.data?.devices ?? "—"}</p><p className="text-sm text-muted-foreground">Devices with push on</p></div>
+          </div>
+        </section>
+        <section className="min-w-0" aria-label="Registered users">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
               <Users className="h-4 w-4" /> Registered users
             </CardTitle>
-            <CardDescription>Har user ki signup details — sirf admin dekh sakta hai.</CardDescription>
+            <CardDescription>{filteredUsers.length} of {users.data?.length ?? 0} users · Admin-only access</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
-            <div className="space-y-2">
+            <div className="grid min-w-0 gap-3 xl:grid-cols-[minmax(0,1fr)_auto]">
+              <div className="relative min-w-0">
+              <Search className="absolute left-3 top-3 size-4 text-muted-foreground" />
               <Input
+                aria-label="Search users"
+                className="pl-9"
                 value={userSearch}
                 onChange={(e) => setUserSearch(e.target.value)}
                 placeholder="Naam, email, username ya mobile se khojein…"
               />
-              <div className="grid grid-cols-3 gap-2">
-                <select value={levelFilter} onChange={(e) => setLevelFilter(e.target.value)} className="h-9 rounded-md border bg-background px-2 text-xs">
+              </div>
+              <Button variant="outline" size="sm" className="h-10 shrink-0" onClick={exportUsersCsv} disabled={!filteredUsers.length}>
+                <Download className="mr-2 h-4 w-4" /> Export {filteredUsers.length} user(s) as CSV
+              </Button>
+              <div className="grid grid-cols-1 gap-2 sm:grid-cols-3 xl:col-span-2">
+                <select aria-label="Experience level" value={levelFilter} onChange={(e) => setLevelFilter(e.target.value)} className="h-10 min-w-0 rounded-md border bg-background px-3 text-sm">
                   <option value="all">Sab levels</option>
                   <option value="beginner">Beginner</option>
                   <option value="intermediate">Intermediate</option>
                   <option value="expert">Expert</option>
                 </select>
-                <select value={capitalFilter} onChange={(e) => setCapitalFilter(e.target.value)} className="h-9 rounded-md border bg-background px-2 text-xs">
+                <select aria-label="Starting capital" value={capitalFilter} onChange={(e) => setCapitalFilter(e.target.value)} className="h-10 min-w-0 rounded-md border bg-background px-3 text-sm">
                   <option value="all">Sab capital</option>
                   <option value="unknown">Don't know</option>
                   <option value="1k_10k">₹1k–₹10k</option>
@@ -211,7 +214,7 @@ function AdminNotificationsPage() {
                   <option value="5l_plus">₹5L+</option>
                   <option value="prefer_not">Prefer not</option>
                 </select>
-                <select value={marketFilter} onChange={(e) => setMarketFilter(e.target.value)} className="h-9 rounded-md border bg-background px-2 text-xs">
+                <select aria-label="Preferred market" value={marketFilter} onChange={(e) => setMarketFilter(e.target.value)} className="h-10 min-w-0 rounded-md border bg-background px-3 text-sm">
                   <option value="all">Sab markets</option>
                   <option value="us_stocks">US Stocks</option>
                   <option value="indian_stocks">Indian Stocks</option>
@@ -219,17 +222,35 @@ function AdminNotificationsPage() {
                   <option value="commodities">Commodities</option>
                 </select>
               </div>
-              <Button variant="outline" size="sm" className="w-full" onClick={exportUsersCsv} disabled={!filteredUsers.length}>
-                <Download className="mr-2 h-4 w-4" /> Export {filteredUsers.length} user(s) as CSV
-              </Button>
             </div>
             {users.isLoading && <Skeleton className="h-24 w-full" />}
             {!users.isLoading && filteredUsers.length === 0 && <p className="text-sm text-muted-foreground">Is filter se koi user nahi mila.</p>}
+            <div className="hidden overflow-x-auto rounded-lg border lg:block">
+              <table className="w-full min-w-[900px] text-left text-xs">
+                <thead className="bg-muted/60 text-muted-foreground">
+                  <tr>{["User", "Contact", "Experience / Goal", "Markets", "Capital", "Progress", "Joined"].map((heading) => <th key={heading} scope="col" className="px-4 py-3 font-semibold">{heading}</th>)}</tr>
+                </thead>
+                <tbody className="divide-y">
+                  {filteredUsers.map((u) => (
+                    <tr key={u.user_id} className="align-top transition-colors hover:bg-muted/30">
+                      <td className="max-w-44 break-words px-4 py-4"><p className="font-semibold text-sm">{u.full_name || u.username}</p><p className="mt-1 text-muted-foreground">@{u.username}</p></td>
+                      <td className="max-w-56 break-words px-4 py-4"><p>{u.email || "—"}</p><p className="mt-1 text-muted-foreground">{u.mobile || "—"}</p></td>
+                      <td className="max-w-44 break-words px-4 py-4"><p className="capitalize">{u.experience_level || "—"}</p><p className="mt-1 text-muted-foreground">{u.learning_goal || "—"}</p></td>
+                      <td className="max-w-40 break-words px-4 py-4">{u.preferred_markets?.length ? u.preferred_markets.join(", ") : "—"}</td>
+                      <td className="px-4 py-4">{u.capital_range || "—"}</td>
+                      <td className="whitespace-nowrap px-4 py-4 tabular-nums"><p>Level {u.level}</p><p className="mt-1 text-muted-foreground">{u.xp} XP</p></td>
+                      <td className="whitespace-nowrap px-4 py-4">{u.created_at ? new Date(u.created_at).toLocaleDateString("en-IN") : "—"}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="space-y-3 lg:hidden">
             {filteredUsers.map((u) => (
-              <div key={u.user_id} className="rounded-xl border p-3 text-sm space-y-1">
-                <div className="flex items-center justify-between gap-2">
-                  <p className="font-medium">{u.full_name || u.username}</p>
-                  <span className="text-xs text-muted-foreground">
+              <div key={u.user_id} className="rounded-lg border p-3 text-sm space-y-1 break-words">
+                <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-2">
+                  <p className="min-w-0 font-medium">{u.full_name || u.username}</p>
+                  <span className="shrink-0 text-xs text-muted-foreground">
                     {u.created_at ? new Date(u.created_at).toLocaleDateString("en-IN") : ""}
                   </span>
                 </div>
@@ -241,15 +262,17 @@ function AdminNotificationsPage() {
                 <p className="text-xs text-muted-foreground">App level {u.level} · {u.xp} XP</p>
               </div>
             ))}
+            </div>
           </CardContent>
-        </Card>
+        </section>
 
-        <Card>
+        <aside className="min-w-0 space-y-4 border-t pt-6 lg:border-l lg:border-t-0 lg:pl-6 lg:pt-0" aria-label="Notifications">
+        <section>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
               <BellRing className="h-4 w-4" /> New notification
             </CardTitle>
-            <CardDescription>Sent via Firebase directly. No AI credits are used.</CardDescription>
+            <CardDescription>Custom message</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
@@ -290,12 +313,13 @@ function AdminNotificationsPage() {
               </Button>
             </div>
           </CardContent>
-        </Card>
+        </section>
 
         <p className="text-xs text-muted-foreground">
           "Send to all users" delivers to every registered device and also saves the message in each user's in-app
           notifications. Test notifications go only to your own devices.
         </p>
+        </aside>
       </div>
 
       <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
