@@ -15,3 +15,4 @@
 - Display FCM messages received while the native app is open through Capacitor Local Notifications; Android displays background messages itself.
 - Push notifications are sent via direct FCM HTTP v1 using the FIREBASE_SERVICE_ACCOUNT_JSON secret with an RS256 JWT (Web Crypto) — never via the Lovable connector gateway or firebase-admin; stale/UNREGISTERED tokens are deleted after a failed send.
 - Admin-only actions (e.g. push broadcasts) check the server-side has_role(auth.uid(), 'admin') security-definer function against the user_roles table; never trust client flags.
+- Only the admin route uses a full-width authenticated shell and hides bottom navigation on desktop; all other screens retain their mobile app layout.

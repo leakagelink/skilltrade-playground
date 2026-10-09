@@ -31,6 +31,7 @@ const BANNER_ROUTES = ["/home", "/profile", "/leaderboard", "/challenges"];
 function AuthedLayout() {
   const { pathname } = useLocation();
   const hideNav = HIDE_NAV.some((p) => pathname.startsWith(p));
+  const isAdminPage = pathname === "/admin";
   const bannerAllowed =
     isEnabled("bannerAds") && !hideNav && BANNER_ROUTES.some((p) => pathname === p || pathname.startsWith(`${p}/`));
   const [bannerHeight, setBannerHeight] = useState(0);
@@ -51,12 +52,12 @@ function AuthedLayout() {
     <div className="min-h-screen bg-background">
       <PushSetup />
       <div
-        className={`mx-auto max-w-lg ${hideNav ? "" : "pb-24"}`}
+        className={`mx-auto ${isAdminPage ? "w-full max-w-none pb-24 lg:pb-0" : `max-w-lg ${hideNav ? "" : "pb-24"}`}`}
         style={bannerHeight > 0 && !hideNav ? { paddingBottom: `calc(6rem + ${bannerHeight}px)` } : undefined}
       >
         <Outlet />
       </div>
-      {hideNav ? null : <BottomNav bottomOffset={bannerHeight} />}
+      {hideNav ? null : isAdminPage ? <div className="lg:hidden"><BottomNav bottomOffset={bannerHeight} /></div> : <BottomNav bottomOffset={bannerHeight} />}
     </div>
   );
 }
