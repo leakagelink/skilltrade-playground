@@ -9,12 +9,14 @@ export const Route = createFileRoute("/legal/privacy")({
       { name: "description", content: "How TradeVirt handles your account data, simulated trading activity and privacy settings." },
       { property: "og:title", content: "Privacy Policy — TradeVirt" },
       { property: "og:description", content: "How TradeVirt handles account data and simulated trading activity." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: () => (
     <LegalPage
       title="Privacy Policy"
-      updated="Version 1.6 — October 5, 2026"
+      updated="Version 1.7 — October 9, 2026"
       sections={[
         {
           heading: "Who operates TradeVirt",
@@ -84,6 +86,10 @@ export const Route = createFileRoute("/legal/privacy")({
         {
           heading: "How we use your data",
           body: "Your data is used only to authenticate you, manage your account, provide paper trading functionality, maintain your simulated portfolio and trade history, calculate your Trading Skill Score, calculate Trader DNA and educational AI insights, run challenges, AI Arena competitions, social competitions and tournaments, Career Mode progression and leaderboards, maintain your Practice Center Trade Journal, weekly summaries, milestones and streaks, and improve reliability. We do not sell your data.",
+        },
+        {
+          heading: "Account activity and admin reporting",
+          body: "On the website and in updated Android/iOS builds, we record signed-in foreground visits linked to your account: calendar activity day in India time, first and latest visit timestamps for that day, and platform (web, Android or iOS). These records measure signup growth and active accounts and are accessible only to authorised administrators, alongside registration and onboarding details for account management. Country breakdowns use only the optional country you supplied; we do not collect GPS coordinates, city, device fingerprints or advertising identifiers for these reports. Account-linked activity is stored in our cloud backend, is not sent to Firebase or Meta, is not sold, and is deleted with your profile. Activity counts are not download or installation counts; older activity before tracking was enabled is unavailable.",
         },
         {
           heading: "Security",

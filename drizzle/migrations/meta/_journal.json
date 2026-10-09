@@ -57,6 +57,13 @@
       "when": 1791169085649,
       "tag": "0007_mobile_login_lookup",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1791517394964,
+      "tag": "0008_admin_activity_reports",
+      "breakpoints": true
     }
   ]
 }

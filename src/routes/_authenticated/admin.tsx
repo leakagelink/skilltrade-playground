@@ -22,14 +22,15 @@ import {
 } from "@/components/ui/alert-dialog";
 import { BellRing, Download, Search, Send, ShieldAlert, Users } from "lucide-react";
 import { toast } from "sonner";
+import { AdminActivityReport } from "@/components/AdminActivityReport";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({
     meta: [
-      { title: "Admin Notifications — TradeVirt" },
-      { name: "description", content: "Admin-only panel to send test and broadcast push notifications." },
-      { property: "og:title", content: "Admin Notifications — TradeVirt" },
-      { property: "og:description", content: "Admin-only panel to send test and broadcast push notifications." },
+      { title: "Admin Reports & Notifications — TradeVirt" },
+      { name: "description", content: "Private TradeVirt admin reports for signup growth, account activity and notifications." },
+      { property: "og:title", content: "Admin Reports & Notifications — TradeVirt" },
+      { property: "og:description", content: "Private TradeVirt signup, activity and notification management." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -175,6 +176,7 @@ function AdminNotificationsPage() {
             <div className="min-w-0"><p className="text-3xl font-semibold tabular-nums">{stats.data?.devices ?? "—"}</p><p className="text-sm text-muted-foreground">Devices with push on</p></div>
           </div>
         </section>
+        {status.data?.admin === true && <AdminActivityReport />}
         <section className="min-w-0" aria-label="Registered users">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">

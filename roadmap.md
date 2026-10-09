@@ -1,5 +1,7 @@
 # Roadmap
 
+- [ ] Add admin signup/activity reports by day, week, month and year, with user/country breakdowns and honest install/download availability.
+
 - [x] Optimize admin panel for desktop and mobile without changing other app screens.
 
 - [ ] Connect Logo.dev in new workspace (connect card declined)

@@ -10,6 +10,7 @@ export const Route = createFileRoute("/account-deletion")({
       { property: "og:title", content: "Delete Your Account — TradeVirt" },
       { property: "og:description", content: "Steps to permanently delete your TradeVirt account and data." },
       { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { property: "og:url", content: "/account-deletion" },
     ],
     links: [{ rel: "canonical", href: "/account-deletion" }],
@@ -17,7 +18,7 @@ export const Route = createFileRoute("/account-deletion")({
   component: () => (
     <LegalPage
       title="TradeVirt Account Deletion"
-      updated="Version 1.6 — October 5, 2026"
+      updated="Version 1.7 — October 9, 2026"
       sections={[
         {
           heading: "Who operates TradeVirt",
@@ -34,6 +35,10 @@ export const Route = createFileRoute("/account-deletion")({
         {
           heading: "What is deleted",
           body: "Your authentication record, profile, username, full name, mobile number and its private login lookup, avatar, virtual balance, credits, XP, level, Trading Skill Score, simulated trades, challenge progress, badges, AI trade reviews, Trader DNA records, AI Arena sessions and Arena trades, Career Mode progress and milestones, your Practice Center Trade Journal entries, practice milestones, streak and insights, social competition participation and competition trades, AI Coach Agent usage counters, unlocks and reported answers, ad-reward records, push notification device tokens, notifications, public profile settings and leaderboard entries are permanently removed.",
+        },
+        {
+          heading: "Account activity reports",
+          body: "Account-linked foreground activity days, first and latest visit timestamps and platform records used for private admin reports are deleted automatically when your profile is deleted. Country breakdowns use the optional country in your profile, which is also removed. Download and install reports from app stores or third-party analytics, if available separately, follow those providers' retention rules.",
         },
         {
           heading: "What is retained",
