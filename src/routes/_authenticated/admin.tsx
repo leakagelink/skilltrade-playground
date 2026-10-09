@@ -175,27 +175,6 @@ function AdminNotificationsPage() {
             <div className="min-w-0"><p className="text-3xl font-semibold tabular-nums">{stats.data?.devices ?? "—"}</p><p className="text-sm text-muted-foreground">Devices with push on</p></div>
           </div>
         </section>
-        <div className="hidden">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-base">
-              <Users className="h-4 w-4" /> Reach
-            </CardTitle>
-            <CardDescription>Registered devices and app users right now.</CardDescription>
-          </CardHeader>
-          <CardContent className="flex gap-6">
-            <div>
-              <p className="text-2xl font-semibold">{stats.data?.devices ?? "—"}</p>
-              <p className="text-xs text-muted-foreground">Devices with push on</p>
-            </div>
-            <div>
-              <p className="text-2xl font-semibold">{stats.data?.users ?? "—"}</p>
-              <p className="text-xs text-muted-foreground">App users</p>
-            </div>
-          </CardContent>
-        </Card>
-        </div>
-
         <section className="min-w-0" aria-label="Registered users">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
