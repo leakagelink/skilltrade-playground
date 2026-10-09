@@ -16,6 +16,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { reportNonFatal, trackEvent } from "@/lib/analytics";
 import { Toaster } from "@/components/ui/sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { ActivityTracker } from "@/components/ActivityTracker";
 
 function NotFoundComponent() {
   return (
@@ -215,6 +216,7 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <ActivityTracker />
       <Outlet />
       <Toaster position="top-center" richColors />
     </QueryClientProvider>
