@@ -1134,6 +1134,38 @@ export type Database = {
           },
         ]
       }
+      user_activity_days: {
+        Row: {
+          activity_date: string
+          first_seen_at: string
+          last_seen_at: string
+          platform: string
+          user_id: string
+        }
+        Insert: {
+          activity_date?: string
+          first_seen_at?: string
+          last_seen_at?: string
+          platform: string
+          user_id: string
+        }
+        Update: {
+          activity_date?: string
+          first_seen_at?: string
+          last_seen_at?: string
+          platform?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_activity_days_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_ad_activity: {
         Row: {
           activity_date: string
@@ -1353,6 +1385,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_admin_activity_report: { Args: { _period?: string }; Returns: Json }
       get_leaderboard: {
         Args: { _limit?: number; _period?: string }
         Returns: {
@@ -1397,6 +1430,7 @@ export type Database = {
         Returns: boolean
       }
       normalize_mobile: { Args: { _m: string }; Returns: string }
+      record_user_activity: { Args: { _platform: string }; Returns: undefined }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
