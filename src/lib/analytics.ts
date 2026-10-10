@@ -149,7 +149,7 @@ async function mirrorToMeta(name: AnalyticsEvent, params?: AnalyticsParams): Pro
     const str = (v: unknown) => (typeof v === "string" ? v : undefined);
     const market = str(params?.asset_type)?.toLowerCase();
     switch (name) {
-      case "app_open": return m.logAppOpen();
+      // app_open is measured natively by AppEventsLogger.activateApp (no JS duplicate).
       case "sign_up_completed": return m.logCompleteRegistration();
       case "login_completed": return m.logLogin();
       case "trade_opened": return m.logTradeOpened(market);
