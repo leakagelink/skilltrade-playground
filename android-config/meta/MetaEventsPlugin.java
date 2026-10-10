@@ -15,11 +15,26 @@ import java.util.Iterator;
 public class MetaEventsPlugin extends Plugin {
     private AppEventsLogger logger;
 
+    /**
+     * The SDK auto-initialises via its ContentProvider (from manifest meta-data).
+     * Because AutoLogAppEventsEnabled=false, we activate the app ONCE here so Meta
+     * still receives install/activation events needed for ads attribution.
+     */
+    @Override
+    public void load() {
+        try {
+            android.app.Application app = (android.app.Application) getContext().getApplicationContext();
+            if (!FacebookSdk.isInitialized()) FacebookSdk.sdkInitialize(app);
+            FacebookSdk.setAutoLogAppEventsEnabled(false);
+            FacebookSdk.setAdvertiserIDCollectionEnabled(true);
+            AppEventsLogger.activateApp(app);
+        } catch (Throwable ignored) {
+            // Meta must never crash TradeVirt.
+        }
+    }
+
     private AppEventsLogger logger() {
         if (logger == null) {
-            if (!FacebookSdk.isInitialized()) {
-                FacebookSdk.sdkInitialize(getContext().getApplicationContext());
-            }
             logger = AppEventsLogger.newLogger(getContext().getApplicationContext());
         }
         return logger;
