@@ -1,6 +1,8 @@
 # Roadmap
 
-- [ ] Add admin signup/activity reports by day, week, month and year, with user/country breakdowns and honest install/download availability.
+- [x] Add admin signup/activity reports by day, week, month and year, with user/country breakdowns and honest install/download availability.
+- [ ] Connect verified download/install reporting — requires Google Play/App Store or Firebase reporting access.
+- [ ] Verify admin activity reports while signed in — preview session unavailable; requesting user's account could not be minted.
 
 - [x] Optimize admin panel for desktop and mobile without changing other app screens.
 
