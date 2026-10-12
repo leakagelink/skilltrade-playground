@@ -189,6 +189,7 @@ export const startRewardedAd = createServerFn({ method: "POST" })
     return { placement: data.placement };
   })
   .handler(async ({ data, context }) => {
+    if (await isAdFree(context.userId)) throw new AdError("Ads are turned off on your plan.");
     const db = await admin();
     const a = await todayActivity(db, context.userId);
     if (
