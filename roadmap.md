@@ -33,3 +33,9 @@
 - Practice Center (Profile → Practice Center): Trade Journal, Weekly Practice Summary, Milestones, Practice Streak, Practice Insights, Decision Check toggle, Market Replay (marked unavailable — no verified historical data, no fake replay).
 - Optional "Check Your Trade Plan" before BUY/SELL (off by default, never blocks).
 - New private `trade_journals` table (owner-only RLS); journal text never sent to analytics.
+
+## Subscriptions (Google Play)
+- [x] Plans screen, server verification, ad-free enforcement for Pro/Elite
+- [ ] Google Play service account secret (GOOGLE_PLAY_SERVICE_ACCOUNT_JSON) — waiting on user
+- [ ] Create products in Play Console — waiting on user
+- [ ] Reconnect Firebase Cloud Messaging in new workspace
