@@ -5,6 +5,9 @@ import { BottomNav } from "@/components/BottomNav";
 import { showBannerAd, hideBannerAd, subscribeBannerHeight } from "@/lib/ads/admob-bridge";
 import { isEnabled } from "@/lib/feature-flags";
 import { PushSetup } from "@/components/PushSetup";
+import { useQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import { getEntitlement } from "@/lib/billing.functions";
 
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
@@ -32,8 +35,14 @@ function AuthedLayout() {
   const { pathname } = useLocation();
   const hideNav = HIDE_NAV.some((p) => pathname.startsWith(p));
   const isAdminPage = pathname === "/admin";
+  const loadEntitlement = useServerFn(getEntitlement);
+  const entitlement = useQuery({ queryKey: ["entitlement"], queryFn: () => loadEntitlement(), staleTime: 5 * 60_000, retry: 1 });
+  // Wait for the entitlement before showing banners; on error fall back to free rules.
+  const adFree = entitlement.data?.features.adFree === true;
   const bannerAllowed =
-    isEnabled("bannerAds") && !hideNav && BANNER_ROUTES.some((p) => pathname === p || pathname.startsWith(`${p}/`));
+    isEnabled("bannerAds") &&
+    !entitlement.isPending &&
+    !adFree && !hideNav && BANNER_ROUTES.some((p) => pathname === p || pathname.startsWith(`${p}/`));
   const [bannerHeight, setBannerHeight] = useState(0);
 
   // Track the native banner's height so content and the nav bar shift up
