@@ -96,6 +96,7 @@ patch("android/app/src/main/AndroidManifest.xml", (s) => {
     "android.permission.INTERNET",
     "com.google.android.gms.permission.AD_ID",
     "android.permission.POST_NOTIFICATIONS",
+    "com.android.vending.BILLING",
   ]) {
     if (!out.includes(perm)) {
       out = out.replace(
