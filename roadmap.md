@@ -38,4 +38,4 @@
 - [x] Plans screen, server verification, ad-free enforcement for Pro/Elite
 - [ ] Google Play service account secret (GOOGLE_PLAY_SERVICE_ACCOUNT_JSON) — waiting on user
 - [ ] Create products in Play Console — waiting on user
-- [ ] Reconnect Firebase Cloud Messaging in new workspace
+- [x] Reconnect Firebase Cloud Messaging in new workspace
