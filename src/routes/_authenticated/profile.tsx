@@ -15,6 +15,7 @@ import { getCareerStatus } from "@/lib/career.functions";
 import { getMySocialSummary } from "@/lib/social.functions";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { PlansLink } from "@/components/PlansLink";
 
 export const Route = createFileRoute("/_authenticated/profile")({
   head: () => ({
@@ -82,6 +83,9 @@ function ProfilePage() {
         <CareerCard />
 
         <TraderCardCard />
+
+        <PlansLink />
+
 
 
         <Link to="/practice" className="bento-tile flex items-center gap-3 p-4" aria-label="Open Practice Center">

@@ -142,13 +142,6 @@ function SettingsPage() {
           </div>
         </section>
 
-        <Link to="/subscription" className="surface-card flex items-center gap-3 p-4 active:bg-elevated">
-          <div className="flex-1">
-            <p className="text-sm font-medium">Plans &amp; subscription</p>
-            <p className="text-xs text-muted-foreground">Basic, Pro and Elite. Pro and Elite are ad-free.</p>
-          </div>
-          <ChevronRight className="size-4 text-muted-foreground" />
-        </Link>
 
         <LearningModeCard />
 
