@@ -8,6 +8,7 @@ import { AppHeader } from "@/components/AppHeader";
 import { Button } from "@/components/ui/button";
 import { getEntitlement, restorePurchases, verifyPurchase } from "@/lib/billing.functions";
 import { PLANS, type BasePlanId } from "@/lib/billing/plans";
+import { entitlementKey } from "@/lib/billing/entitlement-cache";
 import { billingAvailable, currentPurchases, loadOffers, openManage, purchase, type StoreOffer } from "@/lib/billing/native-billing";
 
 export const Route = createFileRoute("/_authenticated/subscription")({
@@ -29,7 +30,8 @@ function SubscriptionPage() {
   const loadEnt = useServerFn(getEntitlement);
   const verify = useServerFn(verifyPurchase);
   const restore = useServerFn(restorePurchases);
-  const ent = useQuery({ queryKey: ["entitlement"], queryFn: () => loadEnt() });
+  const { user } = Route.useRouteContext();
+  const ent = useQuery({ queryKey: entitlementKey(user?.id), queryFn: () => loadEnt(), enabled: !!user?.id });
   const [period, setPeriod] = useState<BasePlanId>("monthly");
   const [native, setNative] = useState<boolean | null>(null);
   const [offers, setOffers] = useState<StoreOffer[]>([]);

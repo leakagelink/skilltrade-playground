@@ -8,6 +8,7 @@ import { PushSetup } from "@/components/PushSetup";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getEntitlement } from "@/lib/billing.functions";
+import { entitlementKey, resolveAdFree } from "@/lib/billing/entitlement-cache";
 
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
@@ -33,12 +34,20 @@ const BANNER_ROUTES = ["/home", "/profile", "/leaderboard", "/challenges"];
 
 function AuthedLayout() {
   const { pathname } = useLocation();
+  const { user } = Route.useRouteContext();
+  const userId = user?.id ?? null;
   const hideNav = HIDE_NAV.some((p) => pathname.startsWith(p));
   const isAdminPage = pathname === "/admin";
   const loadEntitlement = useServerFn(getEntitlement);
-  const entitlement = useQuery({ queryKey: ["entitlement"], queryFn: () => loadEntitlement(), staleTime: 5 * 60_000, retry: 1 });
-  // Wait for the entitlement before showing banners; on error fall back to free rules.
-  const adFree = entitlement.data?.features.adFree === true;
+  const entitlement = useQuery({
+    queryKey: entitlementKey(userId),
+    queryFn: () => loadEntitlement(),
+    enabled: !!userId,
+    staleTime: 5 * 60_000,
+    retry: 1,
+  });
+  // Ad-free only after this user's entitlement is verified by the server; loading/errors → free rules.
+  const adFree = resolveAdFree(entitlement, userId);
   const bannerAllowed =
     isEnabled("bannerAds") &&
     !entitlement.isPending &&

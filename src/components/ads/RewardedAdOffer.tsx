@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
+import { useRouteContext } from "@tanstack/react-router";
+import { adStatusKey } from "@/lib/billing/entitlement-cache";
 import { Button } from "@/components/ui/button";
 import { completeRewardedAd, getAdStatus, startRewardedAd } from "@/lib/ads.functions";
 import {
@@ -15,7 +17,9 @@ import { adsAvailable, preloadRewarded, showRewardedAd } from "@/lib/ads/admob-b
 
 export function useAdStatus() {
   const load = useServerFn(getAdStatus);
-  return useQuery({ queryKey: ["ad-status"], queryFn: () => load(), staleTime: 30_000 });
+  const ctx = useRouteContext({ strict: false }) as { user?: { id?: string } };
+  const userId = ctx.user?.id;
+  return useQuery({ queryKey: adStatusKey(userId), queryFn: () => load(), enabled: !!userId, staleTime: 30_000 });
 }
 
 /**
