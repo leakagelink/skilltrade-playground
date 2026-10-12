@@ -247,8 +247,41 @@ function AuthPage() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="su-mobile">Mobile number</Label>
-                <Input id="su-mobile" type="tel" inputMode="tel" value={mobile} maxLength={20} placeholder="+91 98765 43210" required onChange={(e) => setMobile(e.target.value)} className="h-12 rounded-xl bg-elevated/40" />
-                <p className="text-[11px] text-muted-foreground">Used only so you can log in with your mobile number. Kept private — never shown to other users or used for marketing. Not verified by SMS.</p>
+                <div className="flex gap-2">
+                  <select
+                    aria-label="Country code"
+                    value={countryCode}
+                    onChange={(e) => setCountryCode(e.target.value)}
+                    className="h-12 w-24 shrink-0 rounded-xl border border-input bg-elevated/40 px-2 text-sm"
+                  >
+                    <option value="+91">🇮🇳 +91</option>
+                    <option value="+1">🇺🇸 +1</option>
+                    <option value="+44">🇬🇧 +44</option>
+                    <option value="+971">🇦🇪 +971</option>
+                    <option value="+65">🇸🇬 +65</option>
+                    <option value="+61">🇦🇺 +61</option>
+                    <option value="+49">🇩🇪 +49</option>
+                    <option value="+33">🇫🇷 +33</option>
+                    <option value="+81">🇯🇵 +81</option>
+                    <option value="+86">🇨🇳 +86</option>
+                    <option value="+880">🇧🇩 +880</option>
+                    <option value="+92">🇵🇰 +92</option>
+                    <option value="+94">🇱🇰 +94</option>
+                    <option value="+977">🇳🇵 +977</option>
+                  </select>
+                  <Input
+                    id="su-mobile"
+                    type="tel"
+                    inputMode="numeric"
+                    value={mobile}
+                    maxLength={10}
+                    placeholder="98765 43210"
+                    required
+                    onChange={(e) => setMobile(e.target.value.replace(/\D/g, "").slice(0, 10))}
+                    className="h-12 rounded-xl bg-elevated/40"
+                  />
+                </div>
+                <p className="text-[11px] text-muted-foreground">Enter your 10-digit mobile number. Used only so you can log in with it. Kept private — never shown to other users or used for marketing. Not verified by SMS.</p>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="su-email">Email</Label>
