@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { dehydrate, hydrate, type QueryClient } from "@tanstack/react-query";
+import { clearBillingCache, isBillingQueryKey } from "@/lib/billing/entitlement-cache";
 
 const CACHE_KEY = "tradevirt-query-cache-v1";
 const MAX_AGE = 24 * 60 * 60 * 1000;
@@ -19,6 +20,7 @@ export function useQueryCachePersistence(queryClient: QueryClient) {
         const parsed = JSON.parse(raw) as { at: number; state: unknown };
         if (parsed && Date.now() - parsed.at < MAX_AGE) {
           hydrate(queryClient, parsed.state);
+          clearBillingCache(queryClient); // drop any billing entries saved by older versions
         } else {
           window.localStorage.removeItem(CACHE_KEY);
         }
@@ -35,7 +37,9 @@ export function useQueryCachePersistence(queryClient: QueryClient) {
         timer = undefined;
         try {
           const state = dehydrate(queryClient, {
+            // Subscription/ad status is never stored on the device.
             shouldDehydrateQuery: (query) =>
+              !isBillingQueryKey(query.queryKey) &&
               query.state.status === "success" && query.state.data !== undefined,
           });
           window.localStorage.setItem(CACHE_KEY, JSON.stringify({ at: Date.now(), state }));

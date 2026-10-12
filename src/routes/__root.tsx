@@ -1,6 +1,7 @@
 import type { ErrorComponentProps } from "@tanstack/react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useQueryCachePersistence } from "@/lib/query-persist";
+import { clearBillingCache } from "@/lib/billing/entitlement-cache";
 import {
   Outlet,
   Link,
@@ -205,8 +206,14 @@ function RootComponent() {
   }, [router]);
 
   useEffect(() => {
-    const { data } = supabase.auth.onAuthStateChange((event) => {
+    let lastUserId: string | null | undefined;
+    const { data } = supabase.auth.onAuthStateChange((event, session) => {
+      const uid = session?.user?.id ?? null;
+      // Any identity change drops subscription/ad caches before anything re-renders.
+      if (lastUserId !== undefined && lastUserId !== uid) clearBillingCache(queryClient);
+      lastUserId = uid;
       if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return;
+      clearBillingCache(queryClient);
       router.invalidate();
       if (event !== "SIGNED_OUT") queryClient.invalidateQueries();
     });
