@@ -17,3 +17,4 @@
 - Admin-only actions (e.g. push broadcasts) check the server-side has_role(auth.uid(), 'admin') security-definer function against the user_roles table; never trust client flags.
 - Only the admin route uses a full-width authenticated shell and hides bottom navigation on desktop; all other screens retain their mobile app layout.
 - Admin activity reports use server-timestamped, owner-bound foreground days in Asia/Kolkata with profile-cascade deletion; database aggregation checks has_role and never labels signup or device-token counts as installs/downloads.
+- Subscription entitlements live only in `play_subscriptions` (no client policies), written solely by server functions after Google Play Developer API verification; ad-free status is enforced server-side in every ad gate so clients cannot self-grant.
