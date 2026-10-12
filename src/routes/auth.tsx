@@ -166,11 +166,12 @@ function AuthPage() {
       toast.error("Username can only contain letters, numbers and underscores.");
       return;
     }
-    const m = mobile.trim();
-    if (!/^\+?[0-9 ]{10,20}$/.test(m)) {
-      toast.error("Enter a valid mobile number with country code, e.g. +91 98765 43210.");
+    const digits = mobile.replace(/\D/g, "");
+    if (digits.length !== 10) {
+      toast.error("Enter your 10-digit mobile number.");
       return;
     }
+    const m = `${countryCode}${digits}`;
     // Onboarding owns the user_personalization row (it only exists once the
     // account session does), so hand the optional details over through
     // sessionStorage and let onboarding prefill and save them.
