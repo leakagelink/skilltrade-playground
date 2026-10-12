@@ -50,6 +50,7 @@ function AuthPage() {
   const [username, setUsername] = useState("");
   const [fullName, setFullName] = useState("");
   const [mobile, setMobile] = useState("");
+  const [countryCode, setCountryCode] = useState("+91");
   const [loginId, setLoginId] = useState("");
   const mobileLogin = useServerFn(signInWithMobile);
   const [sent, setSent] = useState(false);
