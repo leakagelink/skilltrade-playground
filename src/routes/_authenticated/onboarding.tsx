@@ -13,6 +13,7 @@ import {
   GOALS,
   MARKETS,
   MODES,
+  usePersonalization,
   useSavePersonalization,
   type CapitalRange,
   type LearningGoal,
@@ -20,6 +21,7 @@ import {
   type Market,
 } from "@/lib/personalization";
 import { trackEvent } from "@/lib/analytics";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated/onboarding")({
   validateSearch: (s: Record<string, unknown>): { personalize?: boolean } =>
@@ -75,6 +77,7 @@ function Onboarding() {
   const [capital, setCapital] = useState<CapitalRange | null>(null);
   const saveProfile = useServerFn(updateProfileSettings);
   const savePers = useSavePersonalization();
+  const { data: existing } = usePersonalization();
 
   // Prefill details the user already typed on the sign-up form and clear the
   // handoff so they are only saved once, here.
@@ -88,9 +91,21 @@ function Onboarding() {
         sessionStorage.removeItem("tv-signup-personal");
       }
     } catch {
-      // Storage unavailable — the onboarding fields simply stay empty.
+      // Storage unavailable — fall back to saved details below.
     }
+    // Fallback when the email link opened a new tab: use the details saved
+    // with the account itself, so nothing typed at sign-up is lost.
+    void supabase.auth.getUser().then(({ data }) => {
+      const meta = (data.user?.user_metadata ?? {}) as { mobile?: string; full_name?: string };
+      if (meta.mobile) setMobile((cur) => cur || meta.mobile!);
+      if (meta.full_name) setFullName((cur) => cur || meta.full_name!);
+    });
   }, []);
+
+  useEffect(() => {
+    if (existing?.full_name) setFullName((cur) => cur || existing.full_name!);
+    if (existing?.mobile) setMobile((cur) => cur || existing.mobile!);
+  }, [existing]);
 
   const key = steps[i]!;
   const isLast = i === steps.length - 1;
@@ -114,9 +129,11 @@ function Onboarding() {
     }
     setSaving(true);
     try {
+      // Only send name/mobile when filled in: an empty field must never wipe a
+      // number saved at sign-up (it is used for mobile login).
       await savePers.mutateAsync({
-        full_name: fullName.trim() || null,
-        mobile: mobile.trim() || null,
+        ...(fullName.trim() ? { full_name: fullName.trim() } : {}),
+        ...(mobile.trim() ? { mobile: mobile.trim() } : {}),
         experience_level: experience,
         active_learning_mode: mode ?? experience,
         learning_goal: goal,
