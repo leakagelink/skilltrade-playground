@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { PlansLink } from "@/components/PlansLink";
 import { useEffect, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -106,6 +107,8 @@ function AgentPage() {
           onGranted={() => void qc.invalidateQueries({ queryKey: ["agent-status"] })}
         />
       )}
+      <PlansLink compact />
+
 
       <section className="space-y-2.5">
         {messages.length === 0 && (
