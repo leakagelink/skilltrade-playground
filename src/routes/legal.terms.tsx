@@ -14,7 +14,7 @@ export const Route = createFileRoute("/legal/terms")({
   component: () => (
     <LegalPage
       title="Terms of Service"
-      updated="Version 1.5 — September 30, 2026"
+      updated="Version 1.6 — October 12, 2026"
       sections={[
         {
           heading: "0. Who operates TradeVirt",
@@ -23,6 +23,10 @@ export const Route = createFileRoute("/legal/terms")({
         {
           heading: "1. Nature of the service",
           body: "TradeVirt is a simulated paper trading and educational skill-development application. It is not a broker, exchange, investment adviser, or financial transaction service. All trading is simulated. No real-money trading, deposits or withdrawals are available.",
+        },
+        {
+          heading: "1A. Subscriptions (Google Play)",
+          body: "TradeVirt offers optional Basic, Pro and Elite subscriptions, each billed monthly or yearly, purchased only through Google Play in the Android app. The price, currency and any taxes are shown by Google Play before you confirm. Subscriptions renew automatically at the end of each billing period at the then-current price unless you cancel at least 24 hours before renewal in Google Play → Payments & subscriptions → Subscriptions, or from Manage subscription in the app. After cancelling, your plan stays active until the end of the period already paid for; uninstalling the app or deleting your account does not cancel a Google Play subscription. Pro and Elite remove in-app ads; Basic keeps ads. Benefits are granted only after Google Play confirms the purchase, and pending payments do not unlock benefits until confirmed. Refunds are handled by Google Play under its refund policy (support.google.com/googleplay); refunded, revoked or charged-back subscriptions end immediately. Use Restore purchases to reconnect an existing subscription to your account. Subscriptions do not add virtual balance or Trading Credits, have no cash value, and do not enable real-money trading.",
         },
         {
           heading: "2. Virtual balance and credits",

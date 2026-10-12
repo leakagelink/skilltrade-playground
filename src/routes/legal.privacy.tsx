@@ -16,7 +16,7 @@ export const Route = createFileRoute("/legal/privacy")({
   component: () => (
     <LegalPage
       title="Privacy Policy"
-      updated="Version 1.7 — October 9, 2026"
+      updated="Version 1.8 — October 12, 2026"
       sections={[
         {
           heading: "Who operates TradeVirt",
@@ -45,6 +45,10 @@ export const Route = createFileRoute("/legal/privacy")({
         {
           heading: "Advertising",
           body: "TradeVirt shows advertisements supplied by Google AdMob (Google Mobile Ads SDK) in the Android app: optional rewarded video ads that you choose to watch, occasional full-screen interstitial ads at natural break points, and small banner ads in a reserved space at the bottom of a few main browsing screens (Home, Profile, Leaderboard and Goals). Banner ads never cover content, charts or buttons and are never shown during sign-in, onboarding, order placement, trading charts, settings, legal pages or account deletion. Google may collect and process device and advertising identifiers to serve and measure ads, as described in Google's Privacy Policy (policies.google.com/privacy) and Google's advertising policies. Where required, a Google-provided consent form (UMP) is displayed before personalised ads are served, and you can reset or delete your advertising ID in Android settings. Rewards from ads are virtual only (an extra AI analysis, bonus XP, or a once-a-day bonus of virtual Trading Credits that doubles the daily reward) and have no monetary value. Rewarded ads can also unlock the AI Coach Agent for a limited time. We limit ads to a maximum of 8 rewarded and 3 interstitial ads per day. TradeVirt itself does not read or store your advertising ID and does not request device location permission or use GPS; any approximate location Google may infer (for example from IP address) is handled by the Google Mobile Ads SDK under Google's policies.",
+        },
+        {
+          heading: "Subscriptions and purchase data",
+          body: "Optional TradeVirt subscriptions (Basic, Pro and Elite) are sold only through Google Play Billing in the Android app. Google processes your payment; TradeVirt never receives or stores your card, bank or other payment details. When you subscribe or restore purchases, the app sends the Google Play purchase token to our server, which confirms it directly with the Google Play Developer API before any benefit is granted. We store, linked to your account: the plan, billing period, subscription status, start and expiry dates, auto-renewal status, the Google order ID, the purchase token and a one-way hash of it. Google Play also notifies our server when a subscription renews, is cancelled, paused, expires, is refunded or revoked, and our server then re-checks the subscription with Google. An opaque, one-way identifier derived from your account is attached to purchases so a subscription cannot be used by another account. This data is used only to provide and verify your subscription, prevent fraud and handle support, is not used for advertising and is never sold. It is deleted with your account; Google keeps its own purchase records under Google's Privacy Policy.",
         },
         {
           heading: "Analytics and crash reporting",
