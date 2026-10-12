@@ -50,7 +50,10 @@ function SubscriptionPage() {
     setBusy(productId);
     try {
       const token = await purchase(productId, period, ent.data.accountId, offer.offerToken);
-      if (!token) return toast.message("Purchase cancelled.");
+      if (!token) {
+        toast.message("Purchase cancelled.");
+        return;
+      }
       const r = await verify({ data: { productId, purchaseToken: token } });
       if (r.pending) toast.message("Payment is pending. Your plan will activate once Google Play confirms it.");
       else toast.success("Subscription active. Thank you!");
@@ -66,7 +69,10 @@ function SubscriptionPage() {
     setBusy("restore");
     try {
       const purchases = await currentPurchases();
-      if (!purchases.length) return toast.message("No subscriptions found on this Google account.");
+      if (!purchases.length) {
+        toast.message("No subscriptions found on this Google account.");
+        return;
+      }
       const r = await restore({ data: { purchases } });
       toast[r.restored ? "success" : "message"](r.restored ? "Subscription restored." : "No active subscription could be confirmed.");
       await refresh();

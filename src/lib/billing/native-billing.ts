@@ -16,7 +16,7 @@ async function load(): Promise<Mod | null> {
   }
 }
 
-export type StoreOffer = { productId: string; basePlanId: string; price: string; offerToken?: string };
+export type StoreOffer = { productId: string; basePlanId: string; price: string; offerToken?: string | undefined };
 
 export async function billingAvailable(): Promise<boolean> {
   return (await load()) !== null;
@@ -45,7 +45,7 @@ export async function purchase(productId: string, basePlanId: BasePlanId, accoun
     const tx = await mod.NativePurchases.purchaseProduct({
       productIdentifier: productId,
       planIdentifier: basePlanId,
-      offerToken,
+      ...(offerToken ? { offerToken } : {}),
       productType: mod.PURCHASE_TYPE.SUBS,
       appAccountToken: accountId,
       // The server acknowledges only after verifying with Google.
