@@ -800,6 +800,68 @@ export type Database = {
         }
         Relationships: []
       }
+      play_subscriptions: {
+        Row: {
+          acknowledged: boolean
+          auto_renewing: boolean | null
+          base_plan_id: string | null
+          created_at: string
+          expires_at: string | null
+          id: string
+          last_verified_at: string
+          latest_order_id: string | null
+          product_id: string
+          purchase_token: string
+          purchase_token_hash: string
+          started_at: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          acknowledged?: boolean
+          auto_renewing?: boolean | null
+          base_plan_id?: string | null
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          last_verified_at?: string
+          latest_order_id?: string | null
+          product_id: string
+          purchase_token: string
+          purchase_token_hash: string
+          started_at?: string | null
+          status: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          acknowledged?: boolean
+          auto_renewing?: boolean | null
+          base_plan_id?: string | null
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          last_verified_at?: string
+          latest_order_id?: string | null
+          product_id?: string
+          purchase_token?: string
+          purchase_token_hash?: string
+          started_at?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "play_subscriptions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null

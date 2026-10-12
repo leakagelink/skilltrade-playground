@@ -9,6 +9,7 @@ import {
   type InterstitialPlacement,
   type RewardedPlacement,
 } from "./ads/config";
+import { isAdFree } from "./billing.functions";
 
 /**
  * Version 2.0 — server-authoritative advertising limits and rewards.
@@ -156,8 +157,10 @@ export const getAdStatus = createServerFn({ method: "GET" })
   .handler(async ({ context }) => {
     const db = await admin();
     const a = await todayActivity(db, context.userId);
+    const adFree = await isAdFree(context.userId);
     return {
-      adsEnabled: AD_FLAGS.ADS_ENABLED,
+      adFree,
+      adsEnabled: AD_FLAGS.ADS_ENABLED && !adFree,
       rewardedEnabled: AD_FLAGS.REWARDED_ADS_ENABLED,
       interstitialEnabled: AD_FLAGS.INTERSTITIAL_ADS_ENABLED,
       rewardedCompletedToday: a.rewarded_ads_completed,
@@ -186,6 +189,7 @@ export const startRewardedAd = createServerFn({ method: "POST" })
     return { placement: data.placement };
   })
   .handler(async ({ data, context }) => {
+    if (await isAdFree(context.userId)) throw new AdError("Ads are turned off on your plan.");
     const db = await admin();
     const a = await todayActivity(db, context.userId);
     if (
@@ -324,6 +328,7 @@ export const requestInterstitial = createServerFn({ method: "POST" })
   })
   .handler(async ({ data, context }) => {
     if (!AD_FLAGS.ADS_ENABLED || !AD_FLAGS.INTERSTITIAL_ADS_ENABLED) return { allowed: false, token: null };
+    if (await isAdFree(context.userId)) return { allowed: false, token: null };
 
     const db = await admin();
     const a = await todayActivity(db, context.userId);

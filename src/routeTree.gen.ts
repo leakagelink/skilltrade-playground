@@ -25,6 +25,7 @@ import { Route as AuthenticatedPracticeRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedStrategyLabRouteImport } from './routes/_authenticated/strategy-lab'
+import { Route as AuthenticatedSubscriptionRouteImport } from './routes/_authenticated/subscription'
 import { Route as AuthenticatedTradeRouteImport } from './routes/_authenticated/trade'
 import { Route as LegalDisclaimerRouteImport } from './routes/legal.disclaimer'
 import { Route as LegalPrivacyRouteImport } from './routes/legal.privacy'
@@ -120,6 +121,12 @@ const AuthenticatedStrategyLabRoute =
   AuthenticatedStrategyLabRouteImport.update({
     id: '/strategy-lab',
     path: '/strategy-lab',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedSubscriptionRoute =
+  AuthenticatedSubscriptionRouteImport.update({
+    id: '/subscription',
+    path: '/subscription',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedTradeRoute = AuthenticatedTradeRouteImport.update({
@@ -222,6 +229,7 @@ export interface FileRoutesByFullPath {
   '/profile': typeof AuthenticatedProfileRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/strategy-lab': typeof AuthenticatedStrategyLabRoute
+  '/subscription': typeof AuthenticatedSubscriptionRoute
   '/trade': typeof AuthenticatedTradeRoute
   '/legal/disclaimer': typeof LegalDisclaimerRoute
   '/legal/privacy': typeof LegalPrivacyRoute
@@ -254,6 +262,7 @@ export interface FileRoutesByTo {
   '/profile': typeof AuthenticatedProfileRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/strategy-lab': typeof AuthenticatedStrategyLabRoute
+  '/subscription': typeof AuthenticatedSubscriptionRoute
   '/trade': typeof AuthenticatedTradeRoute
   '/legal/disclaimer': typeof LegalDisclaimerRoute
   '/legal/privacy': typeof LegalPrivacyRoute
@@ -288,6 +297,7 @@ export interface FileRoutesById {
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/strategy-lab': typeof AuthenticatedStrategyLabRoute
+  '/_authenticated/subscription': typeof AuthenticatedSubscriptionRoute
   '/_authenticated/trade': typeof AuthenticatedTradeRoute
   '/legal/disclaimer': typeof LegalDisclaimerRoute
   '/legal/privacy': typeof LegalPrivacyRoute
@@ -322,6 +332,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/settings'
     | '/strategy-lab'
+    | '/subscription'
     | '/trade'
     | '/legal/disclaimer'
     | '/legal/privacy'
@@ -354,6 +365,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/settings'
     | '/strategy-lab'
+    | '/subscription'
     | '/trade'
     | '/legal/disclaimer'
     | '/legal/privacy'
@@ -387,6 +399,7 @@ export interface FileRouteTypes {
     | '/_authenticated/profile'
     | '/_authenticated/settings'
     | '/_authenticated/strategy-lab'
+    | '/_authenticated/subscription'
     | '/_authenticated/trade'
     | '/legal/disclaimer'
     | '/legal/privacy'
@@ -531,6 +544,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedStrategyLabRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/subscription': {
+      id: '/_authenticated/subscription'
+      path: '/subscription'
+      fullPath: '/subscription'
+      preLoaderRoute: typeof AuthenticatedSubscriptionRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/trade': {
       id: '/_authenticated/trade'
       path: '/trade'
@@ -652,6 +672,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedStrategyLabRoute: typeof AuthenticatedStrategyLabRoute
+  AuthenticatedSubscriptionRoute: typeof AuthenticatedSubscriptionRoute
   AuthenticatedTradeRoute: typeof AuthenticatedTradeRoute
   AuthenticatedAiArenaHistoryRoute: typeof AuthenticatedAiArenaHistoryRoute
   AuthenticatedChartSymbolRoute: typeof AuthenticatedChartSymbolRoute
@@ -676,6 +697,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedStrategyLabRoute: AuthenticatedStrategyLabRoute,
+  AuthenticatedSubscriptionRoute: AuthenticatedSubscriptionRoute,
   AuthenticatedTradeRoute: AuthenticatedTradeRoute,
   AuthenticatedAiArenaHistoryRoute: AuthenticatedAiArenaHistoryRoute,
   AuthenticatedChartSymbolRoute: AuthenticatedChartSymbolRoute,

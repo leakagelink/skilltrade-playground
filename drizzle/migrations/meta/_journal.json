@@ -64,6 +64,13 @@
       "when": 1791517394964,
       "tag": "0008_admin_activity_reports",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1791787742886,
+      "tag": "0009_play_subscriptions",
+      "breakpoints": true
     }
   ]
 }
