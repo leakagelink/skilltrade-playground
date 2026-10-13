@@ -95,6 +95,13 @@ function AdminNotificationsPage() {
 
   const canSend = title.trim().length > 0 && body.trim().length > 0;
 
+  const formatMobile = (m: string | null, code: string | null) => {
+    if (!m) return "—";
+    const digits = m.replace(/^\+/, "");
+    if (code && digits.startsWith(code.slice(1))) return `${code} ${digits.slice(code.length - 1)}`;
+    return m;
+  };
+
   const filteredUsers = (users.data ?? []).filter((u) => {
     const q = userSearch.trim().toLowerCase();
     if (q && ![u.full_name, u.username, u.email, u.mobile].some((v) => v?.toLowerCase().includes(q))) return false;
@@ -236,7 +243,7 @@ function AdminNotificationsPage() {
                   {filteredUsers.map((u) => (
                     <tr key={u.user_id} className="align-top transition-colors hover:bg-muted/30">
                       <td className="max-w-44 break-words px-4 py-4"><p className="font-semibold text-sm">{u.full_name || u.username}</p><p className="mt-1 text-muted-foreground">@{u.username}</p></td>
-                      <td className="max-w-56 break-words px-4 py-4"><p>{u.email || "—"}</p><p className="mt-1 text-muted-foreground">{u.mobile ? `${u.mobile_country_code ?? ""} ${u.mobile_country_code ? u.mobile.replace(/^\+/, "").slice(u.mobile_country_code.length - 1) : u.mobile}`.trim() : "—"}</p></td>
+                      <td className="max-w-56 break-words px-4 py-4"><p>{u.email || "—"}</p><p className="mt-1 text-muted-foreground">{formatMobile(u.mobile, u.mobile_country_code)}</p></td>
                       <td className="max-w-40 break-words px-4 py-4">{u.country || <span className="text-muted-foreground">Not provided</span>}</td>
                       <td className="max-w-44 break-words px-4 py-4"><p className="capitalize">{u.experience_level || "—"}</p><p className="mt-1 text-muted-foreground">{u.learning_goal || "—"}</p></td>
                       <td className="max-w-40 break-words px-4 py-4">{u.preferred_markets?.length ? u.preferred_markets.join(", ") : "—"}</td>
