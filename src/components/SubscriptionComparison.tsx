@@ -1,4 +1,4 @@
-import { Check, X } from "lucide-react";
+import { BarChart3, BookOpen, Check, FlaskConical, Trophy, X } from "lucide-react";
 
 export function SubscriptionComparison() {
   return (
@@ -13,6 +13,16 @@ export function SubscriptionComparison() {
           <tr className="border-b"><th className="py-3 pr-2 font-normal">Paid support</th>{["None", "Basic", "Higher", "Highest"].map(t => <td key={t} className="py-3 text-center text-[10px]">{t}</td>)}</tr>
         </tbody>
       </table>
+      <div className="space-y-4 pt-2">
+        <h3 className="text-sm tracking-normal">Your shared practice toolkit</h3>
+        {[
+          { Icon: BookOpen, name: "Trade Journal & Practice Center", text: "Record your trade reasoning, review weekly summaries and track practice streaks and milestones." },
+          { Icon: FlaskConical, name: "Strategy Lab", text: "Write your entry, exit and risk rules and review simulated trades linked to your strategies." },
+          { Icon: BarChart3, name: "Performance analytics", text: "Review results over time, risk habits, buy versus sell performance and your best and worst symbols." },
+          { Icon: Trophy, name: "Challenges & progress", text: "Take part in available challenges and work towards XP, levels and milestones through practice." },
+        ].map(({ Icon, name, text }) => <div key={name} className="flex items-start gap-3"><Icon className="mt-1 size-5 shrink-0 text-primary" /><div><p className="text-sm font-semibold">{name}</p><p className="mt-1 text-xs leading-relaxed text-muted-foreground">{text}</p></div></div>)}
+        <p className="text-xs font-medium text-primary">Available on Free, Basic, Pro and Elite.</p>
+      </div>
       <p className="text-xs leading-relaxed text-muted-foreground">Subscriptions do not increase analysis limits, add virtual funds or guarantee trading results. Existing usage limits still apply.</p>
     </section>
   );
