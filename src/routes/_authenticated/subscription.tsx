@@ -122,7 +122,7 @@ function SubscriptionPage() {
               {ent.data.autoRenewing ? "Renews" : "Ends"} on {new Date(ent.data.expiresAt).toLocaleDateString()}
             </p>
           ) : null}</div>
-          {ent.data ? <span className="flex items-center gap-1.5 rounded-full bg-bull/10 px-3 py-1.5 text-xs font-medium text-bull"><Check className="size-3.5" /> {ent.data.adFree ? "Ad-free" : "With ads"}</span> : null}
+          {ent.data ? <span className="flex items-center gap-1.5 rounded-full bg-bull/10 px-3 py-1.5 text-xs font-medium text-bull"><Check className="size-3.5" /> {ent.data.features.adFree ? "Ad-free" : "With ads"}</span> : null}
         </section>
 
         <div className="grid grid-cols-2 gap-1 rounded-xl border bg-muted p-1" role="tablist" aria-label="Billing period">

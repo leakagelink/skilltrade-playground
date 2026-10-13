@@ -4,7 +4,7 @@ import { PLANS } from "@/lib/billing/plans";
 
 type Props = {
   plan: (typeof PLANS)[number];
-  price?: string;
+  price: string | undefined;
   period: "monthly" | "yearly";
   current: boolean;
   disabled: boolean;
