@@ -1,6 +1,7 @@
 # Roadmap
 
-- [ ] Polish subscription plan cards using the supplied reference and correct rounded Google Play price display; preserve purchase and entitlement rules.
+- [x] Polish subscription plan cards using the supplied reference and preserve exact Google Play numeric prices without upward rounding; 22 billing/cache tests passed and isolated cards checked at mobile/desktop widths.
+- [ ] Verify redesigned subscription page signed in and Google Play prices/purchases on Android — requesting user's preview account unavailable; native device required.
 
 - [x] Add admin signup/activity reports by day, week, month and year, with user/country breakdowns and honest install/download availability.
 - [ ] Connect verified download/install reporting — requires Google Play/App Store or Firebase reporting access.
