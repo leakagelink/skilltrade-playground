@@ -1,5 +1,8 @@
 # Roadmap
 
+- [ ] Correct Privacy, Terms, Disclaimer, Support and account-deletion disclosures for Meta, paid subscriptions and additive practice tools; verify legal pages.
+- [ ] Verify Play Console Data Safety and native consent/purchase behavior — requires Play Console declarations and Android device testing.
+
 - [x] Add genuinely distinct paid practice benefits: Basic risk planner, Pro discipline report/CSV and Elite stress lab; preserve Free tools, enforce verified server tiers and update comparison/Terms. Calculation and billing tests passed; signed-in Free locks and mobile/desktop checked.
 - [ ] Verify paid workbench with an actual eligible subscription and real Google Play purchase on Android — current preview account is Free; do not fabricate entitlement.
 
