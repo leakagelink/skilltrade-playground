@@ -20,21 +20,21 @@ export const PLANS: {
     tier: "basic",
     name: "Basic",
     adFree: false,
-    benefits: ["Supports TradeVirt development", "All current app features", "Ads still shown"],
+    benefits: ["Position & risk planner", "Reward-to-risk planning", "All existing Free tools", "Ads still shown"],
   },
   {
     productId: "tradevirt_pro",
     tier: "pro",
     name: "Pro",
     adFree: true,
-    benefits: ["Completely ad-free", "All current app features"],
+    benefits: ["Everything in Basic", "Personal discipline report", "Download report as CSV", "Completely ad-free"],
   },
   {
     productId: "tradevirt_elite",
     tier: "elite",
     name: "Elite",
     adFree: true,
-    benefits: ["Completely ad-free", "All current app features", "Highest support tier"],
+    benefits: ["Everything in Pro", "Losing-streak stress lab", "Compare fixed and resized risk", "Drawdown recovery planning"],
   },
 ];
 
@@ -46,7 +46,12 @@ export function tierForProduct(productId: string): Tier {
 
 /** Central feature-access layer. Only real, working benefits live here. */
 export function featuresForTier(tier: Tier) {
-  return { adFree: tier === "pro" || tier === "elite" };
+  return {
+    adFree: tier === "pro" || tier === "elite",
+    riskPlanner: tier !== "free",
+    disciplineReport: tier === "pro" || tier === "elite",
+    stressLab: tier === "elite",
+  };
 }
 
 /** Google Play states that still grant access. CANCELED keeps access until expiry. */
