@@ -86,24 +86,9 @@ function getPlugin(): Promise<MetaPlugin | null> {
 const lastSent = new Map<string, number>();
 const DEDUPE_MS = 2000;
 
-async function send(key: MetaEventKey, params?: MetaParams): Promise<void> {
+async function send(_key: MetaEventKey, _params?: MetaParams): Promise<void> {
   // Google UMP is not consent for Meta. Fail closed; keep callers compatible.
   return;
-  /* Collection intentionally disabled pending a Meta-specific consent flow.
-  try {
-    if (!isNativeAndroid()) return;
-    const clean = sanitise(params);
-    const sig = key + JSON.stringify(clean);
-    const now = Date.now();
-    if (now - (lastSent.get(sig) ?? 0) < DEDUPE_MS) return;
-    lastSent.set(sig, now);
-    const plugin = await getPlugin();
-    if (!plugin) return;
-    await plugin.logEvent({ name: EVENTS[key], params: clean });
-  } catch {
-    // Meta must never affect the app
-  }
-  */
 }
 
 let appOpenSent = false;
