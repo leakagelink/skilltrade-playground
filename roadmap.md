@@ -39,3 +39,6 @@
 - [ ] Google Play service account secret (GOOGLE_PLAY_SERVICE_ACCOUNT_JSON) — waiting on user
 - [ ] Create products in Play Console — waiting on user
 - [x] Reconnect Firebase Cloud Messaging in new workspace
+
+## Pending
+- [ ] Admin panel: AdMob revenue (daily/yesterday/weekly/monthly/last month) — blocked: needs AdMob Reporting API OAuth from user's Google/AdMob account (service accounts not supported by AdMob API).
