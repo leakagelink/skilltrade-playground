@@ -95,6 +95,13 @@ function AdminNotificationsPage() {
 
   const canSend = title.trim().length > 0 && body.trim().length > 0;
 
+  const formatMobile = (m: string | null, code: string | null) => {
+    if (!m) return "—";
+    const digits = m.replace(/^\+/, "");
+    if (code && digits.startsWith(code.slice(1))) return `${code} ${digits.slice(code.length - 1)}`;
+    return m;
+  };
+
   const filteredUsers = (users.data ?? []).filter((u) => {
     const q = userSearch.trim().toLowerCase();
     if (q && ![u.full_name, u.username, u.email, u.mobile].some((v) => v?.toLowerCase().includes(q))) return false;
@@ -111,10 +118,10 @@ function AdminNotificationsPage() {
       return;
     }
     const esc = (v: string | number | null | undefined) => `"${String(v ?? "").replace(/"/g, '""')}"`;
-    const header = ["Full Name", "Username", "Email", "Mobile", "Experience Level", "Learning Goal", "Preferred Markets", "Capital Range", "App Level", "XP", "Signup Date"];
+    const header = ["Full Name", "Username", "Email", "Mobile", "Mobile Country Code", "Country (self-reported)", "Experience Level", "Learning Goal", "Preferred Markets", "Capital Range", "App Level", "XP", "Signup Date"];
     const lines = rows.map((u) =>
       [
-        esc(u.full_name), esc(u.username), esc(u.email), esc(u.mobile), esc(u.experience_level),
+        esc(u.full_name), esc(u.username), esc(u.email), esc(u.mobile), esc(u.mobile_country_code), esc(u.country), esc(u.experience_level),
         esc(u.learning_goal), esc(u.preferred_markets?.join(", ")), esc(u.capital_range),
         esc(u.level), esc(u.xp), esc(u.created_at ? new Date(u.created_at).toLocaleString("en-IN") : ""),
       ].join(","),
@@ -228,15 +235,16 @@ function AdminNotificationsPage() {
             {users.isLoading && <Skeleton className="h-24 w-full" />}
             {!users.isLoading && filteredUsers.length === 0 && <p className="text-sm text-muted-foreground">Is filter se koi user nahi mila.</p>}
             <div className="hidden overflow-x-auto rounded-lg border lg:block">
-              <table className="w-full min-w-[900px] text-left text-xs">
+              <table className="w-full min-w-[1000px] text-left text-xs">
                 <thead className="bg-muted/60 text-muted-foreground">
-                  <tr>{["User", "Contact", "Experience / Goal", "Markets", "Capital", "Progress", "Joined"].map((heading) => <th key={heading} scope="col" className="px-4 py-3 font-semibold">{heading}</th>)}</tr>
+                  <tr>{["User", "Contact", "Country", "Experience / Goal", "Markets", "Capital", "Progress", "Joined"].map((heading) => <th key={heading} scope="col" className="px-4 py-3 font-semibold">{heading}</th>)}</tr>
                 </thead>
                 <tbody className="divide-y">
                   {filteredUsers.map((u) => (
                     <tr key={u.user_id} className="align-top transition-colors hover:bg-muted/30">
                       <td className="max-w-44 break-words px-4 py-4"><p className="font-semibold text-sm">{u.full_name || u.username}</p><p className="mt-1 text-muted-foreground">@{u.username}</p></td>
-                      <td className="max-w-56 break-words px-4 py-4"><p>{u.email || "—"}</p><p className="mt-1 text-muted-foreground">{u.mobile || "—"}</p></td>
+                      <td className="max-w-56 break-words px-4 py-4"><p>{u.email || "—"}</p><p className="mt-1 text-muted-foreground">{formatMobile(u.mobile, u.mobile_country_code)}</p></td>
+                      <td className="max-w-40 break-words px-4 py-4">{u.country || <span className="text-muted-foreground">Not provided</span>}</td>
                       <td className="max-w-44 break-words px-4 py-4"><p className="capitalize">{u.experience_level || "—"}</p><p className="mt-1 text-muted-foreground">{u.learning_goal || "—"}</p></td>
                       <td className="max-w-40 break-words px-4 py-4">{u.preferred_markets?.length ? u.preferred_markets.join(", ") : "—"}</td>
                       <td className="px-4 py-4">{u.capital_range || "—"}</td>
@@ -257,7 +265,8 @@ function AdminNotificationsPage() {
                   </span>
                 </div>
                 <p className="text-xs text-muted-foreground">@{u.username}{u.email ? ` · ${u.email}` : ""}</p>
-                <p className="text-xs">Mobile: {u.mobile || "—"}</p>
+                <p className="text-xs">Mobile: {u.mobile || "—"}{u.mobile_country_code ? <span className="text-muted-foreground"> ({u.mobile_country_code})</span> : null}</p>
+                <p className="text-xs">Country: {u.country || "Not provided"}</p>
                 <p className="text-xs">Level: {u.experience_level || "—"}{u.learning_goal ? ` · Goal: ${u.learning_goal}` : ""}</p>
                 <p className="text-xs">Markets: {u.preferred_markets?.length ? u.preferred_markets.join(", ") : "—"}</p>
                 <p className="text-xs">Starting capital: {u.capital_range || "—"}</p>

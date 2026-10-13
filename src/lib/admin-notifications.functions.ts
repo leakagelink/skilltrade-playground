@@ -28,6 +28,8 @@ export type AdminUserRow = {
   username: string;
   full_name: string | null;
   mobile: string | null;
+  mobile_country_code: string | null;
+  country: string | null;
   experience_level: string | null;
   learning_goal: string | null;
   preferred_markets: string[] | null;
@@ -45,7 +47,7 @@ export const getAdminUsers = createServerFn({ method: "GET" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
     const [{ data: profiles }, { data: pers }, { data: mobiles }, { data: authList }] = await Promise.all([
-      supabaseAdmin.from("profiles").select("id, username, level, xp, created_at").order("created_at", { ascending: false }),
+      supabaseAdmin.from("profiles").select("id, username, level, xp, country, created_at").order("created_at", { ascending: false }),
       supabaseAdmin.from("user_personalization").select("user_id, full_name, mobile, experience_level, learning_goal, preferred_markets, hypothetical_starting_capital_range"),
       supabaseAdmin.from("user_mobiles").select("user_id, mobile"),
       supabaseAdmin.auth.admin.listUsers({ perPage: 1000 }),
@@ -55,14 +57,26 @@ export const getAdminUsers = createServerFn({ method: "GET" })
     const persById = new Map((pers ?? []).map((p) => [p.user_id, p]));
     const mobileById = new Map((mobiles ?? []).map((m) => [m.user_id, m.mobile]));
 
+    // Mobiles are stored as international numbers, with or without a leading "+" —
+    // e.g. "+919876543210" or "919876543210". Match against the dial codes offered at signup.
+    const DIAL_CODES = ["880", "971", "977", "91", "92", "94", "65", "61", "49", "44", "33", "81", "86", "1"];
+    const dialCode = (mobile: string | null | undefined) => {
+      if (!mobile) return null;
+      const digits = mobile.replace(/^\+/, "");
+      return DIAL_CODES.find((c) => digits.startsWith(c)) ? `+${DIAL_CODES.find((c) => digits.startsWith(c))}` : null;
+    };
+
     return (profiles ?? []).map((p) => {
       const pe = persById.get(p.id);
+      const mobile = mobileById.get(p.id) ?? pe?.mobile ?? null;
       return {
         user_id: p.id,
         email: emailById.get(p.id) ?? null,
         username: p.username,
         full_name: pe?.full_name ?? null,
-        mobile: mobileById.get(p.id) ?? pe?.mobile ?? null,
+        mobile,
+        mobile_country_code: dialCode(mobile),
+        country: (p.country as string | null) ?? null,
         experience_level: pe?.experience_level ?? null,
         learning_goal: pe?.learning_goal ?? null,
         preferred_markets: pe?.preferred_markets ?? null,
