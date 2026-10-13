@@ -38,4 +38,13 @@ describe("policy disclosures and consent safeguards", () => {
     expect(bridge).toContain("if (!info.canRequestAds) return null");
     expect(bridge).not.toContain("continue without ads consent form");
   });
+  it("keeps ad disclosures aligned with frequency and banner placements", () => {
+    const privacy = source("src/routes/legal.privacy.tsx");
+    expect(privacy).toContain("8 rewarded and 7 interstitial");
+    expect(privacy).toContain("at least 2 minutes");
+    expect(privacy).toContain("UTC calendar day");
+    expect(privacy).toContain("(Home and Profile)");
+    const layout = source("src/routes/_authenticated/route.tsx");
+    expect(layout).toContain('const BANNER_ROUTES = ["/home", "/profile"]');
+  });
 });
