@@ -15,19 +15,14 @@ import java.util.Iterator;
 public class MetaEventsPlugin extends Plugin {
     private AppEventsLogger logger;
 
-    /**
-     * The SDK auto-initialises via its ContentProvider (from manifest meta-data).
-     * Because AutoLogAppEventsEnabled=false, we activate the app ONCE here so Meta
-     * still receives install/activation events needed for ads attribution.
-     */
+    /** Collection stays disabled until a separate Meta-specific consent flow exists. */
     @Override
     public void load() {
         try {
             android.app.Application app = (android.app.Application) getContext().getApplicationContext();
-            if (!FacebookSdk.isInitialized()) FacebookSdk.sdkInitialize(app);
             FacebookSdk.setAutoLogAppEventsEnabled(false);
-            FacebookSdk.setAdvertiserIDCollectionEnabled(true);
-            AppEventsLogger.activateApp(app);
+            FacebookSdk.setAdvertiserIDCollectionEnabled(false);
+            FacebookSdk.setAutoInitEnabled(false);
         } catch (Throwable ignored) {
             // Meta must never crash TradeVirt.
         }
@@ -42,21 +37,7 @@ public class MetaEventsPlugin extends Plugin {
 
     @PluginMethod
     public void logEvent(PluginCall call) {
-        try {
-            String name = call.getString("name");
-            if (name == null || name.isEmpty()) { call.resolve(); return; }
-            Bundle bundle = new Bundle();
-            JSObject params = call.getObject("params", new JSObject());
-            Iterator<String> keys = params.keys();
-            while (keys.hasNext()) {
-                String k = keys.next();
-                String v = params.optString(k, null);
-                if (v != null) bundle.putString(k, v);
-            }
-            logger().logEvent(name, bundle);
-        } catch (Throwable ignored) {
-            // Meta must never crash TradeVirt.
-        }
+        // Preserve bridge compatibility but never initialize or send Meta events.
         call.resolve();
     }
 }

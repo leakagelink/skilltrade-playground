@@ -2,7 +2,8 @@
  * Meta App Events wrapper (native Android only, explicit allow-list).
  *
  * - Web / SSR: every call is a no-op.
- * - Only allow-listed events and non-sensitive parameters are sent.
+ * - Collection is disabled until a separate Meta-specific consent flow exists.
+ * - Only allow-listed events and non-sensitive parameters may be sent.
  * - Never send emails, phone, names, ids, tokens, balances, amounts, P/L or journal text.
  * - Failures are swallowed so Meta can never affect the app.
  */
@@ -86,6 +87,9 @@ const lastSent = new Map<string, number>();
 const DEDUPE_MS = 2000;
 
 async function send(key: MetaEventKey, params?: MetaParams): Promise<void> {
+  // Google UMP is not consent for Meta. Fail closed; keep callers compatible.
+  return;
+  /* Collection intentionally disabled pending a Meta-specific consent flow.
   try {
     if (!isNativeAndroid()) return;
     const clean = sanitise(params);
@@ -97,8 +101,9 @@ async function send(key: MetaEventKey, params?: MetaParams): Promise<void> {
     if (!plugin) return;
     await plugin.logEvent({ name: EVENTS[key], params: clean });
   } catch {
-    /* Meta must never affect the app */
+    // Meta must never affect the app
   }
+  */
 }
 
 let appOpenSent = false;

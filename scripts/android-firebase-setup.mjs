@@ -133,10 +133,16 @@ patch("android/app/src/main/AndroidManifest.xml", (s) => {
     ["com.facebook.sdk.ApplicationId", "@string/facebook_app_id"],
     ["com.facebook.sdk.ClientToken", "@string/facebook_client_token"],
     ["com.facebook.sdk.AutoLogAppEventsEnabled", "false"],
-    ["com.facebook.sdk.AdvertiserIDCollectionEnabled", "true"],
+    ["com.facebook.sdk.AutoInitEnabled", "false"],
+    ["com.facebook.sdk.AdvertiserIDCollectionEnabled", "false"],
   ];
   for (const [n, v] of metas) {
-    if (!out.includes(n)) {
+    if (out.includes(n)) {
+      // Replace stale enabled flags on an already configured Android project.
+      const escaped = n.replace(/\./g, "\\.");
+      out = out.replace(new RegExp(`<meta-data\\b(?=[^>]*android:name=["']${escaped}["'])[^>]*\\/?>`, "g"),
+        `<meta-data android:name="${n}" android:value="${v}"/>`);
+    } else {
       out = out.replace(/(<application[^>]*>)/, `$1\n        <meta-data android:name="${n}" android:value="${v}"/>`);
     }
   }

@@ -45,12 +45,16 @@ export async function initAds(): Promise<AdMobModule | null> {
       await mod.AdMob.initialize({ initializeForTesting: ADS_USE_TEST_ADS });
       // Google User Messaging Platform (UMP) consent — official Google tooling.
       try {
-        const info = await mod.AdMob.requestConsentInfo();
+        let info = await mod.AdMob.requestConsentInfo();
         if (info.isConsentFormAvailable && info.status === mod.AdmobConsentStatus.REQUIRED) {
-          await mod.AdMob.showConsentForm();
+          info = await mod.AdMob.showConsentForm();
         }
+        // UMP can allow limited ads without personalised-ad consent. Use its
+        // request decision, never infer consent from merely closing the form.
+        if (!info.canRequestAds) return null;
       } catch {
-        /* consent unavailable in this region/build — continue without ads consent form */
+        // Do not request ads when consent eligibility could not be determined.
+        return null;
       }
       return mod;
     } catch {
