@@ -81,7 +81,13 @@ export async function initAds(): Promise<AdMobModule | null> {
       }
       // UMP can allow limited ads without personalised-ad consent. Use its
       // request decision, never infer consent from merely closing the form.
-      if (!info.canRequestAds) return null;
+      // Not permitted now → re-check later (consent may change) instead of
+      // caching "no ads" for the whole session.
+      if (!info.canRequestAds) {
+        lastFailureAt = Date.now();
+        initPromise = null;
+        return null;
+      }
     } catch {
       // Do not request ads when consent eligibility could not be determined;
       // retry on a later ad opportunity instead of blocking the whole session.
@@ -171,14 +177,24 @@ export async function preloadInterstitial(): Promise<void> {
   return interstitialLoading;
 }
 
-/** Never waits for an unready ad. SDK display events, not show() acceptance, count impressions. */
+/** Max time the Continue button waits for a not-yet-loaded interstitial. */
+const INTERSTITIAL_LOAD_WAIT_MS = 3_500;
+
+/**
+ * Shows an interstitial. If none is preloaded yet, waits briefly for one to
+ * load (bounded), so the first natural break of a session can still show an ad.
+ * SDK display events, not show() acceptance, count impressions.
+ */
 export async function showInterstitialAd(onShown?: () => void): Promise<boolean> {
   if (!AD_FLAGS.INTERSTITIAL_ADS_ENABLED) return false;
   const mod = await initAds();
   if (!mod || interstitialShowing) return false;
   if (!interstitialLoaded) {
-    void preloadInterstitial();
-    return false;
+    await Promise.race([
+      preloadInterstitial(),
+      new Promise<void>((resolve) => setTimeout(resolve, INTERSTITIAL_LOAD_WAIT_MS)),
+    ]);
+    if (!interstitialLoaded || interstitialShowing) return false;
   }
   interstitialShowing = true;
   interstitialLoaded = false;
@@ -221,6 +237,10 @@ export async function showInterstitialAd(onShown?: () => void): Promise<boolean>
 /* ------------------------------------------------------------------ */
 
 let bannerVisible = false;
+let bannerWanted = false;
+let bannerRetry: ReturnType<typeof setTimeout> | undefined;
+/** After a banner fails to load (e.g. no fill), request a fresh one after this delay. */
+const BANNER_RETRY_MS = 45_000;
 let bannerHeight = 0;
 const bannerHeightListeners = new Set<(height: number) => void>();
 let bannerListenersAttached = false;
@@ -241,6 +261,14 @@ export function subscribeBannerHeight(listener: (height: number) => void): () =>
   };
 }
 
+function scheduleBannerRetry(): void {
+  if (bannerRetry) clearTimeout(bannerRetry);
+  bannerRetry = setTimeout(() => {
+    bannerRetry = undefined;
+    if (bannerWanted && !bannerVisible) void showBannerAd();
+  }, BANNER_RETRY_MS);
+}
+
 async function attachBannerListeners(mod: AdMobModule): Promise<void> {
   if (bannerListenersAttached) return;
   bannerListenersAttached = true;
@@ -250,6 +278,11 @@ async function attachBannerListeners(mod: AdMobModule): Promise<void> {
     });
     await mod.AdMob.addListener(mod.BannerAdPluginEvents.FailedToLoad, () => {
       setBannerHeight(0);
+      // A failed banner is never re-requested by resumeBanner(); drop it so
+      // the next show creates a fresh request, and retry while still wanted.
+      bannerVisible = false;
+      void mod.AdMob.removeBanner().catch(() => {});
+      scheduleBannerRetry();
     });
   } catch {
     /* listeners are optional — layout simply keeps its default spacing */
@@ -259,11 +292,17 @@ async function attachBannerListeners(mod: AdMobModule): Promise<void> {
 /** Shows the adaptive banner at the bottom of the screen. */
 export async function showBannerAd(): Promise<boolean> {
   if (!AD_FLAGS.BANNER_ADS_ENABLED) return false;
+  bannerWanted = true;
   const mod = await initAds();
-  if (!mod) return false;
+  if (!mod) {
+    scheduleBannerRetry();
+    return false;
+  }
+  if (!bannerWanted) return false;
   await attachBannerListeners(mod);
   try {
     if (!bannerVisible) {
+      bannerVisible = true;
       await mod.AdMob.showBanner({
         adId: BANNER_AD_UNIT_ID,
         adSize: mod.BannerAdSize.ADAPTIVE_BANNER,
@@ -271,18 +310,24 @@ export async function showBannerAd(): Promise<boolean> {
         isTesting: ADS_USE_TEST_ADS,
         margin: 0,
       });
-      bannerVisible = true;
     } else {
       await mod.AdMob.resumeBanner();
     }
     return true;
   } catch {
+    bannerVisible = false;
+    scheduleBannerRetry();
     return false;
   }
 }
 
 /** Hides (does not destroy) the banner so it can be resumed cheaply later. */
 export async function hideBannerAd(): Promise<void> {
+  bannerWanted = false;
+  if (bannerRetry) {
+    clearTimeout(bannerRetry);
+    bannerRetry = undefined;
+  }
   if (!bannerVisible) return;
   const mod = await initAds();
   if (!mod) return;
