@@ -51,6 +51,8 @@ function AdminNotificationsPage() {
   const [levelFilter, setLevelFilter] = useState("all");
   const [capitalFilter, setCapitalFilter] = useState("all");
   const [marketFilter, setMarketFilter] = useState("all");
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
 
   const status = useQuery({ queryKey: ["admin-status"], queryFn: () => loadStatus(), staleTime: 60_000 });
   const stats = useQuery({
@@ -108,6 +110,12 @@ function AdminNotificationsPage() {
     if (levelFilter !== "all" && u.experience_level !== levelFilter) return false;
     if (capitalFilter !== "all" && u.capital_range !== capitalFilter) return false;
     if (marketFilter !== "all" && !u.preferred_markets?.includes(marketFilter)) return false;
+    if (fromDate || toDate) {
+      if (!u.created_at) return false;
+      const d = new Date(u.created_at);
+      if (fromDate && d < new Date(`${fromDate}T00:00:00`)) return false;
+      if (toDate && d > new Date(`${toDate}T23:59:59.999`)) return false;
+    }
     return true;
   });
 
