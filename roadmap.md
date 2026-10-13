@@ -1,6 +1,7 @@
 # Roadmap
 
-- [ ] Add completion-only trade/lesson/Strategy Lab interstitial opportunities, 7/day and 2-minute gap, reliable preloading, Home/Profile banners and aligned privacy disclosure; preserve consent and paid ad-free checks, test changed flows.
+- [x] Add trade-result and saved Strategy Lab Continue interstitials, retain Career/challenge/Arena completion placements, 7/day and 2-minute gap, deduplicated preloading, SDK-confirmed display counting, Home/Profile banners and Privacy v1.10; 40 tests passed and signed-in strategy save/result/Continue/read-back verified with test entry removed. No separate lesson or Strategy Lab run flow exists; no ads added to active order/decision-check workflows.
+- [ ] Verify new interstitial display and dismissal on Android — requires a rebuilt Android release/test device and AdMob availability; no production publish or release performed.
 
 - [x] Correct Privacy, Terms, Disclaimer, Support and account-deletion disclosures for Meta, paid subscriptions and additive practice tools; all five pages browser-verified and 35 tests passed. Meta collection disabled pending separate consent; AdMob fails closed on UMP uncertainty. Android setup fixture confirms stale flags disabled.
 - [ ] Publish corrected policies and ship rebuilt Android consent safeguards; verify Play Console Data Safety and native consent/purchase behavior — requires user-authorized publishing, Android release/device testing and Play Console declarations.
