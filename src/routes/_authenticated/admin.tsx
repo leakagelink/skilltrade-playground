@@ -244,9 +244,27 @@ function AdminNotificationsPage() {
                 placeholder="Naam, email, username ya mobile se khojein…"
               />
               </div>
-              <Button variant="outline" size="sm" className="h-10 shrink-0" onClick={exportUsersCsv} disabled={!filteredUsers.length}>
-                <Download className="mr-2 h-4 w-4" /> Export {filteredUsers.length} user(s) as CSV
-              </Button>
+              <div className="flex shrink-0 flex-wrap gap-2">
+                <Button variant="outline" size="sm" className="h-10" onClick={exportUsersCsv} disabled={!filteredUsers.length}>
+                  <Download className="mr-2 h-4 w-4" /> CSV
+                </Button>
+                <Button variant="outline" size="sm" className="h-10" onClick={exportUsersExcel} disabled={!filteredUsers.length}>
+                  <Download className="mr-2 h-4 w-4" /> Excel
+                </Button>
+                <Button variant="outline" size="sm" className="h-10" onClick={exportUsersPdf} disabled={!filteredUsers.length}>
+                  <Download className="mr-2 h-4 w-4" /> PDF
+                </Button>
+              </div>
+              <div className="grid grid-cols-2 gap-2 xl:col-span-2">
+                <div className="space-y-1">
+                  <Label htmlFor="from-date" className="text-xs text-muted-foreground">Signup date se (From)</Label>
+                  <Input id="from-date" type="date" value={fromDate} max={toDate || undefined} onChange={(e) => setFromDate(e.target.value)} className="h-10" />
+                </div>
+                <div className="space-y-1">
+                  <Label htmlFor="to-date" className="text-xs text-muted-foreground">Signup date tak (To)</Label>
+                  <Input id="to-date" type="date" value={toDate} min={fromDate || undefined} onChange={(e) => setToDate(e.target.value)} className="h-10" />
+                </div>
+              </div>
               <div className="grid grid-cols-1 gap-2 sm:grid-cols-3 xl:col-span-2">
                 <select aria-label="Experience level" value={levelFilter} onChange={(e) => setLevelFilter(e.target.value)} className="h-10 min-w-0 rounded-md border bg-background px-3 text-sm">
                   <option value="all">Sab levels</option>
