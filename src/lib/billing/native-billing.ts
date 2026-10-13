@@ -22,19 +22,68 @@ export async function billingAvailable(): Promise<boolean> {
   return (await load()) !== null;
 }
 
+type RawStoreProduct = { identifier?: string; planIdentifier?: string; priceString?: string; offerToken?: string; offerId?: string | null };
+
+export type OfferDiagnostics = {
+  missingProducts: string[];
+  missingBasePlans: string[];
+  /** Base plans that only had promotional offers (no regular base offer). */
+  noRegularOffer: string[];
+};
+
+/**
+ * Maps @capgo/native-purchases 8.9.2 Android subscription results.
+ * Plugin shape (NativePurchasesPlugin.java getProducts): `planIdentifier` = Play product ID,
+ * `identifier` = base plan ID, one entry per offer; `offerId` is null for the regular base offer.
+ * Only the regular offer is used, so an intro/trial price is never shown as the normal price.
+ */
+export function mapStoreOffers(products: RawStoreProduct[]): { offers: StoreOffer[]; diagnostics: OfferDiagnostics } {
+  const offers: StoreOffer[] = [];
+  const diagnostics: OfferDiagnostics = { missingProducts: [], missingBasePlans: [], noRegularOffer: [] };
+  for (const plan of PLANS) {
+    const forProduct = products.filter((p) => p.planIdentifier === plan.productId);
+    if (!forProduct.length) {
+      diagnostics.missingProducts.push(plan.productId);
+      continue;
+    }
+    for (const base of BASE_PLANS) {
+      const forBase = forProduct.filter((p) => p.identifier === base);
+      if (!forBase.length) {
+        diagnostics.missingBasePlans.push(`${plan.productId}/${base}`);
+        continue;
+      }
+      const regular = forBase.find((p) => !p.offerId && p.offerToken && p.priceString);
+      if (!regular) {
+        diagnostics.noRegularOffer.push(`${plan.productId}/${base}`);
+        continue;
+      }
+      offers.push({ productId: plan.productId, basePlanId: base, price: regular.priceString as string, offerToken: regular.offerToken });
+    }
+  }
+  return { offers, diagnostics };
+}
+
+const BASE_PLANS: BasePlanId[] = ["monthly", "yearly"];
+
+/** Throws on billing query failure (callers must surface it); logs non-sensitive gaps only. */
 export async function loadOffers(): Promise<StoreOffer[]> {
   const mod = await load();
   if (!mod) return [];
-  const { products } = await mod.NativePurchases.getProducts({
-    productIdentifiers: PLANS.map((p) => p.productId),
-    productType: mod.PURCHASE_TYPE.SUBS,
-  });
-  return products.map((p) => ({
-    productId: p.identifier,
-    basePlanId: (p as { planIdentifier?: string }).planIdentifier ?? "",
-    price: p.priceString,
-    offerToken: (p as { offerToken?: string }).offerToken,
-  }));
+  let products: RawStoreProduct[];
+  try {
+    ({ products } = await mod.NativePurchases.getProducts({
+      productIdentifiers: PLANS.map((p) => p.productId),
+      productType: mod.PURCHASE_TYPE.SUBS,
+    }));
+  } catch (e) {
+    console.error("[billing] getProducts failed:", String((e as Error)?.message ?? e).slice(0, 200));
+    throw new Error("Could not load subscription plans from Google Play.");
+  }
+  const { offers, diagnostics } = mapStoreOffers(products ?? []);
+  if (!products?.length) console.warn("[billing] Google Play returned no subscription products.");
+  else if (diagnostics.missingProducts.length || diagnostics.missingBasePlans.length || diagnostics.noRegularOffer.length)
+    console.warn("[billing] incomplete plan catalogue", diagnostics);
+  return offers;
 }
 
 /** Launches the real Google Play purchase sheet. Returns the purchase token or null if cancelled. */

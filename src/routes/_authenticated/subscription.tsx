@@ -40,7 +40,13 @@ function SubscriptionPage() {
   useEffect(() => {
     void billingAvailable().then(async (ok) => {
       setNative(ok);
-      if (ok) setOffers(await loadOffers().catch(() => []));
+      if (ok)
+        setOffers(
+          await loadOffers().catch((e: Error) => {
+            toast.error(e.message);
+            return [];
+          }),
+        );
     });
   }, []);
 
