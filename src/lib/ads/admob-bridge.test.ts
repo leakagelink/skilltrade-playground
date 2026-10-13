@@ -17,6 +17,7 @@ vi.mock("@capacitor-community/admob", () => ({
 }));
 
 beforeEach(() => {
+  vi.stubGlobal("window", {});
   vi.resetModules();
   vi.clearAllMocks();
   sdk.callbacks.clear();
@@ -30,7 +31,7 @@ beforeEach(() => {
   });
   sdk.showInterstitial.mockResolvedValue(undefined);
 });
-afterEach(() => vi.useRealTimers());
+afterEach(() => { vi.useRealTimers(); vi.unstubAllGlobals(); });
 
 describe("native interstitial lifecycle", () => {
   it("skips an unready ad instead of delaying the user's continuation", async () => {
