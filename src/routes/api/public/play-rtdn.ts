@@ -7,19 +7,7 @@ import { createFileRoute } from "@tanstack/react-router";
  * Google Play Developer API and the stored row is overwritten (idempotent).
  * Purchase tokens and credentials are never logged.
  */
-function safeEqual(a: string, b: string) {
-  if (!a || a.length !== b.length) return false;
-  let d = 0;
-  for (let i = 0; i < a.length; i++) d |= a.charCodeAt(i) ^ b.charCodeAt(i);
-  return d === 0;
-}
-
-type Rtdn = {
-  packageName?: string;
-  testNotification?: unknown;
-  subscriptionNotification?: { notificationType?: number; purchaseToken?: string; subscriptionId?: string };
-  voidedPurchaseNotification?: { purchaseToken?: string; productType?: number };
-};
+import { parseRtdnPush, rtdnPatch, rtdnToken, safeEqual } from "@/lib/billing/rtdn";
 
 export const Route = createFileRoute("/api/public/play-rtdn")({
   server: {
@@ -29,13 +17,10 @@ export const Route = createFileRoute("/api/public/play-rtdn")({
         const got = new URL(request.url).searchParams.get("token") ?? "";
         if (!expected || !safeEqual(got, expected)) return new Response("Unauthorized", { status: 401 });
 
-        let msg: Rtdn;
-        try {
-          const body = (await request.json()) as { message?: { data?: string } };
-          msg = JSON.parse(atob(body.message?.data ?? "")) as Rtdn;
-        } catch {
-          return Response.json({ ok: true, ignored: "malformed" }); // ack so Pub/Sub stops retrying junk
-        }
+        let raw: unknown = null;
+        try { raw = await request.json(); } catch { /* malformed */ }
+        const msg = parseRtdnPush(raw);
+        if (!msg) return Response.json({ ok: true, ignored: "malformed" }); // ack so Pub/Sub stops retrying junk
 
         const { ANDROID_PACKAGE, PLANS } = await import("@/lib/billing/plans");
         if (msg.packageName !== ANDROID_PACKAGE) return Response.json({ ok: true, ignored: "package" });
@@ -44,7 +29,7 @@ export const Route = createFileRoute("/api/public/play-rtdn")({
           return Response.json({ ok: true, test: true });
         }
 
-        const token = msg.subscriptionNotification?.purchaseToken ?? msg.voidedPurchaseNotification?.purchaseToken;
+        const token = rtdnToken(msg);
         if (!token) return Response.json({ ok: true, ignored: "no-subscription" });
 
         const play = await import("@/lib/billing/play.server");
@@ -61,16 +46,9 @@ export const Route = createFileRoute("/api/public/play-rtdn")({
           console.error("[rtdn] Google re-query failed:", (e as Error).message);
           return new Response("Retry", { status: 503 }); // Pub/Sub retries later
         }
-        const line = sub?.lineItems?.find((l) => l.productId === row.product_id);
         const voided = !!msg.voidedPurchaseNotification;
-        const status = !sub || voided ? "SUBSCRIPTION_STATE_EXPIRED" : sub.subscriptionState;
-        const patch = {
-          status,
-          expires_at: voided ? new Date().toISOString() : (line?.expiryTime ?? row.expires_at),
-          auto_renewing: line?.autoRenewingPlan?.autoRenewEnabled ?? null,
-          latest_order_id: sub?.latestOrderId ?? null,
-          last_verified_at: new Date().toISOString(),
-        };
+        const patch = rtdnPatch(sub, voided, row);
+        const status = patch.status;
         if (PLANS.some((p) => p.productId === row.product_id)) {
           if (!voided && status === "SUBSCRIPTION_STATE_ACTIVE" && sub?.acknowledgementState !== "ACKNOWLEDGEMENT_STATE_ACKNOWLEDGED") {
             await play.acknowledge(row.product_id, token).catch(() => undefined);
