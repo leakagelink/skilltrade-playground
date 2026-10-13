@@ -57,8 +57,14 @@ export const getAdminUsers = createServerFn({ method: "GET" })
     const persById = new Map((pers ?? []).map((p) => [p.user_id, p]));
     const mobileById = new Map((mobiles ?? []).map((m) => [m.user_id, m.mobile]));
 
-    // A stored mobile is the full international number, e.g. "+919876543210".
-    const dialCode = (mobile: string | null | undefined) => mobile?.match(/^\+\d{1,4}/)?.[0] ?? null;
+    // Mobiles are stored as international numbers, with or without a leading "+" —
+    // e.g. "+919876543210" or "919876543210". Match against the dial codes offered at signup.
+    const DIAL_CODES = ["880", "971", "977", "91", "92", "94", "65", "61", "49", "44", "33", "81", "86", "1"];
+    const dialCode = (mobile: string | null | undefined) => {
+      if (!mobile) return null;
+      const digits = mobile.replace(/^\+/, "");
+      return DIAL_CODES.find((c) => digits.startsWith(c)) ? `+${DIAL_CODES.find((c) => digits.startsWith(c))}` : null;
+    };
 
     return (profiles ?? []).map((p) => {
       const pe = persById.get(p.id);
