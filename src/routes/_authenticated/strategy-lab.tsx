@@ -18,6 +18,7 @@ import { signedMoney } from "@/lib/format";
 import { trackEvent } from "@/lib/analytics";
 import { toast } from "sonner";
 import { FlaskConical, Plus, Pencil, Trash2 } from "lucide-react";
+import { CompletionResult } from "@/components/ads/CompletionResult";
 
 export const Route = createFileRoute("/_authenticated/strategy-lab")({
   head: () => ({
@@ -162,6 +163,7 @@ function StrategySheet({ form, setForm }: { form: Form | null; setForm: (f: Form
   const save = useServerFn(saveStrategy);
   const qc = useQueryClient();
   const [busy, setBusy] = useState(false);
+  const [savedName, setSavedName] = useState<string | null>(null);
   const set = <K extends keyof Form>(k: K, v: Form[K]) => form && setForm({ ...form, [k]: v });
 
   async function submit() {
@@ -184,6 +186,7 @@ function StrategySheet({ form, setForm }: { form: Form | null; setForm: (f: Form
       if (res.created) trackEvent("strategy_created");
       await qc.invalidateQueries({ queryKey: ["strategy-lab"] });
       toast.success("Strategy saved.");
+      setSavedName(form.name);
       setForm(null);
     } catch (e) {
       toast.error((e as Error).message || "Could not save.");
@@ -193,6 +196,12 @@ function StrategySheet({ form, setForm }: { form: Form | null; setForm: (f: Form
   }
 
   return (
+    <>
+    <CompletionResult result={savedName ? {
+      title: "Strategy saved",
+      description: `${savedName} is ready for your simulated practice. Linked trade results appear in Strategy Lab.`,
+      placement: "STRATEGY_SAVED_CONTINUE",
+    } : null} onClose={() => setSavedName(null)} />
     <Sheet open={!!form} onOpenChange={(o) => !o && setForm(null)}>
       <SheetContent side="bottom" className="max-h-[90vh] overflow-y-auto rounded-t-3xl">
         <SheetHeader>
@@ -248,5 +257,6 @@ function StrategySheet({ form, setForm }: { form: Form | null; setForm: (f: Form
         )}
       </SheetContent>
     </Sheet>
+    </>
   );
 }

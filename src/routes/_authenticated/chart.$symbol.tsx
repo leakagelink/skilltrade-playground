@@ -23,6 +23,7 @@ import { MarketDataNote } from "@/components/Disclaimer";
 import { toast } from "sonner";
 import { ArrowDownRight, ArrowUpRight } from "lucide-react";
 import { trackEvent } from "@/lib/analytics";
+import { CompletionResult } from "@/components/ads/CompletionResult";
 
 export const Route = createFileRoute("/_authenticated/chart/$symbol")({
   head: ({ params }) => ({
@@ -31,6 +32,8 @@ export const Route = createFileRoute("/_authenticated/chart/$symbol")({
       { name: "description", content: `Simulated ${params.symbol} price chart with a practice order ticket. Educational use only.` },
       { property: "og:title", content: `${params.symbol} — TradeVirt` },
       { property: "og:description", content: `Practice trading ${params.symbol} with virtual money.` },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: ChartPage,
@@ -54,6 +57,7 @@ function ChartPage() {
   const [notes, setNotes] = useState("");
   const [sheetOpen, setSheetOpen] = useState(false);
   const [checkOpen, setCheckOpen] = useState(false);
+  const [closedResult, setClosedResult] = useState<{ exitPrice: number; pnl: number } | null>(null);
 
   const chart = useQuery({
     queryKey: ["candles", symbol, tf],
@@ -138,17 +142,22 @@ function ChartPage() {
 
   const closeMutation = useMutation({
     mutationFn: (tradeId: string) => close({ data: { tradeId } }),
-    onSuccess: () => {
+    onSuccess: (r) => {
       toast.success("Trade closed. Review added to your history.");
       void trackEvent("trade_closed", { asset_type: catalogEntry(symbol)?.assetType ?? "UNKNOWN" });
       qc.invalidateQueries();
-      navigate({ to: "/profile" });
+      setClosedResult({ exitPrice: r.exitPrice, pnl: r.pnl });
     },
     onError: (e: Error) => toast.error(e.message || "Could not close this trade."),
   });
 
   return (
     <main className="pb-6">
+      <CompletionResult result={closedResult ? {
+        title: "Simulated trade closed",
+        description: `${symbol} · Exit ${price(closedResult.exitPrice)} · ${signedMoney(closedResult.pnl)} simulated P&L. Review added to your history.`,
+        placement: "TRADE_COMPLETE_CONTINUE",
+      } : null} onClose={() => { setClosedResult(null); void navigate({ to: "/profile" }); }} />
       <AppHeader
         title={`${symbol}/USD`}
         subtitle={quote ? `${price(quote.price)} · ${pct(quote.changePercent)}` : "Loading price…"}
