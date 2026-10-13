@@ -20,3 +20,5 @@
 - Subscription entitlements live only in `play_subscriptions` (no client policies), written solely by server functions after Google Play Developer API verification; ad-free status is enforced server-side in every ad gate so clients cannot self-grant.
 - Google Play RTDN arrives at /api/public/play-rtdn, authenticated by the PLAY_RTDN_TOKEN query token; it never trusts payload state and always re-queries the Play Developer API (the 6-hour re-check remains as fallback) so entitlement updates stay idempotent and unforgeable.
 - Subscription/ad-status query caches are keyed by user id, never persisted to device storage, and cleared on every auth change, so one account's paid status can never show for another.
+- Subscription plan cards use the existing catalogue and Google Play offers for presentation; keep purchase handling and entitlement checks in the subscription route so visual changes cannot grant benefits.
+- Format valid Google Play numeric prices with their returned currency and currency decimals; fall back to the store's localized string, never static catalogue prices.

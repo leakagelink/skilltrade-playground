@@ -32,7 +32,19 @@ export async function billingAvailable(): Promise<boolean> {
   return (await load()) !== null;
 }
 
-type RawStoreProduct = { identifier?: string; planIdentifier?: string; priceString?: string; offerToken?: string; offerId?: string | null };
+type RawStoreProduct = { identifier?: string; planIdentifier?: string; priceString?: string; price?: number; currencyCode?: string; offerToken?: string; offerId?: string | null };
+
+/** Preserve the store amount, including currency decimals; never round to a whole amount. */
+export function formatStorePrice(product: Pick<RawStoreProduct, "price" | "currencyCode" | "priceString">): string {
+  if (typeof product.price === "number" && Number.isFinite(product.price) && product.price >= 0 && product.currencyCode && /^[A-Z]{3}$/.test(product.currencyCode)) {
+    try {
+      return new Intl.NumberFormat(undefined, { style: "currency", currency: product.currencyCode, minimumFractionDigits: 0 }).format(product.price);
+    } catch {
+      // Retain Google's localized string if this device cannot format the currency.
+    }
+  }
+  return product.priceString ?? "";
+}
 
 export type OfferDiagnostics = {
   missingProducts: string[];
@@ -68,7 +80,7 @@ export function mapStoreOffers(products: RawStoreProduct[]): { offers: StoreOffe
         diagnostics.noRegularOffer.push(`${plan.productId}/${base}`);
         continue;
       }
-      offers.push({ productId: plan.productId, basePlanId: base, storeBasePlanId: regular.identifier as string, price: regular.priceString as string, offerToken: regular.offerToken });
+      offers.push({ productId: plan.productId, basePlanId: base, storeBasePlanId: regular.identifier as string, price: formatStorePrice(regular), offerToken: regular.offerToken });
     }
   }
   return { offers, diagnostics };
