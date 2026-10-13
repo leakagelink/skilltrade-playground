@@ -21,6 +21,6 @@ describe("interstitial frequency", () => {
     expect(interstitialWithinLimits({ ...activity, last_interstitial_at: "invalid" }, now)).toBe(false);
   });
   it("only exposes deliberate completion placements", () => {
-    expect(INTERSTITIAL_PLACEMENTS).toEqual(["CAREER_MILESTONE_CONTINUE", "CHALLENGE_COMPLETE_CONTINUE", "ARENA_RESULT_CONTINUE", "TRADE_COMPLETE_CONTINUE", "STRATEGY_SAVED_CONTINUE"]);
+    expect(INTERSTITIAL_PLACEMENTS).toEqual(["CAREER_MILESTONE_CONTINUE", "CHALLENGE_COMPLETE_CONTINUE", "ARENA_RESULT_CONTINUE", "TRADE_COMPLETE_CONTINUE", "STRATEGY_SAVED_CONTINUE", "JOURNAL_SAVED_CONTINUE"]);
   });
 });
