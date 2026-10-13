@@ -53,6 +53,8 @@ function AdminNotificationsPage() {
   const [marketFilter, setMarketFilter] = useState("all");
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
+  const [page, setPage] = useState(1);
+  const PAGE_SIZE = 25;
 
   const status = useQuery({ queryKey: ["admin-status"], queryFn: () => loadStatus(), staleTime: 60_000 });
   const stats = useQuery({
