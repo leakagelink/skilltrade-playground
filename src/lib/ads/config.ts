@@ -79,6 +79,7 @@ export const INTERSTITIAL_PLACEMENTS = [
   "ARENA_RESULT_CONTINUE",
   "TRADE_COMPLETE_CONTINUE",
   "STRATEGY_SAVED_CONTINUE",
+  "JOURNAL_SAVED_CONTINUE",
 ] as const;
 export type InterstitialPlacement = (typeof INTERSTITIAL_PLACEMENTS)[number];
 
