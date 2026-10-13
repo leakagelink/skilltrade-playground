@@ -11,6 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { CompletionResult } from "@/components/ads/CompletionResult";
 import { DisclaimerNote } from "@/components/Disclaimer";
 import { signedMoney, dateTime } from "@/lib/format";
 import { isDecisionCheckEnabled, setDecisionCheckEnabled } from "@/lib/decision-check";
@@ -219,6 +220,7 @@ function JournalSheet({ tradeId, journals, onClose }: { tradeId: string | null; 
   const [emotion, setEmotion] = useState<string | null>(null);
   const [confidence, setConfidence] = useState<number | null>(null);
   const [busy, setBusy] = useState(false);
+  const [saved, setSaved] = useState(false);
   const existing = journals.find((j) => j.trade_id === tradeId);
 
   useEffect(() => {
@@ -246,8 +248,8 @@ function JournalSheet({ tradeId, journals, onClose }: { tradeId: string | null; 
       });
       trackEvent(existing ? "trade_journal_reviewed" : "trade_journal_created");
       await qc.invalidateQueries({ queryKey: ["practice"] });
-      toast.success("Journal saved.");
       onClose();
+      setSaved(true);
     } catch (e) {
       toast.error((e as Error).message || "Could not save.");
     } finally {
@@ -256,6 +258,12 @@ function JournalSheet({ tradeId, journals, onClose }: { tradeId: string | null; 
   }
 
   return (
+    <>
+    <CompletionResult result={saved ? {
+      title: "Journal saved",
+      description: "Your review of this simulated trade is saved in Practice Center.",
+      placement: "JOURNAL_SAVED_CONTINUE",
+    } : null} onClose={() => setSaved(false)} />
     <Sheet open={!!tradeId} onOpenChange={(o) => !o && onClose()}>
       <SheetContent side="bottom" className="max-h-[90vh] overflow-y-auto rounded-t-3xl">
         <SheetHeader>
@@ -300,5 +308,6 @@ function JournalSheet({ tradeId, journals, onClose }: { tradeId: string | null; 
         </div>
       </SheetContent>
     </Sheet>
+    </>
   );
 }
