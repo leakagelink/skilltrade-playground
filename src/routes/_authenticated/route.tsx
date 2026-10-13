@@ -2,7 +2,7 @@ import { createFileRoute, Outlet, redirect, useLocation } from "@tanstack/react-
 import { useEffect, useState } from "react";
 import { getSessionSafe } from "@/lib/session";
 import { BottomNav } from "@/components/BottomNav";
-import { showBannerAd, hideBannerAd, subscribeBannerHeight } from "@/lib/ads/admob-bridge";
+import { showBannerAd, hideBannerAd, subscribeBannerHeight, preloadInterstitial, preloadRewarded } from "@/lib/ads/admob-bridge";
 import { isEnabled } from "@/lib/feature-flags";
 import { PushSetup } from "@/components/PushSetup";
 import { useQuery } from "@tanstack/react-query";
@@ -62,6 +62,15 @@ function AuthedLayout() {
     if (bannerAllowed) void showBannerAd();
     else void hideBannerAd();
   }, [bannerAllowed]);
+
+  // Warm up full-screen ads once eligibility is known, so the first natural
+  // break of a session has an ad ready (server gates still decide display).
+  const warmAds = !!userId && !entitlement.isPending && !adFree;
+  useEffect(() => {
+    if (!warmAds) return;
+    void preloadInterstitial();
+    void preloadRewarded();
+  }, [warmAds]);
 
   // Leaving the authenticated layout entirely (sign-out) hides the banner.
   useEffect(() => () => void hideBannerAd(), []);

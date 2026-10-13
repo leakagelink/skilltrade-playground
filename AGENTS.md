@@ -27,3 +27,4 @@
 - Meta events, native SDK auto-init and advertising-ID collection remain disabled until a separate Meta-specific consent flow is implemented; Google UMP does not authorize Meta processing.
 - AdMob requests fail closed unless Google UMP reports canRequestAds; consent errors must never silently allow ad requests.
 - Interstitials use a shared completion-result Continue flow and server frequency policy; never interrupt order entry, auto-closures, page loading or decision checks, because ads belong only at deliberate natural breaks.
+- Full-screen ads are preloaded once ad eligibility is known and loaded on demand with a bounded wait; failed banners and "not yet permitted" consent are retried later, so one failure never silences ads for a whole session.
