@@ -121,6 +121,11 @@ function AdminNotificationsPage() {
     return true;
   });
 
+  const totalPages = Math.max(1, Math.ceil(filteredUsers.length / PAGE_SIZE));
+  const safePage = Math.min(page, totalPages);
+  const pagedUsers = filteredUsers.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
+  const goPage = (p: number) => setPage(Math.min(Math.max(1, p), totalPages));
+
   const EXPORT_HEADER = ["Full Name", "Username", "Email", "Mobile", "Mobile Country Code", "Country (self-reported)", "Experience Level", "Learning Goal", "Preferred Markets", "Capital Range", "App Level", "XP", "Signup Date"];
   const exportRows = () =>
     filteredUsers.map((u) => [
