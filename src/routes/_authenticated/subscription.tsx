@@ -57,7 +57,7 @@ function SubscriptionPage() {
     if (!offer || !ent.data) return;
     setBusy(productId);
     try {
-      const token = await purchase(productId, period, ent.data.accountId, offer.offerToken);
+      const token = await purchase(productId, offer.storeBasePlanId, ent.data.accountId, offer.offerToken);
       if (!token) {
         toast.message("Purchase cancelled.");
         return;
