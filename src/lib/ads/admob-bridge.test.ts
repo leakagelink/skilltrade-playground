@@ -76,4 +76,15 @@ describe("native interstitial lifecycle", () => {
     expect(await bridge.showInterstitialAd()).toBe(false);
     expect(sdk.prepareInterstitial).not.toHaveBeenCalled();
   });
+  it("fails closed on a consent error but retries later instead of blocking the session", async () => {
+    vi.useFakeTimers();
+    sdk.requestConsentInfo.mockRejectedValueOnce(new Error("network"));
+    const bridge = await import("./admob-bridge");
+    expect(await bridge.adsAvailable()).toBe(false);
+    expect(await bridge.adsAvailable()).toBe(false); // within back-off: no hammering
+    expect(sdk.requestConsentInfo).toHaveBeenCalledTimes(1);
+    vi.advanceTimersByTime(21_000);
+    expect(await bridge.adsAvailable()).toBe(true);
+    expect(sdk.initialize).toHaveBeenCalledTimes(1);
+  });
 });
