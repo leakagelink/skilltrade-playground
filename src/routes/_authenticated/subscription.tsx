@@ -3,8 +3,9 @@ import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { Check } from "lucide-react";
+import { Check, RefreshCw, ShieldCheck, SlidersHorizontal } from "lucide-react";
 import { AppHeader } from "@/components/AppHeader";
+import { SubscriptionPlanCard } from "@/components/SubscriptionPlanCard";
 import { Button } from "@/components/ui/button";
 import { getEntitlement, restorePurchases, verifyPurchase } from "@/lib/billing.functions";
 import { PLANS, type BasePlanId } from "@/lib/billing/plans";
@@ -36,17 +37,27 @@ function SubscriptionPage() {
   const [native, setNative] = useState<boolean | null>(null);
   const [offers, setOffers] = useState<StoreOffer[]>([]);
   const [busy, setBusy] = useState<string | null>(null);
+  const [offersLoading, setOffersLoading] = useState(true);
+  const [offersError, setOffersError] = useState(false);
+
+  async function fetchOffers() {
+    setOffersLoading(true);
+    setOffersError(false);
+    try {
+      setOffers(await loadOffers());
+    } catch (e) {
+      setOffersError(true);
+      toast.error((e as Error).message);
+    } finally {
+      setOffersLoading(false);
+    }
+  }
 
   useEffect(() => {
     void billingAvailable().then(async (ok) => {
       setNative(ok);
-      if (ok)
-        setOffers(
-          await loadOffers().catch((e: Error) => {
-            toast.error(e.message);
-            return [];
-          }),
-        );
+      if (ok) await fetchOffers();
+      else setOffersLoading(false);
     });
   }, []);
 
@@ -96,74 +107,63 @@ function SubscriptionPage() {
 
   return (
     <main>
-      <AppHeader title="Plans" back="/settings" />
-      <div className="space-y-5 p-5">
-        <section className="surface-card p-4">
-          <p className="text-xs text-muted-foreground">Current plan</p>
-          <p className="text-lg font-bold capitalize">{ent.isPending ? "Loading…" : tier}</p>
+      <AppHeader title="Plans & pricing" back="/profile" />
+      <div className="space-y-6 px-4 py-6 sm:px-6">
+        <header className="space-y-3">
+          <p className="flex items-center gap-2 text-xs font-semibold text-primary"><ShieldCheck className="size-4" /> GOOGLE PLAY SUBSCRIPTIONS</p>
+          <h1 className="text-3xl leading-tight tracking-normal">Your practice.<br />Your plan.</h1>
+          <p className="text-sm leading-relaxed text-muted-foreground">Enjoy ad-free practice with Pro or Elite, or support TradeVirt with Basic.</p>
+        </header>
+        <section className="flex items-center justify-between gap-3 border-y py-4">
+          <div><p className="text-xs text-muted-foreground">Your current plan</p>
+          <p className="mt-1 text-base font-bold capitalize">{ent.isPending ? "Loading…" : ent.isError ? "Could not verify" : tier}</p>
           {ent.data?.expiresAt ? (
             <p className="text-xs text-muted-foreground">
               {ent.data.autoRenewing ? "Renews" : "Ends"} on {new Date(ent.data.expiresAt).toLocaleDateString()}
             </p>
-          ) : null}
+          ) : null}</div>
+          {ent.data ? <span className="flex items-center gap-1.5 rounded-full bg-bull/10 px-3 py-1.5 text-xs font-medium text-bull"><Check className="size-3.5" /> {ent.data.adFree ? "Ad-free" : "With ads"}</span> : null}
         </section>
 
-        <div className="grid grid-cols-2 gap-2 rounded-xl bg-muted p-1" role="tablist">
+        <div className="grid grid-cols-2 gap-1 rounded-xl border bg-muted p-1" role="tablist" aria-label="Billing period">
           {(["monthly", "yearly"] as const).map((p) => (
-            <button
+            <Button
+              variant="ghost"
               key={p}
               role="tab"
               aria-selected={period === p}
               onClick={() => setPeriod(p)}
-              className={`min-h-11 rounded-lg text-sm font-semibold capitalize ${period === p ? "bg-background text-foreground" : "text-muted-foreground"}`}
+              className={`h-11 rounded-lg text-sm font-semibold capitalize hover:bg-background hover:text-foreground ${period === p ? "bg-background text-foreground shadow-sm" : "text-muted-foreground"}`}
             >
               {p}
-            </button>
+            </Button>
           ))}
         </div>
 
         {native === false ? (
-          <p className="surface-card p-4 text-sm text-muted-foreground">Subscriptions can be bought in the TradeVirt Android app from Google Play.</p>
+          <p className="border-l-2 border-primary pl-3 text-sm leading-relaxed text-muted-foreground">Open TradeVirt on Android to see local prices and subscribe through Google Play.</p>
         ) : null}
         {native && configured === false ? (
           <p className="surface-card p-4 text-sm text-muted-foreground">Subscriptions are not available yet. Please check back soon.</p>
         ) : null}
+        {offersError ? <div role="alert" className="flex items-center justify-between gap-2 text-sm text-muted-foreground"><span>Google Play prices could not load.</span><Button variant="outline" onClick={() => void fetchOffers()} disabled={offersLoading}><RefreshCw /> Retry</Button></div> : null}
 
         {PLANS.map((plan) => {
           const offer = offers.find((o) => o.productId === plan.productId && o.basePlanId === period);
           const isCurrent = tier === plan.tier;
           return (
-            <section key={plan.productId} className="surface-card space-y-3 p-4">
-              <div className="flex items-baseline justify-between gap-2">
-                <h2 className="text-base font-bold">{plan.name}</h2>
-                <p className="text-sm font-semibold">
-                  {offer ? `${offer.price} / ${period === "monthly" ? "month" : "year"}` : native ? "Unavailable" : ""}
-                </p>
-              </div>
-              {plan.adFree ? <span className="inline-block rounded-full bg-primary/15 px-2 py-0.5 text-xs font-semibold text-primary">Ad-free</span> : null}
-              <ul className="space-y-1.5">
-                {plan.benefits.map((b) => (
-                  <li key={b} className="flex items-center gap-2 text-sm">
-                    <Check className="size-4 text-primary" /> {b}
-                  </li>
-                ))}
-              </ul>
-              <Button
-                className="h-11 w-full rounded-xl"
-                disabled={!native || !configured || !offer || isCurrent || busy !== null}
-                onClick={() => subscribe(plan.productId)}
-              >
-                {isCurrent ? "Current plan" : busy === plan.productId ? "Processing…" : "Subscribe"}
-              </Button>
-            </section>
+            <SubscriptionPlanCard key={plan.productId} plan={plan} price={offer?.price} period={period} current={isCurrent}
+              disabled={!native || !configured || !offer || !ent.data || ent.isError || isCurrent || busy !== null}
+              processing={busy === plan.productId} onSubscribe={() => void subscribe(plan.productId)}
+              priceState={offersLoading ? "Loading Google Play price…" : native ? "Currently unavailable" : "Prices available on Android"} />
           );
         })}
 
-        <div className="grid grid-cols-2 gap-2">
-          <Button variant="outline" className="h-11 rounded-xl" disabled={!native || busy !== null} onClick={doRestore}>
+        <div className="grid gap-2 border-t pt-5">
+          <Button variant="outline" className="h-11 rounded-xl" disabled={!native || busy !== null} onClick={doRestore}><RefreshCw />
             {busy === "restore" ? "Restoring…" : "Restore purchases"}
           </Button>
-          <Button variant="outline" className="h-11 rounded-xl" onClick={() => void openManage()}>
+          <Button variant="ghost" className="h-11 rounded-xl" onClick={() => void openManage()}><SlidersHorizontal />
             Manage subscription
           </Button>
         </div>
