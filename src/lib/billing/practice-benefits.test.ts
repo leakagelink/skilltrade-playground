@@ -22,21 +22,21 @@ describe("additive paid practice tools", () => {
     const result = riskPlan(100000,1,100,95,110);
     expect(result.metrics.find(m => m.label === "Whole units (no leverage)")?.value).toBe("200");
     expect(result.metrics.find(m => m.label === "Reward / risk")?.value).toBe("2.00 : 1");
-    expect(riskPlan(100,10,100,99,102).metrics[1].value).toBe("1");
-    expect(riskPlan(100000,1,100,105,90).metrics[4].value).toBe("2.00 : 1");
+    expect(riskPlan(100,10,100,99,102).metrics[1]?.value).toBe("1");
+    expect(riskPlan(100000,1,100,105,90).metrics[4]?.value).toBe("2.00 : 1");
     expect(() => riskPlan(100,1,100,100,110)).toThrow();
     expect(() => riskPlan(100,1,100,105,110)).toThrow();
   });
   it("reports actual recorded risk without fabricating empty results", () => {
-    expect(disciplineAudit([]).metrics[3].value).toBe("Not enough risk data");
+    expect(disciplineAudit([]).metrics[3]?.value).toBe("Not enough risk data");
     const report = disciplineAudit([{symbol:"TEST",realized_pnl:100,stop_loss:95,take_profit:110,entry_price:100,position_size:10,opened_at:"2026-01-01",closed_at:"2026-01-02"}]);
-    expect(report.metrics[3].value).toBe("2.00 R");
+    expect(report.metrics[3]?.value).toBe("2.00 R");
   });
   it("calculates fixed and resized risk separately", () => {
     const report = stressPlan(100000,1,10);
-    expect(report.metrics[1].value).toBe("90000.00");
-    expect(report.metrics[2].value).toBe("90438.21");
-    expect(report.metrics[3].value).toBe("9.56%");
+    expect(report.metrics[1]?.value).toBe("90000.00");
+    expect(report.metrics[2]?.value).toBe("90438.21");
+    expect(report.metrics[3]?.value).toBe("9.56%");
     expect(report.notes[0]).toContain("not market history");
   });
 });
