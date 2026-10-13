@@ -10,6 +10,7 @@ import {
   type RewardedPlacement,
 } from "./ads/config";
 import { isAdFree } from "./billing.functions";
+import { interstitialWithinLimits } from "./ads/interstitial-policy";
 
 /**
  * Version 2.0 — server-authoritative advertising limits and rewards.
@@ -333,16 +334,7 @@ export const requestInterstitial = createServerFn({ method: "POST" })
     const db = await admin();
     const a = await todayActivity(db, context.userId);
 
-    if (a.interstitial_ads_shown >= AD_LIMITS.INTERSTITIAL_PER_DAY) return { allowed: false, token: null };
-    if (a.rewarded_ads_completed + a.interstitial_ads_shown >= AD_LIMITS.TOTAL_PER_DAY) {
-      return { allowed: false, token: null };
-    }
-    if (a.last_interstitial_at) {
-      const elapsed = Date.now() - new Date(a.last_interstitial_at).getTime();
-      if (elapsed < AD_LIMITS.INTERSTITIAL_MIN_INTERVAL_MINUTES * 60_000) {
-        return { allowed: false, token: null };
-      }
-    }
+    if (!interstitialWithinLimits(a)) return { allowed: false, token: null };
 
     // First-session protection: no interstitial before the user has actually
     // experienced the core simulator (account age + at least one trade).
@@ -382,6 +374,8 @@ export const recordInterstitialShown = createServerFn({ method: "POST" })
       .eq("nonce", data.token)
       .eq("user_id", context.userId)
       .eq("status", "PENDING")
+      .eq("reward_type", "INTERSTITIAL")
+      .gte("created_at", new Date(Date.now() - GRANT_TTL_MS).toISOString())
       .select("id")
       .maybeSingle();
     if (!claimed) return { recorded: false };

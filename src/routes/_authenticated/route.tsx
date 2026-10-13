@@ -30,7 +30,7 @@ const HIDE_NAV = ["/onboarding"];
  * very bottom (above the navigation bar) so they never cover content, charts,
  * order buttons or any other tap target.
  */
-const BANNER_ROUTES = ["/home", "/profile", "/leaderboard", "/challenges"];
+const BANNER_ROUTES = ["/home", "/profile"];
 
 function AuthedLayout() {
   const { pathname } = useLocation();

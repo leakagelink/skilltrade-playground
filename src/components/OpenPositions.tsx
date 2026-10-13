@@ -11,6 +11,7 @@ import { money, price, signedMoney } from "@/lib/format";
 import { Loader2, History, TrendingDown, TrendingUp } from "lucide-react";
 import { toast } from "sonner";
 import { trackEvent } from "@/lib/analytics";
+import { CompletionResult } from "@/components/ads/CompletionResult";
 
 export type OpenTrade = {
   id: string;
@@ -39,6 +40,7 @@ export function OpenPositions({ trades, emptyText }: { trades: OpenTrade[]; empt
   const loadQuotes = useServerFn(getQuotes);
   const close = useServerFn(closeTrade);
   const [closingId, setClosingId] = useState<string | null>(null);
+  const [closedResult, setClosedResult] = useState<{ exitPrice: number; pnl: number } | null>(null);
 
   const symbols = useMemo(() => Array.from(new Set(trades.map((t) => t.symbol))), [trades]);
   const hasCrypto = symbols.some((s) => catalogEntry(s)?.assetType === "CRYPTO");
@@ -63,6 +65,7 @@ export function OpenPositions({ trades, emptyText }: { trades: OpenTrade[]; empt
     onMutate: (tradeId: string) => setClosingId(tradeId),
     onSuccess: (r) => {
       toast.success(`Trade closed at ${price(r.exitPrice)} · ${signedMoney(r.pnl)} simulated P&L.`);
+      setClosedResult({ exitPrice: r.exitPrice, pnl: r.pnl });
       void trackEvent("trade_closed", {});
       void qc.invalidateQueries();
     },
@@ -70,7 +73,7 @@ export function OpenPositions({ trades, emptyText }: { trades: OpenTrade[]; empt
     onSettled: () => setClosingId(null),
   });
 
-  if (trades.length === 0) {
+  if (trades.length === 0 && !closedResult) {
     return (
       <EmptyState
         icon={History}
@@ -81,6 +84,12 @@ export function OpenPositions({ trades, emptyText }: { trades: OpenTrade[]; empt
   }
 
   return (
+    <>
+    <CompletionResult result={closedResult ? {
+      title: "Simulated trade closed",
+      description: `Exit ${price(closedResult.exitPrice)} · ${signedMoney(closedResult.pnl)} simulated P&L. Your history has been updated.`,
+      placement: "TRADE_COMPLETE_CONTINUE",
+    } : null} onClose={() => setClosedResult(null)} />
     <ul className="space-y-2">
       {trades.map((t) => {
         const entry = Number(t.entry_price);
@@ -134,5 +143,6 @@ export function OpenPositions({ trades, emptyText }: { trades: OpenTrade[]; empt
         );
       })}
     </ul>
+    </>
   );
 }

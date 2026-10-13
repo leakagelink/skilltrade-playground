@@ -46,7 +46,7 @@ export const AD_FLAGS = {
   INTERSTITIAL_ADS_ENABLED: true,
   /**
    * Small bottom banner, shown only on calm browsing screens (Home, Profile,
-   * Leaderboard, Goals) in reserved space that never covers content or buttons.
+   * in reserved space that never covers content or buttons.
    */
   BANNER_ADS_ENABLED: true,
 } as const;
@@ -56,10 +56,10 @@ export const AD_FLAGS = {
 /* ------------------------------------------------------------------ */
 
 export const AD_LIMITS = {
-  TOTAL_PER_DAY: 11,
+  TOTAL_PER_DAY: 15,
   REWARDED_PER_DAY: 8,
-  INTERSTITIAL_PER_DAY: 3,
-  INTERSTITIAL_MIN_INTERVAL_MINUTES: 15,
+  INTERSTITIAL_PER_DAY: 7,
+  INTERSTITIAL_MIN_INTERVAL_MINUTES: 2,
   AI_COACH_REWARDED_PER_DAY: 3,
   CAREER_REWARDED_PER_DAY: 1,
   ARENA_REWARDED_PER_DAY: 1,
@@ -77,6 +77,8 @@ export const INTERSTITIAL_PLACEMENTS = [
   "CAREER_MILESTONE_CONTINUE",
   "CHALLENGE_COMPLETE_CONTINUE",
   "ARENA_RESULT_CONTINUE",
+  "TRADE_COMPLETE_CONTINUE",
+  "STRATEGY_SAVED_CONTINUE",
 ] as const;
 export type InterstitialPlacement = (typeof INTERSTITIAL_PLACEMENTS)[number];
 
