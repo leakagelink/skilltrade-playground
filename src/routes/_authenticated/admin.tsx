@@ -265,7 +265,7 @@ function AdminNotificationsPage() {
                   <Input id="to-date" type="date" value={toDate} min={fromDate || undefined} onChange={(e) => setToDate(e.target.value)} className="h-10" />
                 </div>
               </div>
-              <div className="grid grid-cols-1 gap-2 sm:grid-cols-3 xl:col-span-2">
+              <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
                 <select aria-label="Experience level" value={levelFilter} onChange={(e) => setLevelFilter(e.target.value)} className="h-10 min-w-0 rounded-md border bg-background px-3 text-sm">
                   <option value="all">Sab levels</option>
                   <option value="beginner">Beginner</option>
