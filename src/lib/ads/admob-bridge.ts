@@ -20,6 +20,10 @@ import {
 type AdMobModule = typeof import("@capacitor-community/admob");
 
 let initPromise: Promise<AdMobModule | null> | null = null;
+let sdkPromise: Promise<AdMobModule | null> | null = null;
+let lastFailureAt = 0;
+/** After a failed SDK/consent check, wait this long before trying again. */
+const INIT_RETRY_MS = 20_000;
 let rewardedLoaded = false;
 let interstitialLoaded = false;
 let interstitialLoading: Promise<void> | null = null;
@@ -36,32 +40,57 @@ async function isNative(): Promise<boolean> {
 }
 
 /** Initialises the Google Mobile Ads SDK exactly once per app process. */
-export async function initAds(): Promise<AdMobModule | null> {
-  if (!AD_FLAGS.ADS_ENABLED) return null;
-  if (initPromise) return initPromise;
-
-  initPromise = (async () => {
-    if (!(await isNative())) return null;
+async function initSdk(): Promise<AdMobModule | null> {
+  if (sdkPromise) return sdkPromise;
+  sdkPromise = (async () => {
     try {
       const mod = await import("@capacitor-community/admob");
       await mod.AdMob.initialize({ initializeForTesting: ADS_USE_TEST_ADS });
-      // Google User Messaging Platform (UMP) consent — official Google tooling.
-      try {
-        let info = await mod.AdMob.requestConsentInfo();
-        if (info.isConsentFormAvailable && info.status === mod.AdmobConsentStatus.REQUIRED) {
-          info = await mod.AdMob.showConsentForm();
-        }
-        // UMP can allow limited ads without personalised-ad consent. Use its
-        // request decision, never infer consent from merely closing the form.
-        if (!info.canRequestAds) return null;
-      } catch {
-        // Do not request ads when consent eligibility could not be determined.
-        return null;
-      }
       return mod;
     } catch {
+      sdkPromise = null; // allow a later retry
       return null;
     }
+  })();
+  return sdkPromise;
+}
+
+/**
+ * Returns the SDK only when Google UMP says ads may be requested. A failed
+ * check fails closed for this attempt but is retried later, so one network
+ * hiccup at launch can no longer block ads for the whole app session.
+ */
+export async function initAds(): Promise<AdMobModule | null> {
+  if (!AD_FLAGS.ADS_ENABLED) return null;
+  if (initPromise) return initPromise;
+  if (lastFailureAt && Date.now() - lastFailureAt < INIT_RETRY_MS) return null;
+
+  initPromise = (async () => {
+    if (!(await isNative())) return null; // web: permanently no ads
+    const mod = await initSdk();
+    if (!mod) {
+      lastFailureAt = Date.now();
+      initPromise = null;
+      return null;
+    }
+    // Google User Messaging Platform (UMP) consent — official Google tooling.
+    try {
+      let info = await mod.AdMob.requestConsentInfo();
+      if (info.isConsentFormAvailable && info.status === mod.AdmobConsentStatus.REQUIRED) {
+        info = await mod.AdMob.showConsentForm();
+      }
+      // UMP can allow limited ads without personalised-ad consent. Use its
+      // request decision, never infer consent from merely closing the form.
+      if (!info.canRequestAds) return null;
+    } catch {
+      // Do not request ads when consent eligibility could not be determined;
+      // retry on a later ad opportunity instead of blocking the whole session.
+      lastFailureAt = Date.now();
+      initPromise = null;
+      return null;
+    }
+    lastFailureAt = 0;
+    return mod;
   })();
 
   return initPromise;
