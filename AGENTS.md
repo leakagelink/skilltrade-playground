@@ -23,3 +23,4 @@
 - Subscription plan cards use the existing catalogue and Google Play offers for presentation; keep purchase handling and entitlement checks in the subscription route so visual changes cannot grant benefits.
 - Subscription marketing details and billing-period descriptions live in a browser-safe presentation module; the comparison includes Free and never implies exclusive benefits that the entitlement layer does not enforce.
 - Format valid Google Play numeric prices with their returned currency and currency decimals; fall back to the store's localized string, never static catalogue prices.
+- Additive paid practice tools execute in authenticated server functions with a fresh stored Google Play entitlement check per request; browser-safe pure calculations support tests, while existing Free tools remain ungated.

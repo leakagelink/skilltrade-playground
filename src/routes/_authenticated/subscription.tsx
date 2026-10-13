@@ -7,6 +7,7 @@ import { Check, RefreshCw, ShieldCheck, SlidersHorizontal } from "lucide-react";
 import { AppHeader } from "@/components/AppHeader";
 import { SubscriptionPlanCard } from "@/components/SubscriptionPlanCard";
 import { SubscriptionComparison } from "@/components/SubscriptionComparison";
+import { PaidPracticeTools } from "@/components/PaidPracticeTools";
 import { BILLING_DETAILS } from "@/lib/billing/plan-presentation";
 import { Button } from "@/components/ui/button";
 import { getEntitlement, restorePurchases, verifyPurchase } from "@/lib/billing.functions";
@@ -18,9 +19,9 @@ export const Route = createFileRoute("/_authenticated/subscription")({
   head: () => ({
     meta: [
       { title: "Plans — TradeVirt" },
-      { name: "description", content: "Choose a TradeVirt Basic, Pro or Elite subscription. Pro and Elite are ad-free." },
+      { name: "description", content: "Compare TradeVirt risk planning, personal discipline reports and losing-streak stress labs. Free features stay available." },
       { property: "og:title", content: "Plans — TradeVirt" },
-      { property: "og:description", content: "TradeVirt subscription plans via Google Play." },
+      { property: "og:description", content: "Basic risk planning, Pro discipline reports and Elite stress scenarios, verified through Google Play." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -114,7 +115,7 @@ function SubscriptionPage() {
         <header className="space-y-3">
           <p className="flex items-center gap-2 text-xs font-semibold text-primary"><ShieldCheck className="size-4" /> GOOGLE PLAY SUBSCRIPTIONS</p>
           <h1 className="text-3xl leading-tight tracking-normal">TradeVirt plans</h1>
-          <p className="text-sm leading-relaxed text-muted-foreground">Enjoy ad-free practice with Pro or Elite, or support TradeVirt with Basic.</p>
+          <p className="text-sm leading-relaxed text-muted-foreground">Plan with Basic. Review with Pro. Stress-test with Elite. Every existing Free tool stays yours.</p>
         </header>
         <section className="flex items-center justify-between gap-3 border-y py-4">
           <div><p className="text-xs text-muted-foreground">Your current plan</p>
@@ -164,12 +165,14 @@ function SubscriptionPage() {
         })}
 
         <SubscriptionComparison />
+        <PaidPracticeTools key={user?.id} tier={ent.isSuccess && ent.isFetchedAfterMount ? tier : "free"} />
 
         <section className="space-y-3 border-t pt-6" aria-label="Subscription questions">
           <h2 className="text-xl tracking-normal">Before you subscribe</h2>
           {[
-            ["Can I keep using TradeVirt for free?", "Yes. Free includes the existing practice tools with ads. Basic is a voluntary support subscription and keeps ads enabled."],
-            ["Does Elite unlock more than Pro?", "No. Both provide the same ad-free access. Elite is for people who want to contribute more to TradeVirt, not for extra tools or priority service."],
+            ["Can I keep using TradeVirt for free?", "Yes. Every existing Free feature stays available with its current usage rules. Paid plans add new tools; they do not remove your Free access."],
+            ["What does each upgrade add?", "Basic adds a position and risk planner. Pro includes Basic, ad-free practice, personal discipline reports and CSV export. Elite includes Pro plus a hypothetical losing-streak stress lab and drawdown-recovery calculations."],
+            ["Are these AI credits or market predictions?", "No. The new tools use transparent rule-based calculations. They do not call an AI service, predict market prices, execute trades or award virtual funds."],
             ["Does yearly include extra benefits?", "No. Monthly and yearly have the same benefits for your chosen tier. Only the upfront payment and renewal period change. Any price difference is shown by Google Play; no discount is guaranteed."],
             ["What happens if I cancel?", "Cancel through Google Play. Verified access continues until the end of the paid period. Cancellation stops future renewals; it does not automatically refund the current period."],
           ].map(([question, answer]) => <details key={question} className="border-b pb-3"><summary className="cursor-pointer py-2 text-sm font-semibold">{question}</summary><p className="mt-2 text-sm leading-relaxed text-muted-foreground">{answer}</p></details>)}
