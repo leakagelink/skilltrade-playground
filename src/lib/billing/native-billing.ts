@@ -16,7 +16,17 @@ async function load(): Promise<Mod | null> {
   }
 }
 
-export type StoreOffer = { productId: string; basePlanId: string; price: string; offerToken?: string | undefined };
+/** basePlanId = app period key ("monthly"/"yearly"); storeBasePlanId = the exact Play Console base-plan ID. */
+export type StoreOffer = { productId: string; basePlanId: string; storeBasePlanId: string; price: string; offerToken?: string | undefined };
+
+/**
+ * Accepted Play Console base-plan IDs per period. Verified via the Android Publisher API (2026-10-13):
+ * tradevirt_basic uses "basic-monthly"; pro/elite use "monthly"; all use "yearly".
+ */
+export const BASE_PLAN_ALIASES: Record<BasePlanId, (tier: string) => string[]> = {
+  monthly: (tier) => ["monthly", `${tier}-monthly`],
+  yearly: (tier) => ["yearly", `${tier}-yearly`],
+};
 
 export async function billingAvailable(): Promise<boolean> {
   return (await load()) !== null;
@@ -47,7 +57,8 @@ export function mapStoreOffers(products: RawStoreProduct[]): { offers: StoreOffe
       continue;
     }
     for (const base of BASE_PLANS) {
-      const forBase = forProduct.filter((p) => p.identifier === base);
+      const aliases = BASE_PLAN_ALIASES[base](plan.tier);
+      const forBase = forProduct.filter((p) => !!p.identifier && aliases.includes(p.identifier));
       if (!forBase.length) {
         diagnostics.missingBasePlans.push(`${plan.productId}/${base}`);
         continue;
@@ -57,7 +68,7 @@ export function mapStoreOffers(products: RawStoreProduct[]): { offers: StoreOffe
         diagnostics.noRegularOffer.push(`${plan.productId}/${base}`);
         continue;
       }
-      offers.push({ productId: plan.productId, basePlanId: base, price: regular.priceString as string, offerToken: regular.offerToken });
+      offers.push({ productId: plan.productId, basePlanId: base, storeBasePlanId: regular.identifier as string, price: regular.priceString as string, offerToken: regular.offerToken });
     }
   }
   return { offers, diagnostics };
@@ -80,6 +91,9 @@ export async function loadOffers(): Promise<StoreOffer[]> {
     throw new Error("Could not load subscription plans from Google Play.");
   }
   const { offers, diagnostics } = mapStoreOffers(products ?? []);
+  // Non-sensitive: product/base-plan IDs and whether a regular offer exists. Never logs tokens.
+  console.info("[billing] store offers", (products ?? []).map((p) => `${p.planIdentifier}/${p.identifier}/${p.offerId ?? "base"}`));
+  console.info("[billing] selected", offers.map((o) => `${o.productId}/${o.basePlanId}->${o.storeBasePlanId}`));
   if (!products?.length) console.warn("[billing] Google Play returned no subscription products.");
   else if (diagnostics.missingProducts.length || diagnostics.missingBasePlans.length || diagnostics.noRegularOffer.length)
     console.warn("[billing] incomplete plan catalogue", diagnostics);
@@ -87,7 +101,7 @@ export async function loadOffers(): Promise<StoreOffer[]> {
 }
 
 /** Launches the real Google Play purchase sheet. Returns the purchase token or null if cancelled. */
-export async function purchase(productId: string, basePlanId: BasePlanId, accountId: string, offerToken?: string): Promise<string | null> {
+export async function purchase(productId: string, basePlanId: string, accountId: string, offerToken?: string): Promise<string | null> {
   const mod = await load();
   if (!mod) throw new Error("Subscriptions are available in the TradeVirt Android app.");
   try {

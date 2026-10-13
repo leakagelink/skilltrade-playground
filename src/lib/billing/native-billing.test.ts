@@ -11,7 +11,7 @@ describe("mapStoreOffers", () => {
     const { offers, diagnostics } = mapStoreOffers(ids.flatMap((p) => [row(p, "monthly"), row(p, "yearly")]));
     expect(offers).toHaveLength(6);
     for (const p of ids) for (const b of ["monthly", "yearly"])
-      expect(offers).toContainEqual({ productId: p, basePlanId: b, price: `${p}-${b}`, offerToken: `tok-${p}-${b}` });
+      expect(offers).toContainEqual({ productId: p, basePlanId: b, storeBasePlanId: b, price: `${p}-${b}`, offerToken: `tok-${p}-${b}` });
     expect(diagnostics).toEqual({ missingProducts: [], missingBasePlans: [], noRegularOffer: [] });
   });
 
@@ -20,7 +20,7 @@ describe("mapStoreOffers", () => {
       row("tradevirt_pro", "monthly", { offerId: "intro", priceString: "₹1", offerToken: "intro-tok" }),
       row("tradevirt_pro", "monthly"),
     ]);
-    expect(offers).toEqual([{ productId: "tradevirt_pro", basePlanId: "monthly", price: "tradevirt_pro-monthly", offerToken: "tok-tradevirt_pro-monthly" }]);
+    expect(offers).toEqual([{ productId: "tradevirt_pro", basePlanId: "monthly", storeBasePlanId: "monthly", price: "tradevirt_pro-monthly", offerToken: "tok-tradevirt_pro-monthly" }]);
   });
 
   it("does not pick a promo when no regular offer exists", () => {
@@ -42,5 +42,19 @@ describe("mapStoreOffers", () => {
 
   it("does not use the old swapped mapping", () => {
     expect(mapStoreOffers([{ ...row("x", "y"), planIdentifier: "monthly", identifier: "tradevirt_pro" }]).offers).toEqual([]);
+  });
+
+  it("maps the live Play catalogue (basic uses basic-monthly) for all 6 combinations", () => {
+    const live = [row("tradevirt_basic", "basic-monthly"), row("tradevirt_basic", "yearly"), row("tradevirt_pro", "monthly"), row("tradevirt_pro", "yearly"), row("tradevirt_elite", "monthly"), row("tradevirt_elite", "yearly")];
+    const { offers, diagnostics } = mapStoreOffers(live);
+    expect(offers).toHaveLength(6);
+    expect(offers.find((o) => o.productId === "tradevirt_basic" && o.basePlanId === "monthly")).toMatchObject({ storeBasePlanId: "basic-monthly", offerToken: "tok-tradevirt_basic-basic-monthly" });
+    for (const p of ids) for (const b of ["monthly", "yearly"]) expect(offers.some((o) => o.productId === p && o.basePlanId === b)).toBe(true);
+    expect(diagnostics.missingBasePlans).toEqual([]);
+  });
+
+  it("never reuses a yearly token for monthly", () => {
+    const { offers } = mapStoreOffers([row("tradevirt_pro", "yearly")]);
+    expect(offers.some((o) => o.basePlanId === "monthly")).toBe(false);
   });
 });
