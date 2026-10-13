@@ -1,5 +1,7 @@
 # Roadmap
 
+- [ ] Add completion-only trade/lesson/Strategy Lab interstitial opportunities, 7/day and 2-minute gap, reliable preloading, Home/Profile banners and aligned privacy disclosure; preserve consent and paid ad-free checks, test changed flows.
+
 - [x] Correct Privacy, Terms, Disclaimer, Support and account-deletion disclosures for Meta, paid subscriptions and additive practice tools; all five pages browser-verified and 35 tests passed. Meta collection disabled pending separate consent; AdMob fails closed on UMP uncertainty. Android setup fixture confirms stale flags disabled.
 - [ ] Publish corrected policies and ship rebuilt Android consent safeguards; verify Play Console Data Safety and native consent/purchase behavior — requires user-authorized publishing, Android release/device testing and Play Console declarations.
 
