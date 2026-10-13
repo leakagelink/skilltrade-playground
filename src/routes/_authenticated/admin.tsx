@@ -51,6 +51,8 @@ function AdminNotificationsPage() {
   const [levelFilter, setLevelFilter] = useState("all");
   const [capitalFilter, setCapitalFilter] = useState("all");
   const [marketFilter, setMarketFilter] = useState("all");
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
 
   const status = useQuery({ queryKey: ["admin-status"], queryFn: () => loadStatus(), staleTime: 60_000 });
   const stats = useQuery({
@@ -108,33 +110,72 @@ function AdminNotificationsPage() {
     if (levelFilter !== "all" && u.experience_level !== levelFilter) return false;
     if (capitalFilter !== "all" && u.capital_range !== capitalFilter) return false;
     if (marketFilter !== "all" && !u.preferred_markets?.includes(marketFilter)) return false;
+    if (fromDate || toDate) {
+      if (!u.created_at) return false;
+      const d = new Date(u.created_at);
+      if (fromDate && d < new Date(`${fromDate}T00:00:00`)) return false;
+      if (toDate && d > new Date(`${toDate}T23:59:59.999`)) return false;
+    }
     return true;
   });
 
-  function exportUsersCsv() {
-    const rows = filteredUsers;
-    if (!rows.length) {
-      toast.error("Export ke liye koi user nahi mila.");
-      return;
-    }
-    const esc = (v: string | number | null | undefined) => `"${String(v ?? "").replace(/"/g, '""')}"`;
-    const header = ["Full Name", "Username", "Email", "Mobile", "Mobile Country Code", "Country (self-reported)", "Experience Level", "Learning Goal", "Preferred Markets", "Capital Range", "App Level", "XP", "Signup Date"];
-    const lines = rows.map((u) =>
-      [
-        esc(u.full_name), esc(u.username), esc(u.email), esc(u.mobile), esc(u.mobile_country_code), esc(u.country), esc(u.experience_level),
-        esc(u.learning_goal), esc(u.preferred_markets?.join(", ")), esc(u.capital_range),
-        esc(u.level), esc(u.xp), esc(u.created_at ? new Date(u.created_at).toLocaleString("en-IN") : ""),
-      ].join(","),
-    );
-    const csv = [header.map(esc).join(","), ...lines].join("\n");
-    const blob = new Blob(["﻿" + csv], { type: "text/csv;charset=utf-8" });
+  const EXPORT_HEADER = ["Full Name", "Username", "Email", "Mobile", "Mobile Country Code", "Country (self-reported)", "Experience Level", "Learning Goal", "Preferred Markets", "Capital Range", "App Level", "XP", "Signup Date"];
+  const exportRows = () =>
+    filteredUsers.map((u) => [
+      u.full_name ?? "", u.username, u.email ?? "", u.mobile ?? "", u.mobile_country_code ?? "", u.country ?? "",
+      u.experience_level ?? "", u.learning_goal ?? "", u.preferred_markets?.join(", ") ?? "", u.capital_range ?? "",
+      String(u.level), String(u.xp), u.created_at ? new Date(u.created_at).toLocaleString("en-IN") : "",
+    ]);
+
+  function downloadBlob(content: string, type: string, filename: string) {
+    const blob = new Blob([content], { type });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `tradevirt-users-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.download = filename;
     a.click();
     URL.revokeObjectURL(url);
-    toast.success(`${rows.length} user(s) export ho gaye.`);
+  }
+
+  const stamp = () => new Date().toISOString().slice(0, 10);
+
+  function exportUsersCsv() {
+    if (!filteredUsers.length) { toast.error("Export ke liye koi user nahi mila."); return; }
+    const esc = (v: string) => `"${v.replace(/"/g, '""')}"`;
+    const csv = [EXPORT_HEADER.map(esc).join(","), ...exportRows().map((r) => r.map(esc).join(","))].join("\n");
+    downloadBlob("﻿" + csv, "text/csv;charset=utf-8", `tradevirt-users-${stamp()}.csv`);
+    toast.success(`${filteredUsers.length} user(s) CSV me export ho gaye.`);
+  }
+
+  function exportUsersExcel() {
+    if (!filteredUsers.length) { toast.error("Export ke liye koi user nahi mila."); return; }
+    const escHtml = (v: string) => v.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    const headerCells = EXPORT_HEADER.map((h) => `<th style="background:#0f172a;color:#fff;font-weight:bold;border:1px solid #ccc;padding:6px">${escHtml(h)}</th>`).join("");
+    const bodyRows = exportRows()
+      .map((r) => `<tr>${r.map((c) => `<td style="border:1px solid #ccc;padding:6px">${escHtml(c)}</td>`).join("")}</tr>`)
+      .join("");
+    const html = `<html xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="utf-8"/></head><body><table><thead><tr>${headerCells}</tr></thead><tbody>${bodyRows}</tbody></table></body></html>`;
+    downloadBlob(html, "application/vnd.ms-excel", `tradevirt-users-${stamp()}.xls`);
+    toast.success(`${filteredUsers.length} user(s) Excel file me export ho gaye.`);
+  }
+
+  function exportUsersPdf() {
+    if (!filteredUsers.length) { toast.error("Export ke liye koi user nahi mila."); return; }
+    const escHtml = (v: string) => v.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    const headerCells = EXPORT_HEADER.map((h) => `<th>${escHtml(h)}</th>`).join("");
+    const bodyRows = exportRows()
+      .map((r) => `<tr>${r.map((c) => `<td>${escHtml(c)}</td>`).join("")}</tr>`)
+      .join("");
+    const rangeNote = fromDate || toDate ? `<p>Signup date filter: ${fromDate || "start"} → ${toDate || "today"}</p>` : "";
+    const win = window.open("", "_blank");
+    if (!win) { toast.error("Popup blocked hai — browser me popups allow karein."); return; }
+    win.document.write(`<!doctype html><html><head><meta charset="utf-8"/><title>TradeVirt Users Report</title>
+      <style>body{font-family:Arial,sans-serif;padding:24px;font-size:11px}h1{font-size:18px}p{color:#555}table{border-collapse:collapse;width:100%}th,td{border:1px solid #999;padding:5px;text-align:left}th{background:#0f172a;color:#fff}tr:nth-child(even){background:#f3f4f6}@media print{body{padding:0}}</style></head><body>
+      <h1>TradeVirt — Registered Users Report</h1><p>Generated: ${new Date().toLocaleString("en-IN")} · Total: ${filteredUsers.length} user(s)</p>${rangeNote}
+      <table><thead><tr>${headerCells}</tr></thead><tbody>${bodyRows}</tbody></table>
+      <script>window.onload=()=>{window.print();}<\/script></body></html>`);
+    win.document.close();
+    toast.success("PDF report khul rahi hai — print dialog me 'Save as PDF' chunein.");
   }
 
   if (status.isLoading) {
@@ -203,10 +244,28 @@ function AdminNotificationsPage() {
                 placeholder="Naam, email, username ya mobile se khojein…"
               />
               </div>
-              <Button variant="outline" size="sm" className="h-10 shrink-0" onClick={exportUsersCsv} disabled={!filteredUsers.length}>
-                <Download className="mr-2 h-4 w-4" /> Export {filteredUsers.length} user(s) as CSV
-              </Button>
-              <div className="grid grid-cols-1 gap-2 sm:grid-cols-3 xl:col-span-2">
+              <div className="flex shrink-0 flex-wrap gap-2">
+                <Button variant="outline" size="sm" className="h-10" onClick={exportUsersCsv} disabled={!filteredUsers.length}>
+                  <Download className="mr-2 h-4 w-4" /> CSV
+                </Button>
+                <Button variant="outline" size="sm" className="h-10" onClick={exportUsersExcel} disabled={!filteredUsers.length}>
+                  <Download className="mr-2 h-4 w-4" /> Excel
+                </Button>
+                <Button variant="outline" size="sm" className="h-10" onClick={exportUsersPdf} disabled={!filteredUsers.length}>
+                  <Download className="mr-2 h-4 w-4" /> PDF
+                </Button>
+              </div>
+              <div className="grid grid-cols-2 gap-2 xl:col-span-2">
+                <div className="space-y-1">
+                  <Label htmlFor="from-date" className="text-xs text-muted-foreground">Signup date se (From)</Label>
+                  <Input id="from-date" type="date" value={fromDate} max={toDate || undefined} onChange={(e) => setFromDate(e.target.value)} className="h-10" />
+                </div>
+                <div className="space-y-1">
+                  <Label htmlFor="to-date" className="text-xs text-muted-foreground">Signup date tak (To)</Label>
+                  <Input id="to-date" type="date" value={toDate} min={fromDate || undefined} onChange={(e) => setToDate(e.target.value)} className="h-10" />
+                </div>
+              </div>
+              <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
                 <select aria-label="Experience level" value={levelFilter} onChange={(e) => setLevelFilter(e.target.value)} className="h-10 min-w-0 rounded-md border bg-background px-3 text-sm">
                   <option value="all">Sab levels</option>
                   <option value="beginner">Beginner</option>
