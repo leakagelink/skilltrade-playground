@@ -18,7 +18,7 @@ export const Route = createFileRoute("/account-deletion")({
   component: () => (
     <LegalPage
       title="TradeVirt Account Deletion"
-      updated="Version 1.7 — October 9, 2026"
+      updated="Version 1.8 — October 13, 2026"
       sections={[
         {
           heading: "Who operates TradeVirt",
@@ -41,8 +41,12 @@ export const Route = createFileRoute("/account-deletion")({
           body: "Account-linked foreground activity days, first and latest visit timestamps and platform records used for private admin reports are deleted automatically when your profile is deleted. Country breakdowns use the optional country in your profile, which is also removed. Download and install reports from app stores or third-party analytics, if available separately, follow those providers' retention rules.",
         },
         {
+          heading: "Subscriptions and exported reports",
+          body: "Deleting your account removes subscription verification records held by TradeVirt, including the account-linked plan, status, purchase token and its hash, order identifier and billing dates. It does not cancel a subscription in Google Play or erase Google's purchase records. Before deleting, use Manage subscription in the app or Google Play → Payments & subscriptions → Subscriptions to cancel future renewals. Refund requests follow Google Play's refund policy. CSV reports and other files you downloaded remain on your device and must be deleted by you.",
+        },
+        {
           heading: "What is retained",
-          body: "Deletion from the live database happens immediately when you confirm. TradeVirt keeps no payment or financial data because the app involves no real money. Anonymous Firebase analytics and crash reports are not linked to your account and follow Google's retention settings. Backup copies may persist for a short period before being overwritten, and anonymised or legally required records may be retained.",
+          body: "Deletion from the live database happens immediately when you confirm. TradeVirt does not hold payment-card or bank details. Google retains its own subscription purchase records. Firebase analytics and crash reports and Meta App Events records may be associated with device or app identifiers, even though we do not attach your TradeVirt account identifier. These third-party records are not automatically erased by deleting your TradeVirt account and follow Google's and Meta's privacy, retention and deletion procedures (https://policies.google.com/privacy and https://www.facebook.com/privacy/policy/). Backup copies may persist for a short period before being overwritten, and anonymised or legally required records may be retained.",
         },
         {
           heading: "After deletion",

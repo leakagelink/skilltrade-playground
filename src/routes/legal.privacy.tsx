@@ -16,7 +16,7 @@ export const Route = createFileRoute("/legal/privacy")({
   component: () => (
     <LegalPage
       title="Privacy Policy"
-      updated="Version 1.8 — October 12, 2026"
+      updated="Version 1.9 — October 13, 2026"
       sections={[
         {
           heading: "Who operates TradeVirt",
@@ -35,8 +35,8 @@ export const Route = createFileRoute("/legal/privacy")({
           body: "You can hide your profile from all public leaderboards at any time in Settings. When hidden, your account is excluded from every leaderboard period.",
         },
         {
-          heading: "Financial data",
-          body: "TradeVirt never collects payment details, bank information or cryptocurrency wallet addresses, because no real-money transactions exist in the application.",
+          heading: "Simulated trading and payments",
+          body: "All trading, balances and trading rewards are simulated: TradeVirt does not offer real-money trading, deposits or withdrawals. Optional subscriptions are real-money purchases processed by Google Play. TradeVirt does not receive or store payment-card details, bank account information or cryptocurrency wallet addresses; we do process subscription purchase records as described below.",
         },
         {
           heading: "Push notifications",
@@ -52,11 +52,15 @@ export const Route = createFileRoute("/legal/privacy")({
         },
         {
           heading: "Analytics and crash reporting",
-          body: "In the Android app we use Google Firebase Analytics and Firebase Crashlytics to understand which features are used and to detect crashes. Firebase Analytics records anonymous app-usage events (for example: a simulated trade was opened, a challenge was completed, a screen was viewed) together with device and app information and an app-instance/advertising identifier. Crashlytics records crash and error diagnostics, including device state and a technical error label. We never send your email address, username, password, authentication token, account identifier, virtual balance or individual trade details to these services. Firebase Authentication, Firestore and Firebase Storage are not used. This data is processed by Google as described in Google's Privacy Policy (policies.google.com/privacy) and is never sold. Analytics and crash reporting are not active in the web version.",
+          body: "In the Android app we use Google Firebase Analytics and Firebase Crashlytics to understand which features are used and to detect crashes. Firebase Analytics records app-usage events (for example: a simulated trade was opened, a challenge was completed, a screen was viewed) together with device and app information and app-instance or advertising identifiers. Crashlytics records crash and error diagnostics, including device state and a technical error label. Device-linked identifiers mean this information should not be considered fully anonymous. We do not attach your email address, username, password, authentication token, TradeVirt account identifier, virtual balance or individual trade details to these events. Firebase Authentication, Firestore and Firebase Storage are not used. This data is processed by Google as described in Google's Privacy Policy (https://policies.google.com/privacy) and is never sold by TradeVirt. Analytics and crash reporting are not active in the web version.",
+        },
+        {
+          heading: "Meta App Events and advertising measurement",
+          body: "Updated Android builds include the Meta (Facebook) App Events SDK for app activation, advertising attribution and measurement of how features are used. It may collect device and app information, advertising identifiers, network information such as IP address, and app activity. We send allow-listed events such as app open, registration, login, content views, searches, simulated trades opened or closed, challenge completion, strategy creation and educational review usage, with limited non-sensitive categories. We do not attach your name, email, phone number, TradeVirt account identifier, passwords, authentication tokens, balances, trade amounts, profit or loss, or journal text to these events. Meta may process SDK information under its own privacy policy (https://www.facebook.com/privacy/policy/); device-linked events are not guaranteed to be anonymous. Google AdMob's consent form does not itself describe or control Meta's separate processing. Ad-free subscriptions remove in-app advertisements, not automatically Firebase or Meta measurement. You can reset or delete your Android advertising ID in device settings. Meta-held records follow Meta's retention and privacy-request procedures and are not automatically erased by deleting your TradeVirt account. This integration is not active on the website.",
         },
         {
           heading: "Third-party services",
-          body: "We use a managed cloud backend (Supabase) for authentication, database storage and server functions, Google Sign-In for optional authentication, and public third-party market data sources for stock and crypto prices. In the Android app we also use Google AdMob (Google Mobile Ads SDK) for advertising and Google Firebase Analytics and Crashlytics for anonymous usage statistics and crash reporting.",
+          body: "We use a managed cloud backend for authentication, database storage and server functions, Google Sign-In for optional authentication, and public third-party market data sources for stock and crypto prices. In the Android app we also use Google Play Billing for subscription purchases, Google AdMob for advertising, Google Firebase Analytics and Crashlytics for usage statistics and crash reporting, Firebase Cloud Messaging for notifications, and Meta App Events for advertising attribution and measurement. The optional AI Coach Agent uses RelayModels as described below.",
         },
 
         {
@@ -84,12 +88,16 @@ export const Route = createFileRoute("/legal/privacy")({
           body: "The Practice Center lets you keep a private Trade Journal: your written thesis, strategy, entry and exit reasons, what went well or what to improve, notes, your selected emotion and confidence rating. Journal entries are stored server-side, are visible only to you, and are used only to show your journal, weekly summaries, milestones, streaks and neutral, rule-based practice insights. The optional \"Check Your Trade Plan\" feature is a short reflection checklist shown on your device before a simulated trade; it is educational only, is off by default, and never blocks, alters or places a trade. Journal text is never shared, sold or sent to any third-party AI service.",
         },
         {
+          heading: "Paid practice tools and exports",
+          body: "Basic's position and risk planner processes your entered virtual capital, risk percentage, entry, stop and target on our authenticated server. Pro's discipline report reads up to your latest 500 closed simulated trades and calculates a rule-based report; Elite's stress lab processes virtual capital, risk percentage and hypothetical losing-streak inputs. We check your current subscription eligibility on each request. These calculation inputs and generated reports are not saved as new practice records, sold, or sent to a third-party AI provider. Existing simulated trade records remain subject to your account's normal retention. If you download a CSV report, the file is saved to your device and remains under your control; deleting your account does not delete copies you exported. The tools are educational calculations, not financial advice or predictions.",
+        },
+        {
           heading: "Social competitions and public profiles",
           body: "If you take part in friend challenges, open challenges or weekly tournaments, we store your participation, the simulated trades you place inside that competition, your virtual balance for it and the resulting Simulation Competition Score and ranking. Competition results are visible to the other participants of the same competition. You may optionally select a country and turn on a public trader profile; when enabled, other users can see only your username, avatar, level, Trading Skill Score, badges and (if you allow it) your country. We never display your email address, phone number, account identifiers, precise location or your private trades. If you follow other public traders, we store who follows whom so follower and following counts can be shown; you can unfollow at any time. Your shareable Trader Card shows only the same public details and is always labelled as simulated performance. TradeVirt does not request device location, and every competition uses virtual funds only with no entry fee, wager, cash prize or transferable reward.",
         },
         {
           heading: "How we use your data",
-          body: "Your data is used only to authenticate you, manage your account, provide paper trading functionality, maintain your simulated portfolio and trade history, calculate your Trading Skill Score, calculate Trader DNA and educational AI insights, run challenges, AI Arena competitions, social competitions and tournaments, Career Mode progression and leaderboards, maintain your Practice Center Trade Journal, weekly summaries, milestones and streaks, and improve reliability. We do not sell your data.",
+          body: "We use account data to authenticate you, manage your account, provide simulated trading and learning features, maintain your portfolio, journal and progress, calculate educational scores and reports, run competitions and leaderboards, verify subscription benefits, prevent fraud, provide support and improve reliability. Google and Meta SDK data is also processed for the advertising, attribution, usage measurement and diagnostic purposes described above. We do not sell your data.",
         },
         {
           heading: "Account activity and admin reporting",
@@ -109,7 +117,7 @@ export const Route = createFileRoute("/legal/privacy")({
         },
         {
           heading: "Deleting your data and retention",
-          body: `You can delete your account from Settings inside the app, which removes your account immediately, or email ${APP_INFO.supportEmail} from your registered address. Deletion removes your profile, simulated trades, credit history, XP, challenge progress, AI reviews, Trader DNA records, AI Arena sessions and Arena trades, Career Mode progress and milestones, your Practice Center Trade Journal entries, practice milestones, streak and insights, your competition participation and competition trades, and your ad-reward records. Anonymous analytics and crash reports held by Google Firebase are not linked to your account and are retained and deleted according to Google's own retention settings. Backup copies may persist for a short period before being overwritten, and anonymised or legally required records may be retained.`,
+          body: `You can delete your account from Settings inside the app, or request deletion by emailing ${APP_INFO.supportEmail} from your registered address. In-app deletion removes your live account data immediately; verified email requests are processed within 30 days. Deletion removes your profile, simulated trades, credit history, XP, challenge progress, AI reviews, Trader DNA records, Arena and Career Mode records, Trade Journal and practice progress, competition participation, ad-reward records, account activity, device push tokens and subscription records held by TradeVirt. Account deletion does not cancel your Google Play subscription: cancel it separately in Google Play to stop future renewal charges. Google retains its own purchase records. Firebase and Meta SDK records are not linked by us to your TradeVirt account identifier but may be linked to device or app identifiers; their retention and deletion follow the respective providers' policies. CSV reports and other copies you exported remain on your device. Backup copies may persist for a short period before being overwritten, and anonymised or legally required records may be retained.`,
         },
       ]}
     />

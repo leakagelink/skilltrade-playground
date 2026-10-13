@@ -10,6 +10,7 @@ export const Route = createFileRoute("/legal/support")({
       { property: "og:title", content: "Support & Contact — TradeVirt" },
       { property: "og:description", content: "Get help with your TradeVirt paper trading account." },
       { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { property: "og:url", content: "/legal/support" },
     ],
     links: [{ rel: "canonical", href: "/legal/support" }],
@@ -17,7 +18,7 @@ export const Route = createFileRoute("/legal/support")({
   component: () => (
     <LegalPage
       title="Support & Contact"
-      updated="Version 1.1"
+      updated="Version 1.2 — October 13, 2026"
       sections={[
         {
           heading: "Who operates TradeVirt",
@@ -29,7 +30,11 @@ export const Route = createFileRoute("/legal/support")({
         },
         {
           heading: "Account help",
-          body: "For login problems, include the email address on your account. We never ask for your password, and TradeVirt never requests payment details because the app involves no real money.",
+          body: "For login problems, include the email address on your account. We never ask for your password, payment-card details or bank details. Trading uses virtual funds only; optional subscription payments are processed by Google Play.",
+        },
+        {
+          heading: "Subscription help",
+          body: "For Basic, Pro or Elite purchase issues, include your plan and Google Play order ID if available, but never send your password, payment-card details or purchase token. Use Restore purchases in the app for an existing subscription and Manage subscription to open Google Play. Refund requests follow Google Play's refund policy. Uninstalling TradeVirt or deleting your account does not cancel your subscription; cancel separately in Google Play to stop renewal charges.",
         },
         {
           heading: "Reporting a bug",
