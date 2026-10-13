@@ -125,6 +125,7 @@ function AdminNotificationsPage() {
   const safePage = Math.min(page, totalPages);
   const pagedUsers = filteredUsers.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
   const goPage = (p: number) => setPage(Math.min(Math.max(1, p), totalPages));
+  const resetPage = () => setPage(1);
 
   const EXPORT_HEADER = ["Full Name", "Username", "Email", "Mobile", "Mobile Country Code", "Country (self-reported)", "Experience Level", "Learning Goal", "Preferred Markets", "Capital Range", "App Level", "XP", "Signup Date"];
   const exportRows = () =>
