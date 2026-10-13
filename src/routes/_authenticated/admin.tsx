@@ -53,6 +53,8 @@ function AdminNotificationsPage() {
   const [marketFilter, setMarketFilter] = useState("all");
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
+  const [page, setPage] = useState(1);
+  const PAGE_SIZE = 25;
 
   const status = useQuery({ queryKey: ["admin-status"], queryFn: () => loadStatus(), staleTime: 60_000 });
   const stats = useQuery({
@@ -118,6 +120,12 @@ function AdminNotificationsPage() {
     }
     return true;
   });
+
+  const totalPages = Math.max(1, Math.ceil(filteredUsers.length / PAGE_SIZE));
+  const safePage = Math.min(page, totalPages);
+  const pagedUsers = filteredUsers.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
+  const goPage = (p: number) => setPage(Math.min(Math.max(1, p), totalPages));
+  const resetPage = () => setPage(1);
 
   const EXPORT_HEADER = ["Full Name", "Username", "Email", "Mobile", "Mobile Country Code", "Country (self-reported)", "Experience Level", "Learning Goal", "Preferred Markets", "Capital Range", "App Level", "XP", "Signup Date"];
   const exportRows = () =>
@@ -230,7 +238,7 @@ function AdminNotificationsPage() {
             <CardTitle className="flex items-center gap-2 text-base">
               <Users className="h-4 w-4" /> Registered users
             </CardTitle>
-            <CardDescription>{filteredUsers.length} of {users.data?.length ?? 0} users · Admin-only access</CardDescription>
+            <CardDescription>{filteredUsers.length} of {users.data?.length ?? 0} users · Page {safePage} of {totalPages} · Admin-only access</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
             <div className="grid min-w-0 gap-3 xl:grid-cols-[minmax(0,1fr)_auto]">
@@ -240,7 +248,7 @@ function AdminNotificationsPage() {
                 aria-label="Search users"
                 className="pl-9"
                 value={userSearch}
-                onChange={(e) => setUserSearch(e.target.value)}
+                onChange={(e) => { setUserSearch(e.target.value); resetPage(); }}
                 placeholder="Naam, email, username ya mobile se khojein…"
               />
               </div>
@@ -258,21 +266,21 @@ function AdminNotificationsPage() {
               <div className="grid grid-cols-2 gap-2 xl:col-span-2">
                 <div className="space-y-1">
                   <Label htmlFor="from-date" className="text-xs text-muted-foreground">Signup date se (From)</Label>
-                  <Input id="from-date" type="date" value={fromDate} max={toDate || undefined} onChange={(e) => setFromDate(e.target.value)} className="h-10" />
+                  <Input id="from-date" type="date" value={fromDate} max={toDate || undefined} onChange={(e) => { setFromDate(e.target.value); resetPage(); }} className="h-10" />
                 </div>
                 <div className="space-y-1">
                   <Label htmlFor="to-date" className="text-xs text-muted-foreground">Signup date tak (To)</Label>
-                  <Input id="to-date" type="date" value={toDate} min={fromDate || undefined} onChange={(e) => setToDate(e.target.value)} className="h-10" />
+                  <Input id="to-date" type="date" value={toDate} min={fromDate || undefined} onChange={(e) => { setToDate(e.target.value); resetPage(); }} className="h-10" />
                 </div>
               </div>
               <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
-                <select aria-label="Experience level" value={levelFilter} onChange={(e) => setLevelFilter(e.target.value)} className="h-10 min-w-0 rounded-md border bg-background px-3 text-sm">
+                <select aria-label="Experience level" value={levelFilter} onChange={(e) => { setLevelFilter(e.target.value); resetPage(); }} className="h-10 min-w-0 rounded-md border bg-background px-3 text-sm">
                   <option value="all">Sab levels</option>
                   <option value="beginner">Beginner</option>
                   <option value="intermediate">Intermediate</option>
                   <option value="expert">Expert</option>
                 </select>
-                <select aria-label="Starting capital" value={capitalFilter} onChange={(e) => setCapitalFilter(e.target.value)} className="h-10 min-w-0 rounded-md border bg-background px-3 text-sm">
+                <select aria-label="Starting capital" value={capitalFilter} onChange={(e) => { setCapitalFilter(e.target.value); resetPage(); }} className="h-10 min-w-0 rounded-md border bg-background px-3 text-sm">
                   <option value="all">Sab capital</option>
                   <option value="unknown">Don't know</option>
                   <option value="1k_10k">₹1k–₹10k</option>
@@ -282,7 +290,7 @@ function AdminNotificationsPage() {
                   <option value="5l_plus">₹5L+</option>
                   <option value="prefer_not">Prefer not</option>
                 </select>
-                <select aria-label="Preferred market" value={marketFilter} onChange={(e) => setMarketFilter(e.target.value)} className="h-10 min-w-0 rounded-md border bg-background px-3 text-sm">
+                <select aria-label="Preferred market" value={marketFilter} onChange={(e) => { setMarketFilter(e.target.value); resetPage(); }} className="h-10 min-w-0 rounded-md border bg-background px-3 text-sm">
                   <option value="all">Sab markets</option>
                   <option value="us_stocks">US Stocks</option>
                   <option value="indian_stocks">Indian Stocks</option>
@@ -299,7 +307,7 @@ function AdminNotificationsPage() {
                   <tr>{["User", "Contact", "Country", "Experience / Goal", "Markets", "Capital", "Progress", "Joined"].map((heading) => <th key={heading} scope="col" className="px-4 py-3 font-semibold">{heading}</th>)}</tr>
                 </thead>
                 <tbody className="divide-y">
-                  {filteredUsers.map((u) => (
+                  {pagedUsers.map((u) => (
                     <tr key={u.user_id} className="align-top transition-colors hover:bg-muted/30">
                       <td className="max-w-44 break-words px-4 py-4"><p className="font-semibold text-sm">{u.full_name || u.username}</p><p className="mt-1 text-muted-foreground">@{u.username}</p></td>
                       <td className="max-w-56 break-words px-4 py-4"><p>{u.email || "—"}</p><p className="mt-1 text-muted-foreground">{formatMobile(u.mobile, u.mobile_country_code)}</p></td>
@@ -315,7 +323,7 @@ function AdminNotificationsPage() {
               </table>
             </div>
             <div className="space-y-3 lg:hidden">
-            {filteredUsers.map((u) => (
+            {pagedUsers.map((u) => (
               <div key={u.user_id} className="rounded-lg border p-3 text-sm space-y-1 break-words">
                 <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-2">
                   <p className="min-w-0 font-medium">{u.full_name || u.username}</p>
@@ -333,6 +341,22 @@ function AdminNotificationsPage() {
               </div>
             ))}
             </div>
+            {filteredUsers.length > PAGE_SIZE && (
+              <nav aria-label="Users pagination" className="flex flex-wrap items-center justify-between gap-2 border-t pt-3">
+                <p className="text-xs text-muted-foreground">
+                  {filteredUsers.length === 0 ? "0 users" : `Showing ${(safePage - 1) * PAGE_SIZE + 1}–${Math.min(safePage * PAGE_SIZE, filteredUsers.length)} of ${filteredUsers.length} users`}
+                </p>
+                <div className="flex items-center gap-2">
+                  <Button variant="outline" size="sm" className="h-8" onClick={() => goPage(safePage - 1)} disabled={safePage <= 1}>
+                    ← Back
+                  </Button>
+                  <span className="text-sm tabular-nums">Page {safePage} / {totalPages}</span>
+                  <Button variant="outline" size="sm" className="h-8" onClick={() => goPage(safePage + 1)} disabled={safePage >= totalPages}>
+                    Next →
+                  </Button>
+                </div>
+              </nav>
+            )}
           </CardContent>
         </section>
 
