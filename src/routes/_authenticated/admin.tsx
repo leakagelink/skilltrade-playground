@@ -237,7 +237,7 @@ function AdminNotificationsPage() {
             <CardTitle className="flex items-center gap-2 text-base">
               <Users className="h-4 w-4" /> Registered users
             </CardTitle>
-            <CardDescription>{filteredUsers.length} of {users.data?.length ?? 0} users · Admin-only access</CardDescription>
+            <CardDescription>{filteredUsers.length} of {users.data?.length ?? 0} users · Page {safePage} of {totalPages} · Admin-only access</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
             <div className="grid min-w-0 gap-3 xl:grid-cols-[minmax(0,1fr)_auto]">
@@ -306,7 +306,7 @@ function AdminNotificationsPage() {
                   <tr>{["User", "Contact", "Country", "Experience / Goal", "Markets", "Capital", "Progress", "Joined"].map((heading) => <th key={heading} scope="col" className="px-4 py-3 font-semibold">{heading}</th>)}</tr>
                 </thead>
                 <tbody className="divide-y">
-                  {filteredUsers.map((u) => (
+                  {pagedUsers.map((u) => (
                     <tr key={u.user_id} className="align-top transition-colors hover:bg-muted/30">
                       <td className="max-w-44 break-words px-4 py-4"><p className="font-semibold text-sm">{u.full_name || u.username}</p><p className="mt-1 text-muted-foreground">@{u.username}</p></td>
                       <td className="max-w-56 break-words px-4 py-4"><p>{u.email || "—"}</p><p className="mt-1 text-muted-foreground">{formatMobile(u.mobile, u.mobile_country_code)}</p></td>
@@ -322,7 +322,7 @@ function AdminNotificationsPage() {
               </table>
             </div>
             <div className="space-y-3 lg:hidden">
-            {filteredUsers.map((u) => (
+            {pagedUsers.map((u) => (
               <div key={u.user_id} className="rounded-lg border p-3 text-sm space-y-1 break-words">
                 <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-2">
                   <p className="min-w-0 font-medium">{u.full_name || u.username}</p>
