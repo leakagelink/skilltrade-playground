@@ -340,6 +340,22 @@ function AdminNotificationsPage() {
               </div>
             ))}
             </div>
+            {filteredUsers.length > PAGE_SIZE && (
+              <nav aria-label="Users pagination" className="flex flex-wrap items-center justify-between gap-2 border-t pt-3">
+                <p className="text-xs text-muted-foreground">
+                  {filteredUsers.length === 0 ? "0 users" : `Showing ${(safePage - 1) * PAGE_SIZE + 1}–${Math.min(safePage * PAGE_SIZE, filteredUsers.length)} of ${filteredUsers.length} users`}
+                </p>
+                <div className="flex items-center gap-2">
+                  <Button variant="outline" size="sm" className="h-8" onClick={() => goPage(safePage - 1)} disabled={safePage <= 1}>
+                    ← Back
+                  </Button>
+                  <span className="text-sm tabular-nums">Page {safePage} / {totalPages}</span>
+                  <Button variant="outline" size="sm" className="h-8" onClick={() => goPage(safePage + 1)} disabled={safePage >= totalPages}>
+                    Next →
+                  </Button>
+                </div>
+              </nav>
+            )}
           </CardContent>
         </section>
 
