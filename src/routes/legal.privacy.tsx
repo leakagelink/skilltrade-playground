@@ -16,7 +16,7 @@ export const Route = createFileRoute("/legal/privacy")({
   component: () => (
     <LegalPage
       title="Privacy Policy"
-      updated="Version 1.9 — October 13, 2026"
+      updated="Version 1.10 — October 13, 2026"
       sections={[
         {
           heading: "Who operates TradeVirt",

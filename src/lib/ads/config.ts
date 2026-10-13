@@ -45,7 +45,7 @@ export const AD_FLAGS = {
   REWARDED_ADS_ENABLED: true,
   INTERSTITIAL_ADS_ENABLED: true,
   /**
-   * Small bottom banner, shown only on calm browsing screens (Home, Profile,
+   * Small bottom banner, shown only on calm browsing screens (Home, Profile)
    * in reserved space that never covers content or buttons.
    */
   BANNER_ADS_ENABLED: true,

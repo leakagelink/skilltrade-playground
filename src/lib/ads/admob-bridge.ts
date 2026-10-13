@@ -22,6 +22,8 @@ type AdMobModule = typeof import("@capacitor-community/admob");
 let initPromise: Promise<AdMobModule | null> | null = null;
 let rewardedLoaded = false;
 let interstitialLoaded = false;
+let interstitialLoading: Promise<void> | null = null;
+let interstitialShowing = false;
 
 async function isNative(): Promise<boolean> {
   if (typeof window === "undefined") return false;
@@ -125,38 +127,63 @@ export async function showRewardedAd(): Promise<boolean> {
 export async function preloadInterstitial(): Promise<void> {
   if (!AD_FLAGS.INTERSTITIAL_ADS_ENABLED) return;
   const mod = await initAds();
-  if (!mod || interstitialLoaded) return;
-  try {
-    await mod.AdMob.prepareInterstitial({
-      adId: INTERSTITIAL_AD_UNIT_ID,
-      isTesting: ADS_USE_TEST_ADS,
-    });
-    interstitialLoaded = true;
-  } catch {
-    interstitialLoaded = false;
-  }
+  if (!mod || interstitialLoaded || interstitialShowing) return;
+  if (interstitialLoading) return interstitialLoading;
+  interstitialLoading = (async () => {
+    try {
+      await mod.AdMob.prepareInterstitial({ adId: INTERSTITIAL_AD_UNIT_ID, isTesting: ADS_USE_TEST_ADS });
+      interstitialLoaded = true;
+    } catch {
+      interstitialLoaded = false;
+    } finally {
+      interstitialLoading = null;
+    }
+  })();
+  return interstitialLoading;
 }
 
-/** Shows an interstitial at a natural break. Returns true if it was displayed. */
-export async function showInterstitialAd(): Promise<boolean> {
+/** Never waits for an unready ad. SDK display events, not show() acceptance, count impressions. */
+export async function showInterstitialAd(onShown?: () => void): Promise<boolean> {
   if (!AD_FLAGS.INTERSTITIAL_ADS_ENABLED) return false;
   const mod = await initAds();
-  if (!mod) return false;
-  try {
-    if (!interstitialLoaded) {
-      await mod.AdMob.prepareInterstitial({
-        adId: INTERSTITIAL_AD_UNIT_ID,
-        isTesting: ADS_USE_TEST_ADS,
-      });
-      interstitialLoaded = true;
-    }
-    await mod.AdMob.showInterstitial();
-    interstitialLoaded = false;
+  if (!mod || interstitialShowing) return false;
+  if (!interstitialLoaded) {
     void preloadInterstitial();
-    return true;
-  } catch {
-    interstitialLoaded = false;
     return false;
+  }
+  interstitialShowing = true;
+  interstitialLoaded = false;
+  const listeners: Array<{ remove: () => Promise<void> }> = [];
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  let displayed = false;
+  let finished = false;
+  let finish: () => void = () => {};
+  const dismissed = new Promise<void>((resolve) => {
+    finish = () => { finished = true; resolve(); };
+  });
+  try {
+    const markShown = () => {
+      if (displayed || finished) return;
+      displayed = true;
+      if (timer) clearTimeout(timer);
+      timer = setTimeout(finish, 120_000);
+      try { onShown?.(); } catch { /* reporting never blocks dismissal */ }
+    };
+    listeners.push(await mod.AdMob.addListener(mod.InterstitialAdPluginEvents.Showed, markShown));
+    listeners.push(await mod.AdMob.addListener(mod.InterstitialAdPluginEvents.AdImpression, markShown));
+    listeners.push(await mod.AdMob.addListener(mod.InterstitialAdPluginEvents.Dismissed, finish));
+    listeners.push(await mod.AdMob.addListener(mod.InterstitialAdPluginEvents.FailedToShow, finish));
+    timer = setTimeout(finish, 8_000);
+    await mod.AdMob.showInterstitial();
+    await dismissed;
+    return displayed;
+  } catch {
+    return false;
+  } finally {
+    if (timer) clearTimeout(timer);
+    await Promise.all(listeners.map((listener) => listener.remove().catch(() => {})));
+    interstitialShowing = false;
+    void preloadInterstitial();
   }
 }
 

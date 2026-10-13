@@ -1,8 +1,8 @@
-import { useCallback } from "react";
+import { useCallback, useRef } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { recordInterstitialShown, requestInterstitial } from "@/lib/ads.functions";
 import type { InterstitialPlacement } from "./config";
-import { preloadInterstitial, showInterstitialAd } from "./admob-bridge";
+import { adsAvailable, preloadInterstitial, showInterstitialAd } from "./admob-bridge";
 
 /**
  * Shows an interstitial only at a natural break, after the user has already
@@ -14,19 +14,24 @@ import { preloadInterstitial, showInterstitialAd } from "./admob-bridge";
 export function useInterstitialContinue() {
   const request = useServerFn(requestInterstitial);
   const record = useServerFn(recordInterstitialShown);
+  const continuing = useRef(false);
 
   return useCallback(
     async (placement: InterstitialPlacement, onContinue: () => void) => {
+      if (continuing.current) return;
+      continuing.current = true;
       try {
+        if (!(await adsAvailable())) return;
         const decision = await request({ data: { placement } });
         if (decision.allowed && decision.token) {
-          const shown = await showInterstitialAd();
-          if (shown) await record({ data: { token: decision.token } });
+          const token = decision.token;
+          await showInterstitialAd(() => { void record({ data: { token } }).catch(() => {}); });
           void preloadInterstitial();
         }
       } catch {
         /* ads must never block the user */
       } finally {
+        continuing.current = false;
         onContinue();
       }
     },
