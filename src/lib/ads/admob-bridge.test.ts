@@ -34,10 +34,31 @@ beforeEach(() => {
 afterEach(() => { vi.useRealTimers(); vi.unstubAllGlobals(); });
 
 describe("native interstitial lifecycle", () => {
-  it("skips an unready ad instead of delaying the user's continuation", async () => {
+  it("loads an unpreloaded ad on demand so the first break can still show one", async () => {
     const bridge = await import("./admob-bridge");
-    expect(await bridge.showInterstitialAd()).toBe(false);
+    sdk.showInterstitial.mockImplementation(async () => {
+      sdk.callbacks.get("showed")?.();
+      sdk.callbacks.get("dismissed")?.();
+    });
+    expect(await bridge.showInterstitialAd()).toBe(true);
+    expect(sdk.prepareInterstitial).toHaveBeenCalledTimes(1);
+  });
+  it("gives up after a bounded wait when the ad cannot load", async () => {
+    vi.useFakeTimers();
+    sdk.prepareInterstitial.mockImplementation(() => new Promise(() => {}));
+    const bridge = await import("./admob-bridge");
+    const shown = bridge.showInterstitialAd();
+    await vi.advanceTimersByTimeAsync(4_000);
+    expect(await shown).toBe(false);
     expect(sdk.showInterstitial).not.toHaveBeenCalled();
+  });
+  it("re-checks consent later when UMP does not yet permit requests", async () => {
+    vi.useFakeTimers();
+    sdk.requestConsentInfo.mockResolvedValueOnce({ canRequestAds: false, isConsentFormAvailable: false });
+    const bridge = await import("./admob-bridge");
+    expect(await bridge.adsAvailable()).toBe(false);
+    vi.advanceTimersByTime(21_000);
+    expect(await bridge.adsAvailable()).toBe(true);
   });
   it("deduplicates preloading", async () => {
     const bridge = await import("./admob-bridge");
