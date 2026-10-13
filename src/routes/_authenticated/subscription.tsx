@@ -6,6 +6,8 @@ import { toast } from "sonner";
 import { Check, RefreshCw, ShieldCheck, SlidersHorizontal } from "lucide-react";
 import { AppHeader } from "@/components/AppHeader";
 import { SubscriptionPlanCard } from "@/components/SubscriptionPlanCard";
+import { SubscriptionComparison } from "@/components/SubscriptionComparison";
+import { BILLING_DETAILS } from "@/lib/billing/plan-presentation";
 import { Button } from "@/components/ui/button";
 import { getEntitlement, restorePurchases, verifyPurchase } from "@/lib/billing.functions";
 import { PLANS, type BasePlanId } from "@/lib/billing/plans";
@@ -111,7 +113,7 @@ function SubscriptionPage() {
       <div className="space-y-6 px-4 py-6 sm:px-6">
         <header className="space-y-3">
           <p className="flex items-center gap-2 text-xs font-semibold text-primary"><ShieldCheck className="size-4" /> GOOGLE PLAY SUBSCRIPTIONS</p>
-          <h1 className="text-3xl leading-tight tracking-normal">Your practice.<br />Your plan.</h1>
+          <h1 className="text-3xl leading-tight tracking-normal">TradeVirt plans</h1>
           <p className="text-sm leading-relaxed text-muted-foreground">Enjoy ad-free practice with Pro or Elite, or support TradeVirt with Basic.</p>
         </header>
         <section className="flex items-center justify-between gap-3 border-y py-4">
@@ -140,6 +142,8 @@ function SubscriptionPage() {
           ))}
         </div>
 
+        <div aria-live="polite" className="border-l-2 border-primary pl-3"><h2 className="text-sm tracking-normal">{BILLING_DETAILS[period].title}</h2><p className="mt-2 text-xs leading-relaxed text-muted-foreground">{BILLING_DETAILS[period].description}</p></div>
+
         {native === false ? (
           <p className="border-l-2 border-primary pl-3 text-sm leading-relaxed text-muted-foreground">Open TradeVirt on Android to see local prices and subscribe through Google Play.</p>
         ) : null}
@@ -158,6 +162,18 @@ function SubscriptionPage() {
               priceState={offersLoading ? "Loading Google Play price…" : native ? "Currently unavailable" : "Prices available on Android"} />
           );
         })}
+
+        <SubscriptionComparison />
+
+        <section className="space-y-3 border-t pt-6" aria-label="Subscription questions">
+          <h2 className="text-xl tracking-normal">Before you subscribe</h2>
+          {[
+            ["Can I keep using TradeVirt for free?", "Yes. Free includes the existing practice tools with ads. Basic is a voluntary support subscription and keeps ads enabled."],
+            ["Does Elite unlock more than Pro?", "No. Both provide the same ad-free access. Elite is for people who want to contribute more to TradeVirt, not for extra tools or priority service."],
+            ["Does yearly include extra benefits?", "No. Monthly and yearly have the same benefits for your chosen tier. Only the upfront payment and renewal period change. Any price difference is shown by Google Play; no discount is guaranteed."],
+            ["What happens if I cancel?", "Cancel through Google Play. Verified access continues until the end of the paid period. Cancellation stops future renewals; it does not automatically refund the current period."],
+          ].map(([question, answer]) => <details key={question} className="border-b pb-3"><summary className="cursor-pointer py-2 text-sm font-semibold">{question}</summary><p className="mt-2 text-sm leading-relaxed text-muted-foreground">{answer}</p></details>)}
+        </section>
 
         <div className="grid gap-2 border-t pt-5">
           <Button variant="outline" className="h-11 rounded-xl" disabled={!native || busy !== null} onClick={doRestore}><RefreshCw />

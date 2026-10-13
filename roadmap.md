@@ -1,5 +1,7 @@
 # Roadmap
 
+- [x] Differentiate Basic/Pro/Elite with detailed truthful benefits, Free comparison and monthly/yearly explanations without changing entitlements; 26 tests passed and cards/comparison checked on mobile and desktop.
+
 - [x] Polish subscription plan cards using the supplied reference and preserve exact Google Play numeric prices without upward rounding; 22 billing/cache tests passed and isolated cards checked at mobile/desktop widths.
 - [ ] Verify redesigned subscription page signed in and Google Play prices/purchases on Android — requesting user's preview account unavailable; native device required.
 
