@@ -9,21 +9,21 @@ const row = (product: string, base: string, extra: Record<string, unknown> = {})
 describe("exact Google Play price display", () => {
   it.each([99, 299, 499])("keeps INR %s instead of rounding up", (price) => {
     const result = formatStorePrice({ price, currencyCode: "INR", priceString: `₹${price + 1}` });
-    expect(result).toContain(`${price}.00`);
-    expect(result).not.toContain(`${price + 1}.00`);
+    expect(result).toBe(`₹${price}`);
+    expect(result).not.toContain(`${price + 1}`);
   });
   it("preserves fractional store amounts", () => {
     expect(formatStorePrice({ price: 99.99, currencyCode: "INR" })).toContain("99.99");
   });
   it("never substitutes a hardcoded target for an actual store price", () => {
-    expect(formatStorePrice({ price: 100, currencyCode: "INR", priceString: "₹100.00" })).toContain("100.00");
+    expect(formatStorePrice({ price: 100, currencyCode: "INR", priceString: "₹100.00" })).toBe("₹100");
   });
   it("retains Google's localized price when numeric data is unavailable", () => {
     expect(formatStorePrice({ priceString: "₹99.00" })).toBe("₹99.00");
     expect(formatStorePrice({ price: Number.NaN, currencyCode: "INR", priceString: "₹299.00" })).toBe("₹299.00");
   });
   it("maps the exact numeric price to the selected regular offer", () => {
-    expect(mapStoreOffers([row("tradevirt_basic", "basic-monthly", { price: 99, currencyCode: "INR", priceString: "₹100" })]).offers[0]?.price).toContain("99.00");
+    expect(mapStoreOffers([row("tradevirt_basic", "basic-monthly", { price: 99, currencyCode: "INR", priceString: "₹100" })]).offers[0]?.price).toBe("₹99");
   });
 });
 

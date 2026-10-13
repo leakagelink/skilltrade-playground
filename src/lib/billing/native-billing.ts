@@ -38,7 +38,7 @@ type RawStoreProduct = { identifier?: string; planIdentifier?: string; priceStri
 export function formatStorePrice(product: Pick<RawStoreProduct, "price" | "currencyCode" | "priceString">): string {
   if (typeof product.price === "number" && Number.isFinite(product.price) && product.price >= 0 && product.currencyCode && /^[A-Z]{3}$/.test(product.currencyCode)) {
     try {
-      return new Intl.NumberFormat(undefined, { style: "currency", currency: product.currencyCode }).format(product.price);
+      return new Intl.NumberFormat(undefined, { style: "currency", currency: product.currencyCode, minimumFractionDigits: 0 }).format(product.price);
     } catch {
       // Retain Google's localized string if this device cannot format the currency.
     }
