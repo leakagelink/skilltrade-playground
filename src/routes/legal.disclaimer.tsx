@@ -9,12 +9,14 @@ export const Route = createFileRoute("/legal/disclaimer")({
       { name: "description", content: "TradeVirt is for educational and simulation purposes only. Nothing in the app constitutes financial or investment advice." },
       { property: "og:title", content: "Educational & Risk Disclaimer — TradeVirt" },
       { property: "og:description", content: "Educational simulation only. Not financial advice." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: () => (
     <LegalPage
       title="Educational & Risk Disclaimer"
-      updated="Version 1.5 — September 30, 2026"
+      updated="Version 1.6 — October 13, 2026"
       sections={[
         {
           heading: "Who operates TradeVirt",
@@ -22,7 +24,7 @@ export const Route = createFileRoute("/legal/disclaimer")({
         },
         {
           heading: "No real-money trading",
-          body: "This application is for educational and simulated trading purposes only. No real-money trading is available through the application.",
+          body: "This application is for educational and simulated trading purposes only. No real-money trading, deposits or withdrawals are available. Optional Google Play subscriptions are paid access to educational tools, not investments or deposits into a trading account.",
         },
         {
           heading: "Educational purpose",
@@ -51,6 +53,10 @@ export const Route = createFileRoute("/legal/disclaimer")({
         {
           heading: "Trader DNA and Trading Personality",
           body: "Trader DNA and Trading Personality features are educational and gamified summaries based on your simulated trading activity. They are not financial assessments, investment recommendations or psychological evaluations, and they do not predict real-world trading ability or outcomes.",
+        },
+        {
+          heading: "Paid planners, reports and stress scenarios",
+          body: "Basic's position and risk planner, Pro's discipline report and CSV export, and Elite's losing-streak and drawdown-recovery scenarios are rule-based educational tools. They do not place trades, supply personalised investment recommendations or predict results. Position calculations exclude fees, slippage, gaps and instrument-specific lot rules. Reports describe up to the latest 500 closed simulated trades, not independently verified real-money performance. Stress scenarios are mathematical what-if exercises, not historical backtests. A subscription does not guarantee improvement, profit or success in real markets.",
         },
         {
           heading: "Practice Center and Trade Journal",

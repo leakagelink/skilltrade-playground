@@ -16,7 +16,7 @@ export const Route = createFileRoute("/legal/terms")({
   component: () => (
     <LegalPage
       title="Terms of Service"
-      updated="Version 1.7 — October 13, 2026"
+      updated="Version 1.8 — October 13, 2026"
       sections={[
         {
           heading: "0. Who operates TradeVirt",
@@ -28,7 +28,7 @@ export const Route = createFileRoute("/legal/terms")({
         },
         {
           heading: "1A. Subscriptions (Google Play)",
-          body: "TradeVirt offers optional Basic, Pro and Elite subscriptions, each billed monthly or yearly, purchased only through Google Play in the Android app. The price, currency and any taxes are shown by Google Play before you confirm. Subscriptions renew automatically at the end of each billing period at the then-current price unless you cancel at least 24 hours before renewal in Google Play → Payments & subscriptions → Subscriptions, or from Manage subscription in the app. After cancelling, your plan stays active until the end of the period already paid for; uninstalling the app or deleting your account does not cancel a Google Play subscription. Pro and Elite remove in-app ads; Basic keeps ads. Benefits are granted only after Google Play confirms the purchase, and pending payments do not unlock benefits until confirmed. Refunds are handled by Google Play under its refund policy (support.google.com/googleplay); refunded, revoked or charged-back subscriptions end immediately. Use Restore purchases to reconnect an existing subscription to your account. Subscriptions do not add virtual balance or Trading Credits, have no cash value, and do not enable real-money trading.",
+          body: "TradeVirt offers optional Basic, Pro and Elite subscriptions, each billed monthly or yearly, purchased only through Google Play in the Android app. These are real-money purchases of recurring access to educational tools; all trading remains simulated. The price, currency, billing period and applicable taxes are shown by Google Play before you confirm. Yearly subscriptions charge the full annual amount upfront; monthly subscriptions charge for one month at a time. Subscriptions renew automatically unless cancelled before the next renewal in Google Play → Payments & subscriptions → Subscriptions, or from Manage subscription in the app. Google Play displays the renewal date and any applicable price-change terms. After cancelling, your plan normally stays active until the end of the period already paid for unless refunded or revoked; uninstalling the app or deleting your account does not cancel a Google Play subscription. Pro and Elite remove in-app ads; Basic keeps ads. Ad-free does not automatically disable Firebase or Meta measurement described in the Privacy Policy. Benefits are granted only after server verification with Google Play, and pending payments do not unlock benefits until confirmed. Refunds are handled under Google Play's refund policy (https://support.google.com/googleplay); revoked entitlements lose benefits when confirmed by Google. Restore purchases reconnects an eligible existing purchase to its linked TradeVirt account and does not transfer it to another account. Subscriptions do not add virtual balance or Trading Credits, do not provide redeemable financial assets, and do not enable real-money trading.",
         },
         {
           heading: "1B. Additive practice benefits",

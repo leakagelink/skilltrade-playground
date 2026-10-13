@@ -1,5 +1,8 @@
 # Roadmap
 
+- [x] Correct Privacy, Terms, Disclaimer, Support and account-deletion disclosures for Meta, paid subscriptions and additive practice tools; all five pages browser-verified and 35 tests passed. Meta collection disabled pending separate consent; AdMob fails closed on UMP uncertainty. Android setup fixture confirms stale flags disabled.
+- [ ] Publish corrected policies and ship rebuilt Android consent safeguards; verify Play Console Data Safety and native consent/purchase behavior — requires user-authorized publishing, Android release/device testing and Play Console declarations.
+
 - [x] Add genuinely distinct paid practice benefits: Basic risk planner, Pro discipline report/CSV and Elite stress lab; preserve Free tools, enforce verified server tiers and update comparison/Terms. Calculation and billing tests passed; signed-in Free locks and mobile/desktop checked.
 - [ ] Verify paid workbench with an actual eligible subscription and real Google Play purchase on Android — current preview account is Free; do not fabricate entitlement.
 
