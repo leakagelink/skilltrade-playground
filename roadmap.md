@@ -1,9 +1,12 @@
 # Roadmap
 
+- [x] Add genuinely distinct paid practice benefits: Basic risk planner, Pro discipline report/CSV and Elite stress lab; preserve Free tools, enforce verified server tiers and update comparison/Terms. Calculation and billing tests passed; signed-in Free locks and mobile/desktop checked.
+- [ ] Verify paid workbench with an actual eligible subscription and real Google Play purchase on Android — current preview account is Free; do not fabricate entitlement.
+
 - [x] Differentiate Basic/Pro/Elite with detailed truthful benefits, Free comparison and monthly/yearly explanations without changing entitlements; 26 tests passed and cards/comparison checked on mobile and desktop.
 
 - [x] Polish subscription plan cards using the supplied reference and preserve exact Google Play numeric prices without upward rounding; 22 billing/cache tests passed and isolated cards checked at mobile/desktop widths.
-- [ ] Verify redesigned subscription page signed in and Google Play prices/purchases on Android — requesting user's preview account unavailable; native device required.
+- [ ] Verify real Google Play prices/purchases on Android — signed-in pricing page checked; native device required.
 
 - [x] Add admin signup/activity reports by day, week, month and year, with user/country breakdowns and honest install/download availability.
 - [ ] Connect verified download/install reporting — requires Google Play/App Store or Firebase reporting access.

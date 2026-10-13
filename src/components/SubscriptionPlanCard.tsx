@@ -22,8 +22,8 @@ export function SubscriptionPlanCard({ plan, price, period, current, disabled, p
 
   return (
     <section aria-label={`${plan.name} plan`} className={`relative overflow-hidden rounded-2xl border bg-surface shadow-card motion-safe:animate-rise ${featured ? "border-primary" : plan.tier === "elite" ? "border-warning/60" : "border-border"}`}>
-      {featured ? <div className="flex items-center justify-center gap-2 bg-primary px-5 py-2 text-xs font-semibold text-primary-foreground"><Sparkles className="size-3.5" /> Recommended for ad-free practice</div> : null}
-      {plan.tier === "elite" ? <div className="flex items-center justify-center gap-2 bg-warning/15 px-5 py-2 text-xs font-semibold text-foreground"><Crown className="size-3.5" /> Highest support tier · same Pro benefits</div> : null}
+      {featured ? <div className="flex items-center justify-center gap-2 bg-primary px-5 py-2 text-xs font-semibold text-primary-foreground"><Sparkles className="size-3.5" /> Personal reports + ad-free practice</div> : null}
+      {plan.tier === "elite" ? <div className="flex items-center justify-center gap-2 bg-warning/15 px-5 py-2 text-xs font-semibold text-foreground"><Crown className="size-3.5" /> Everything in Pro + stress lab</div> : null}
       <div className="space-y-6 p-5 sm:p-6">
         <div className="flex items-start justify-between gap-3">
           <div className="flex min-w-0 items-center gap-3">
@@ -41,7 +41,7 @@ export function SubscriptionPlanCard({ plan, price, period, current, disabled, p
 
         <div className={`flex items-center gap-2 border-y py-3 text-sm font-semibold ${plan.adFree ? "text-bull" : "text-muted-foreground"}`}>
           {plan.adFree ? <ShieldCheck className="size-5 shrink-0" /> : <Zap className="size-5 shrink-0" />}
-          {plan.adFree ? "Ad-free across TradeVirt" : "Full access, with ads"}
+          {plan.adFree ? "Ad-free across TradeVirt" : "Risk planning, with ads"}
         </div>
         <ul className="space-y-3">
           {detail.highlights.map((benefit) => <li key={benefit} className="flex items-start gap-2.5 text-sm leading-relaxed"><Check className="mt-0.5 size-4 shrink-0 text-bull" /><span>{benefit}</span></li>)}

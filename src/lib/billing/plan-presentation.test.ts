@@ -7,15 +7,15 @@ describe("truthful subscription presentation", () => {
     expect(new Set(Object.values(PLAN_DETAILS).map(p => p.reason)).size).toBe(3);
     expect(new Set(Object.values(PLAN_DETAILS).map(p => p.action)).size).toBe(3);
   });
-  it("does not imply that Basic unlocks tools or removes ads", () => {
+  it("Basic adds risk planning but keeps ads", () => {
     expect(featuresForTier("basic").adFree).toBe(false);
-    expect(PLAN_DETAILS.basic.limitation).toContain("available on Free");
+    expect(featuresForTier("basic").riskPlanner).toBe(true);
     expect(PLAN_DETAILS.basic.limitation).toContain("Ads remain enabled");
   });
-  it("discloses that Elite has the same features as Pro", () => {
-    expect(featuresForTier("pro")).toEqual(featuresForTier("elite"));
-    expect(PLAN_DETAILS.elite.limitation).toContain("Same feature access as Pro");
-    expect(PLAN_DETAILS.elite.reason).toContain("Pro provides the same ad-free access");
+  it("Elite adds the stress lab beyond Pro", () => {
+    expect(featuresForTier("pro").stressLab).toBe(false);
+    expect(featuresForTier("elite").stressLab).toBe(true);
+    expect(PLAN_DETAILS.elite.reason).toContain("losing-streak");
   });
   it("distinguishes annual upfront billing without promising extra features or savings", () => {
     expect(BILLING_DETAILS.yearly.description).toContain("full yearly price upfront");
