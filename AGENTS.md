@@ -28,4 +28,3 @@
 - AdMob requests fail closed unless Google UMP reports canRequestAds; consent errors must never silently allow ad requests.
 - Interstitials use a shared completion-result Continue flow and server frequency policy; never interrupt order entry, auto-closures, page loading or decision checks, because ads belong only at deliberate natural breaks.
 - Full-screen ads are preloaded once ad eligibility is known and loaded on demand with a bounded wait; failed banners and "not yet permitted" consent are retried later, so one failure never silences ads for a whole session.
-- Native splash (@capacitor/splash-screen) covers the remote WebView load and is hidden by the root route after first render, so launch never shows a blank white screen.
