@@ -142,12 +142,6 @@ function RootComponent() {
   // App open (native builds only — no-op on web/SSR).
   useEffect(() => {
     void trackEvent("app_open");
-    // Hide the native splash once the web app has rendered (no-op on web).
-    void import("@capacitor/core").then(({ Capacitor, registerPlugin }) => {
-      if (!Capacitor.isNativePlatform()) return;
-      const Splash = registerPlugin<{ hide: (o?: { fadeOutDuration?: number }) => Promise<void> }>("SplashScreen");
-      void Splash.hide({ fadeOutDuration: 200 }).catch(() => {});
-    });
   }, []);
 
   // Android can only show this permission after the app is opened, not during
